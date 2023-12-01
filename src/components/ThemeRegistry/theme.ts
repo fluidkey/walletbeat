@@ -1,4 +1,5 @@
 import { createTheme, type ThemeOptions, lighten } from '@mui/material/styles';
+import type {} from '@mui/x-data-grid/themeAugmentation';
 
 const themeOptions: ThemeOptions = {
   palette: {
@@ -118,6 +119,21 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
+    MuiDataGrid: {
+      styleOverrides: {
+          root: {
+              '& .MuiDataGrid-cell:focus': {
+                  outline: 'none'
+              },
+              '& .MuiDataGrid-cell:focus-within': {
+                  outline: 'none'
+              },
+              '& .MuiDataGrid-columnHeader:focus': {
+                outline: 'none'
+            },
+          },
+      }
+  },
   },
 };
 
