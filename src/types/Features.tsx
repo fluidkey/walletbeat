@@ -26,7 +26,7 @@ export interface Features {
     L2s: boolean;
   };
   backupOptions: {
-    googleDrive: boolean;
+    cloud: boolean;
     local: boolean;
     socialRecovery: boolean;
   };
@@ -39,7 +39,9 @@ export interface Features {
     hardwareWalletSupport: boolean;
   };
   availableTestnets: {
-    goerli: boolean;
-    sepolia: boolean;
+    availableTestnets: boolean;
+  };
+  walletConnect: {
+    compatible: boolean;
   };
 }

@@ -1,7 +1,9 @@
 import { Features } from "@/types/Features";
+import { Info } from "@/types/Info";
 
-export const wallets: { [name: string]: Features } = {
+export const wallets: { [name: string]: Features & Info } = {
   'Super Wallet': {
+    url: 'https://test.io',
     deviceCompatibility: {
       mobile: true,
       desktop: true,
@@ -29,7 +31,7 @@ export const wallets: { [name: string]: Features } = {
       L2s: false,
     },
     backupOptions: {
-      googleDrive: false,
+      cloud: false,
       local: true,
       socialRecovery: false,
     },
@@ -42,15 +44,18 @@ export const wallets: { [name: string]: Features } = {
       hardwareWalletSupport: true,
     },
     availableTestnets: {
-      goerli: true,
-      sepolia: false,
+      availableTestnets: true
+    },
+    walletConnect: {
+      compatible: true,
     },
   },
   'ABC Wallet': {
+    url: 'https://test.io',
     deviceCompatibility: {
       mobile: true,
       desktop: false,
-      browserExtension: false,
+      browser: false,
     },
     accountType: {
       eoa: true,
@@ -74,21 +79,23 @@ export const wallets: { [name: string]: Features } = {
       L2s: false,
     },
     backupOptions: {
-      googleDrive: true,
+      cloud: true,
       local: false,
       socialRecovery: false,
     },
     securityFeatures: {
       multisig: false,
       MPC: false,
-      keyRotation: false,
+      keyRotation: true,
       transactionScanning: true,
       limitsAndTimelocks: false,
       hardwareWalletSupport: true,
     },
     availableTestnets: {
-      goerli: true,
-      sepolia: false,
+      availableTestnets: true
+    },
+    walletConnect: {
+      compatible: false,
     },
   },
 };
