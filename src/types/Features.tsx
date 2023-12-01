@@ -2,7 +2,7 @@ export interface Features {
   deviceCompatibility: {
     mobile: boolean;
     desktop: boolean;
-    browserExtension: boolean;
+    browser: boolean;
   };
   accountType: {
     eoa: boolean;

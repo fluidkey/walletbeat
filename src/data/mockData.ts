@@ -5,7 +5,7 @@ export const wallets: { [name: string]: Features } = {
     deviceCompatibility: {
       mobile: true,
       desktop: true,
-      browserExtension: true,
+      browser: true,
     },
     accountType: {
       eoa: true,
