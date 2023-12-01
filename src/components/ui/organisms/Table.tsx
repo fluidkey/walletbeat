@@ -41,15 +41,21 @@ export default function ComparisonTable(): JSX.Element {
     row.total = Object.values(row).filter(Boolean).length;
     // Calculate the maximum number of true values
     row.max = Object.values(row).length;
-    
+
     console.log(row);
     return row;
   });
 
   const fields = [
-    'deviceCompatibility', 'accountType', 'chainCompatibility', 'ensCompatibility', 'backupOptions', 'securityFeatures', 'availableTestnets'
+    'deviceCompatibility',
+    'accountType',
+    'chainCompatibility',
+    'ensCompatibility',
+    'backupOptions',
+    'securityFeatures',
+    'availableTestnets',
   ];
-  
+
   const fieldToHeaderName: { [key: string]: string } = {
     accountType: 'Account Type',
     deviceCompatibility: 'Device Compatibility',
@@ -66,24 +72,41 @@ export default function ComparisonTable(): JSX.Element {
       [id]: !prevState[id],
     }));
   };
-  
+
   const createColumnDef = (field: string): GridColDef => ({
     field,
     headerName: fieldToHeaderName[field],
     width: 150,
     type: 'boolean',
     headerAlign: 'center',
-    renderCell: (params) => {
+    valueGetter: (params) => {
       const values = Object.values(params.value as Record<string, boolean>);
       const trueCount = values.filter(Boolean).length;
+      return trueCount;
+    },
+    renderCell: params => {
+      const values = Object.values(params.row[field] as Record<string, boolean>);
+      const trueCount = values.filter(Boolean).length;
       const totalCount = values.length;
-    
       return (
-        <div style={{width: "100%"}}>
-          <div style={{ width: `${(trueCount / totalCount) * 100}%`, backgroundColor: 'blue', height: '20px' }} />
+        <div style={{ width: '100%' }}>
+          <div style={{ display: 'flex', height: '20px' }}>
+            {values
+              .sort((a, b) => (b === a ? 0 : b ? 1 : -1)) // Sort so that true values come first
+              .map((value, index, array) => (
+                <div
+                  key={index}
+                  style={{
+                    width: `${100 / totalCount}%`,
+                    backgroundColor: value ? 'green' : 'grey',
+                    marginRight: index !== array.length - 1 ? '2px' : undefined,
+                  }}
+                />
+              ))}
+          </div>
           {expandedRows[params.id.toString()] && (
             <ul>
-              {Object.entries(params.value as Record<string, boolean>).map(([key, value]) => (
+              {Object.entries(params.row[field] as Record<string, boolean>).map(([key, value]) => (
                 <li key={key}>{`${key}: ${value ? 'Yes' : 'No'}`}</li>
               ))}
             </ul>
@@ -92,9 +115,16 @@ export default function ComparisonTable(): JSX.Element {
       );
     },
   });
-  
   const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Wallet', width: 150, type: 'string', renderCell: (params) => <Box onClick={() => handleShowMore(params.id.toString())}>{params.value}</Box> },
+    {
+      field: 'name',
+      headerName: 'Wallet',
+      width: 150,
+      type: 'string',
+      renderCell: params => (
+        <Box onClick={() => handleShowMore(params.id.toString())}>{params.value}</Box>
+      ),
+    },
     ...fields.map(field => createColumnDef(field)),
   ];
 
@@ -113,7 +143,7 @@ export default function ComparisonTable(): JSX.Element {
         columns={columns}
         experimentalFeatures={{ columnGrouping: true }}
         columnGroupingModel={columnGroupingModel}
-        getRowHeight={(row) => expandedRows[row.id.toString()] ? 200 : 50}
+        getRowHeight={row => (expandedRows[row.id.toString()] ? 200 : 50)}
       />
     </div>
   );
