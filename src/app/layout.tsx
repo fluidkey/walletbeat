@@ -21,9 +21,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
         <PlausibleProvider domain="your.domain" />
       </head>
       <body className={workSans.className}>
-        <ThemeRegistry>
-          {children}
-        </ThemeRegistry>
+        <ThemeRegistry>{children}</ThemeRegistry>
       </body>
     </html>
   );
