@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function Home(): JSX.Element {
   return (
-    <Box maxWidth="100vw" px={1} display="flex" flexDirection="column" alignItems="center">
+    <Box maxWidth="100vw" display="flex" flexDirection="column" alignItems="center">
       <Box
         minHeight="100vh"
         maxWidth="100vw"
@@ -13,6 +13,7 @@ export default function Home(): JSX.Element {
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
+        px={2}
       >
         <Typography variant="h1" fontWeight={600} mt={6} maxWidth="90vw">
           ~ walletbeat

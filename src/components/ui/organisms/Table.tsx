@@ -317,7 +317,7 @@ export default function ComparisonTable(): JSX.Element {
   ];
 
   return (
-    <Box maxWidth="95%" height="100%" width="fit-content" overflow="auto" my={2}>
+    <Box maxWidth="100%" height="100%" width="fit-content" overflow="auto">
       <DataGrid
         rows={rows}
         columns={columns}
