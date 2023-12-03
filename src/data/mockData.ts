@@ -1,7 +1,7 @@
-import { Features } from "@/types/Features";
-import { Info } from "@/types/Info";
+import { type Features } from '@/types/Features';
+import { type Info } from '@/types/Info';
 
-export const wallets: { [name: string]: Features & Info } = {
+export const wallets: Record<string, Features & Info> = {
   'Super Wallet': {
     url: 'https://test.io',
     deviceCompatibility: {
@@ -45,7 +45,7 @@ export const wallets: { [name: string]: Features & Info } = {
       hardwareWalletSupport: true,
     },
     availableTestnets: {
-      availableTestnets: true
+      availableTestnets: true,
     },
   },
   'ABC Wallet': {
@@ -91,7 +91,7 @@ export const wallets: { [name: string]: Features & Info } = {
       hardwareWalletSupport: true,
     },
     availableTestnets: {
-      availableTestnets: true
+      availableTestnets: true,
     },
   },
 };
