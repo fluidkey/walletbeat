@@ -5,7 +5,7 @@ import PlausibleProvider from 'next-plausible';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: `Your title here`,
+  title: `walletbeat`,
 };
 
 const workSans = Work_Sans({

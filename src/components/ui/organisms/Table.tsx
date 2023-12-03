@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { wallets } from '@/data/mockData';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
+import { wallets } from '@/data/data';
 import { Box, Typography, Link } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -12,6 +12,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import { OpenInNewRounded } from '@mui/icons-material';
 
 export default function ComparisonTable(): JSX.Element {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
@@ -44,17 +45,12 @@ export default function ComparisonTable(): JSX.Element {
       availableTestnets: features.availableTestnets,
       availableTestnetsTotal: Object.values(features.availableTestnets).filter(Boolean).length,
       availableTestnetsMax: Object.values(features.availableTestnets).length,
-      walletConnect: features.walletConnect,
-      walletConnectTotal: Object.values(features.walletConnect).filter(Boolean).length,
-      walletConnectMax: Object.values(features.walletConnect).length,
     };
 
     // Calculate the total number of true values
     row.total = Object.values(row).filter(Boolean).length;
     // Calculate the maximum number of true values
     row.max = Object.values(row).length;
-
-    console.log(row);
     return row;
   });
 
@@ -66,10 +62,9 @@ export default function ComparisonTable(): JSX.Element {
     'deviceCompatibility',
     'accountType',
     'availableTestnets',
-    'walletConnect',
   ];
 
-  const fieldToHeaderName: { [key: string]: string } = {
+  const fieldToHeaderName: Record<string, string> = {
     accountType: 'Type',
     deviceCompatibility: 'Devices',
     chainCompatibility: 'Chains',
@@ -77,13 +72,12 @@ export default function ComparisonTable(): JSX.Element {
     backupOptions: 'Backup',
     securityFeatures: 'Security',
     availableTestnets: 'Testnets',
-    walletConnect: 'WalletConnect',
   };
 
-  const subcategoryMapping: { [key: string]: string } = {
+  const subcategoryMapping: Record<string, string> = {
     socialRecovery: 'Social Recovery',
     cloud: 'Cloud Backup',
-    local: 'Local Backup',
+    local: 'Manual Backup',
     multisig: 'Multisig',
     MPC: 'MPC',
     keyRotation: 'Key Rotation',
@@ -94,17 +88,18 @@ export default function ComparisonTable(): JSX.Element {
     subDomains: 'Subdomains',
     offchain: 'Offchain',
     L2s: 'L2s',
+    customDomains: 'Custom',
+    freeUsernames: 'Usernames',
     ethereum: 'Ethereum',
     optimism: 'Optimism',
     arbitrum: 'Arbitrum',
     base: 'Base',
     polygon: 'Polygon',
-    zora: 'Zora',
     gnosis: 'Gnosis',
     bnbSmartChain: 'Binance Chain',
   };
 
-  const handleShowMore = (id: string) => {
+  const handleShowMore = (id: string): void => {
     setExpandedRows(prevState => ({
       ...prevState,
       [id]: !prevState[id],
@@ -269,7 +264,7 @@ export default function ComparisonTable(): JSX.Element {
                           ) : (
                             <CloseIcon fontSize="inherit" />
                           )}
-                          <span>{subcategoryMapping[key] || key}</span>
+                          <span>{subcategoryMapping[key].length > 0 || key}</span>
                         </div>
                       </li>
                     )
@@ -286,12 +281,31 @@ export default function ComparisonTable(): JSX.Element {
     {
       field: 'name',
       headerName: 'Wallet',
-      width: 150,
+      width: 190,
       type: 'string',
       renderCell: params => (
-        <Box display="flex" flexDirection="column" alignItems="flex-start" justifyContent="flex-start" height="100%">
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="flex-start"
+          justifyContent="flex-start"
+          height="100%"
+        >
           <Box display="flex" alignItems="center" gap={1} justifyContent="flex-start" pt={1}>
-            <Typography fontSize="inherit">{params.value}</Typography>
+            <Box display="flex" alignItems="center">
+              <Typography fontSize="inherit" style={{ display: 'flex', alignItems: 'center' }}>
+                {params.value}
+              </Typography>
+              <Link
+                href={params.row.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                color="text.primary"
+                style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }}
+              >
+                <OpenInNewRounded color="inherit" fontSize="inherit" />
+              </Link>
+            </Box>
             <IconButton
               size="small"
               onClick={event => {
@@ -303,8 +317,15 @@ export default function ComparisonTable(): JSX.Element {
             </IconButton>
           </Box>
           {expandedRows[params.id.toString()] && (
-            <Link href={params.row.url} target="_blank" rel="noopener noreferrer">
-              {params.row.url}
+            <Link
+              href={`https://searchcaster.xyz/search?text=${params.value}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              color="text.primary"
+            >
+              <Typography variant="body2" fontSize="10px" pt={1}>
+                what people are saying
+              </Typography>
             </Link>
           )}
         </Box>

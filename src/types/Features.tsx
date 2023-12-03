@@ -15,7 +15,6 @@ export interface Features {
     arbitrum: boolean;
     base: boolean;
     polygon: boolean;
-    zora: boolean;
     gnosis: boolean;
     bnbSmartChain: boolean;
   };
@@ -24,6 +23,8 @@ export interface Features {
     subDomains: boolean;
     offchain: boolean;
     L2s: boolean;
+    customDomains: boolean;
+    freeUsernames: boolean;
   };
   backupOptions: {
     cloud: boolean;
@@ -40,8 +41,5 @@ export interface Features {
   };
   availableTestnets: {
     availableTestnets: boolean;
-  };
-  walletConnect: {
-    compatible: boolean;
   };
 }

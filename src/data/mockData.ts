@@ -20,7 +20,6 @@ export const wallets: { [name: string]: Features & Info } = {
       arbitrum: false,
       base: false,
       polygon: true,
-      zora: false,
       gnosis: false,
       bnbSmartChain: false,
     },
@@ -29,6 +28,8 @@ export const wallets: { [name: string]: Features & Info } = {
       subDomains: true,
       offchain: false,
       L2s: false,
+      customDomains: false,
+      freeUsernames: false,
     },
     backupOptions: {
       cloud: false,
@@ -45,9 +46,6 @@ export const wallets: { [name: string]: Features & Info } = {
     },
     availableTestnets: {
       availableTestnets: true
-    },
-    walletConnect: {
-      compatible: true,
     },
   },
   'ABC Wallet': {
@@ -68,7 +66,6 @@ export const wallets: { [name: string]: Features & Info } = {
       arbitrum: false,
       base: false,
       polygon: true,
-      zora: false,
       gnosis: false,
       bnbSmartChain: false,
     },
@@ -77,6 +74,8 @@ export const wallets: { [name: string]: Features & Info } = {
       subDomains: true,
       offchain: false,
       L2s: false,
+      customDomains: false,
+      freeUsernames: false,
     },
     backupOptions: {
       cloud: true,
@@ -93,9 +92,6 @@ export const wallets: { [name: string]: Features & Info } = {
     },
     availableTestnets: {
       availableTestnets: true
-    },
-    walletConnect: {
-      compatible: false,
     },
   },
 };

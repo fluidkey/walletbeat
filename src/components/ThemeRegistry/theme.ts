@@ -43,6 +43,9 @@ const themeOptions: ThemeOptions = {
     fontWeightLight: 300,
     h1: {
       fontWeight: 700,
+      '@media (max-width:600px)': {
+        fontSize: '3rem',
+      },
     },
     h2: {
       fontWeight: 700,
