@@ -142,7 +142,7 @@ export default function ComparisonTable(): JSX.Element {
               py={1.5}
             >
               {accountType.eoa && <Typography color={'#FAFDFF'}>EOA</Typography>}
-              {accountType.erc4337 && <Typography color={'#FAFDFF'}>ERC4337</Typography>}
+              {accountType.erc4337 && <Typography color={'#FAFDFF'}>4337</Typography>}
               {accountType.safe && <Typography color={'#FAFDFF'}>Safe</Typography>}
             </Box>
           );
