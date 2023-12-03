@@ -5,25 +5,27 @@ import ComparisonTable from '@/components/ui/organisms/Table';
 export default function Home(): JSX.Element {
   return (
     <Box maxWidth="100vw" px={1} display="flex" flexDirection="column" alignItems="center">
-      <Typography variant="h1" fontWeight={600} mt={6}>
-        ~ walletbeat
-      </Typography>
-      <Typography variant="h5" mb={6} textAlign="center" fontWeight={300}>
-        An open repository of EVM-compatible wallets.
-      </Typography>
-      <ComparisonTable />
-      <Box my={6}>
-        <Button
-          variant="outlined"
-          color="inherit"
-          sx={{
-            paddingY: '3px',
-            paddingX: '12px',
-            textTransform: 'none',
-          }}
-        >
-          Contribute
-        </Button>
+      <Box minHeight="100vh" display="flex" flexDirection="column" alignItems="center">
+        <Typography variant="h1" fontWeight={600} mt={6}>
+          ~ walletbeat
+        </Typography>
+        <Typography variant="h5" mb={6} textAlign="center" fontWeight={300}>
+          An open repository of EVM-compatible wallets.
+        </Typography>
+        <ComparisonTable />
+        <Box my={6}>
+          <Button
+            variant="outlined"
+            color="inherit"
+            sx={{
+              paddingY: '3px',
+              paddingX: '12px',
+              textTransform: 'none',
+            }}
+          >
+            Contribute
+          </Button>
+        </Box>
       </Box>
       <Typography variant="h6" mt={10} px={2} width="100%" maxWidth="sm">
         Definitions & Methodology
@@ -140,8 +142,18 @@ export default function Home(): JSX.Element {
       <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
         Whether the wallet is compatible with testnets.
       </Typography>
-      <Typography variant="h6" mt={12} px={2} width="100%" maxWidth="sm">
+      <Typography variant="h6" mt={8} px={2} width="100%" maxWidth="sm">
         Why walletbeat?
+      </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
+        Walletbeat is an MVP built out of necessity. There currently isn't any repository
+        transparently listing wallet features. Many features such as full ENS compatibility should
+        be standard across all wallets, but unfortunately aren't yet. Walletbeat aims to change this
+        by providing a transparent repository of feature availability, encouraging wallet providers
+        to improve their offering.
+      </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} mb={16} px={2} width="100%" maxWidth="sm">
+        Contribute by adding a wallet or updating existing data with a PR in the project GitHub.
       </Typography>
     </Box>
   );
