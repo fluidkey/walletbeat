@@ -28,7 +28,7 @@ export const wallets: Record<string, Features & Info> = {
       subDomains: true,
       offchain: true,
       L2s: false,
-      customDomains: true,
+      customDomains: false,
       freeUsernames: false,
     },
     backupOptions: {
