@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import ComparisonTable from '@/components/ui/organisms/Table';
+import Link from 'next/link';
 
 export default function Home(): JSX.Element {
   return (
@@ -14,17 +15,21 @@ export default function Home(): JSX.Element {
         </Typography>
         <ComparisonTable />
         <Box my={6}>
-          <Button
-            variant="outlined"
-            color="inherit"
-            sx={{
-              paddingY: '3px',
-              paddingX: '12px',
-              textTransform: 'none',
-            }}
-          >
-            Contribute
-          </Button>
+          <Link href="https://github.com/fluidkey/walletbeat" target="_blank">
+            <Box color="text.primary">
+              <Button
+                variant="outlined"
+                color="inherit"
+                sx={{
+                  paddingY: '3px',
+                  paddingX: '12px',
+                  textTransform: 'none',
+                }}
+              >
+                Contribute
+              </Button>
+            </Box>
+          </Link>
         </Box>
       </Box>
       <Typography variant="h6" mt={10} px={2} width="100%" maxWidth="sm">

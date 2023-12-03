@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }):
   return (
     <html lang="en">
       <head>
-        <PlausibleProvider domain="your.domain" />
+        <PlausibleProvider domain="walletbeat.fyi" />
       </head>
       <body className={workSans.className}>
         <ThemeRegistry>{children}</ThemeRegistry>
