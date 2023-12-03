@@ -49,7 +49,7 @@ export const wallets: Record<string, Features & Info> = {
     },
   },
   'Coinbase Wallet': {
-    url: 'https://www.coinbase.com/wallet',
+    url: 'https://www.coinbase.com/wallet/',
     deviceCompatibility: {
       mobile: true,
       desktop: false,
