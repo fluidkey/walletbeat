@@ -240,7 +240,7 @@ export const wallets: Record<string, Features & Info> = {
       browser: false,
     },
     accountType: {
-      eoa: true,
+      eoa: false,
       erc4337: true,
       safe: false,
     },
