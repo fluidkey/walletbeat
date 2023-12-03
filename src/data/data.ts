@@ -186,52 +186,6 @@ export const wallets: Record<string, Features & Info> = {
       availableTestnets: true,
     },
   },
-  Rainbow: {
-    url: 'https://rainbow.me/',
-    deviceCompatibility: {
-      mobile: true,
-      desktop: false,
-      browser: true,
-    },
-    accountType: {
-      eoa: true,
-      erc4337: false,
-      safe: false,
-    },
-    chainCompatibility: {
-      ethereum: true,
-      optimism: true,
-      arbitrum: true,
-      base: true,
-      polygon: true,
-      gnosis: false,
-      bnbSmartChain: true,
-    },
-    ensCompatibility: {
-      mainnet: true,
-      subDomains: true,
-      offchain: true,
-      L2s: true,
-      customDomains: false,
-      freeUsernames: false,
-    },
-    backupOptions: {
-      cloud: true,
-      local: true,
-      socialRecovery: false,
-    },
-    securityFeatures: {
-      multisig: false,
-      MPC: false,
-      keyRotation: false,
-      transactionScanning: true,
-      limitsAndTimelocks: false,
-      hardwareWalletSupport: true,
-    },
-    availableTestnets: {
-      availableTestnets: false,
-    },
-  },
   'Safe Wallet': {
     url: 'https://app.safe.global/',
     deviceCompatibility: {
