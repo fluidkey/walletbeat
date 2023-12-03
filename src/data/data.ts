@@ -48,6 +48,52 @@ export const wallets: Record<string, Features & Info> = {
       availableTestnets: true,
     },
   },
+  Uniswap: {
+    url: 'https://wallet.uniswap.org/',
+    deviceCompatibility: {
+      mobile: true,
+      desktop: false,
+      browser: false,
+    },
+    accountType: {
+      eoa: true,
+      erc4337: false,
+      safe: false,
+    },
+    chainCompatibility: {
+      ethereum: true,
+      optimism: true,
+      arbitrum: true,
+      base: true,
+      polygon: true,
+      gnosis: false,
+      bnbSmartChain: true,
+    },
+    ensCompatibility: {
+      mainnet: true,
+      subDomains: true,
+      offchain: true,
+      L2s: false,
+      customDomains: true,
+      freeUsernames: false,
+    },
+    backupOptions: {
+      cloud: true,
+      local: true,
+      socialRecovery: false,
+    },
+    securityFeatures: {
+      multisig: false,
+      MPC: false,
+      keyRotation: false,
+      transactionScanning: false,
+      limitsAndTimelocks: false,
+      hardwareWalletSupport: false,
+    },
+    availableTestnets: {
+      availableTestnets: false,
+    },
+  },
   'Coinbase Wallet': {
     url: 'https://www.coinbase.com/wallet/',
     deviceCompatibility: {
