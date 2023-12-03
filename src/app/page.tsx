@@ -6,15 +6,22 @@ import Link from 'next/link';
 export default function Home(): JSX.Element {
   return (
     <Box maxWidth="100vw" px={1} display="flex" flexDirection="column" alignItems="center">
-      <Box minHeight="100vh" display="flex" flexDirection="column" alignItems="center">
-        <Typography variant="h1" fontWeight={600} mt={6}>
+      <Box
+        minHeight="100vh"
+        maxWidth="100vw"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography variant="h1" fontWeight={600} mt={6} maxWidth="90vw">
           ~ walletbeat
         </Typography>
-        <Typography variant="h5" mb={6} textAlign="center" fontWeight={300}>
+        <Typography variant="h5" mb={6} textAlign="center" fontWeight={300} maxWidth="90vw">
           An open repository of EVM-compatible wallets.
         </Typography>
         <ComparisonTable />
-        <Box my={6}>
+        <Box my={6} mb={10} mx={1}>
           <Link href="https://github.com/fluidkey/walletbeat" target="_blank">
             <Box color="text.primary">
               <Button
@@ -32,7 +39,7 @@ export default function Home(): JSX.Element {
           </Link>
         </Box>
       </Box>
-      <Typography variant="h6" mt={10} px={2} width="100%" maxWidth="sm">
+      <Typography variant="h6" px={2} width="100%" maxWidth="sm">
         Definitions & Methodology
       </Typography>
       <Typography
