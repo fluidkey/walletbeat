@@ -25,32 +25,14 @@ export default function ComparisonTable(): JSX.Element {
       max: 0,
       url: features.url,
       deviceCompatibility: features.deviceCompatibility,
-      deviceCompatibilityTotal: Object.values(features.deviceCompatibility).filter(Boolean).length,
-      deviceCompatibilityMax: Object.values(features.deviceCompatibility).length,
       accountType: features.accountType,
-      accountTypeTotal: Object.values(features.accountType).filter(Boolean).length,
-      accountTypeMax: Object.values(features.accountType).length,
       chainCompatibility: features.chainCompatibility,
-      chainCompatibilityTotal: Object.values(features.chainCompatibility).filter(Boolean).length,
-      chainCompatibilityMax: Object.values(features.chainCompatibility).length,
       ensCompatibility: features.ensCompatibility,
-      ensCompatibilityTotal: Object.values(features.ensCompatibility).filter(Boolean).length,
-      ensCompatibilityMax: Object.values(features.ensCompatibility).length,
       backupOptions: features.backupOptions,
-      backupOptionsTotal: Object.values(features.backupOptions).filter(Boolean).length,
-      backupOptionsMax: Object.values(features.backupOptions).length,
       securityFeatures: features.securityFeatures,
-      securityFeaturesTotal: Object.values(features.securityFeatures).filter(Boolean).length,
-      securityFeaturesMax: Object.values(features.securityFeatures).length,
       availableTestnets: features.availableTestnets,
-      availableTestnetsTotal: Object.values(features.availableTestnets).filter(Boolean).length,
-      availableTestnetsMax: Object.values(features.availableTestnets).length,
     };
 
-    // Calculate the total number of true values
-    row.total = Object.values(row).filter(Boolean).length;
-    // Calculate the maximum number of true values
-    row.max = Object.values(row).length;
     return row;
   });
 
