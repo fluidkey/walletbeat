@@ -264,7 +264,7 @@ export default function ComparisonTable(): JSX.Element {
                           ) : (
                             <CloseIcon fontSize="inherit" />
                           )}
-                          <span>{subcategoryMapping[key].length > 0 || key}</span>
+                          <span>{subcategoryMapping[key] ?? key}</span>
                         </div>
                       </li>
                     )
