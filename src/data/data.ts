@@ -186,4 +186,50 @@ export const wallets: Record<string, Features & Info> = {
       availableTestnets: true,
     },
   },
+  Obvious: {
+    url: 'https://obvious.technology/',
+    deviceCompatibility: {
+      mobile: true,
+      desktop: false,
+      browser: false,
+    },
+    accountType: {
+      eoa: true,
+      erc4337: true,
+      safe: false,
+    },
+    chainCompatibility: {
+      ethereum: true,
+      optimism: true,
+      arbitrum: true,
+      base: true,
+      polygon: true,
+      gnosis: true,
+      bnbSmartChain: true,
+    },
+    ensCompatibility: {
+      mainnet: true,
+      subDomains: true,
+      offchain: true,
+      L2s: true,
+      customDomains: true,
+      freeUsernames: true,
+    },
+    backupOptions: {
+      cloud: false,
+      local: true,
+      socialRecovery: true,
+    },
+    securityFeatures: {
+      multisig: false,
+      MPC: false,
+      keyRotation: false,
+      transactionScanning: true,
+      limitsAndTimelocks: false,
+      hardwareWalletSupport: true,
+    },
+    availableTestnets: {
+      availableTestnets: false,
+    },
+  },
 };
