@@ -295,37 +295,6 @@ export default function ComparisonTable(): JSX.Element {
               )
             : {};
 
-        const renderSubBar = (
-          deviceValues: any[],
-          deviceTrueCount: number,
-          color: string
-        ): React.ReactElement | null => {
-          return deviceValues.length > 0 ? (
-            <div
-              style={{
-                display: 'flex',
-                maxHeight: '3px',
-                width: '100%',
-                paddingBottom: '5px',
-              }}
-            >
-              {[...Array(totalCount)].map((_, index) => (
-                <div
-                  key={index}
-                  style={{
-                    width: `${100 / totalCount}%`,
-                    backgroundColor: index < deviceTrueCount ? color : '#3f4350',
-                    marginRight: index !== totalCount - 1 ? '2px' : undefined,
-                    borderRadius:
-                      index === 0 ? '5px 0 0 5px' : index === totalCount - 1 ? '0 5px 5px 0' : '0',
-                    minHeight: '2px',
-                  }}
-                />
-              ))}
-            </div>
-          ) : null;
-        };
-
         return (
           <Box
             display="flex"
@@ -360,7 +329,16 @@ export default function ComparisonTable(): JSX.Element {
                     key={index}
                     style={{
                       width: `${100 / totalCount}%`,
-                      backgroundColor: index < minTrueCount ? '#80ffa2' : '#3f4350',
+                      backgroundColor:
+                        index < minTrueCount
+                          ? '#80ffa2'
+                          : index < mobileTrueCount
+                            ? '#E6C2FF'
+                            : index < browserTrueCount
+                              ? '#C3C7FF'
+                              : index < desktopTrueCount
+                                ? '#C2D9FF'
+                                : '#3f4350',
                       marginRight: index !== totalCount - 1 ? '2px' : undefined,
                       borderRadius:
                         index === 0
@@ -375,9 +353,6 @@ export default function ComparisonTable(): JSX.Element {
               </div>
               {expandedRows[params.id.toString()] && (
                 <>
-                  {renderSubBar(mobileValues, mobileTrueCount, '#E6C2FF')}
-                  {renderSubBar(browserValues, browserTrueCount, '#C3C7FF')}
-                  {renderSubBar(desktopValues, desktopTrueCount, '#C2D9FF')}
                   <ul
                     style={{ textAlign: 'left', width: '100%', padding: 0, listStyleType: 'none' }}
                   >
