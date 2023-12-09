@@ -42,5 +42,7 @@ export interface Features {
     embedded: boolean;
     inappBrowser: boolean;
   };
-  modularity: boolean;
+  modularity: {
+    modularity: boolean;
+  };
 }

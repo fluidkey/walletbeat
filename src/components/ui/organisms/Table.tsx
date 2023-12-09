@@ -12,7 +12,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { OpenInNewRounded } from '@mui/icons-material';
+import { DataUsageRounded, OpenInNewRounded } from '@mui/icons-material';
 
 export default function ComparisonTable(): JSX.Element {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
@@ -21,16 +21,57 @@ export default function ComparisonTable(): JSX.Element {
     const row = {
       id: index,
       name,
-      total: 0,
-      max: 0,
       url: features.url,
-      deviceCompatibility: features.deviceCompatibility,
-      accountType: features.accountType,
-      chainCompatibility: features.chainCompatibility,
-      ensCompatibility: features.ensCompatibility,
-      backupOptions: features.backupOptions,
-      securityFeatures: features.securityFeatures,
-      availableTestnets: features.availableTestnets,
+      deviceCompatibility: {
+        mobile: Boolean(features.mobile),
+        browser: Boolean(features.browser),
+        desktop: Boolean(features.desktop),
+      },
+      chainCompatibility: {
+        mobile: features.mobile?.chainCompatibility,
+        browser: features.browser?.chainCompatibility,
+        desktop: features.desktop?.chainCompatibility,
+      },
+      ensCompatibility: {
+        mobile: features.mobile?.ensCompatibility,
+        browser: features.browser?.ensCompatibility,
+        desktop: features.desktop?.ensCompatibility,
+      },
+      backupOptions: {
+        mobile: features.mobile?.backupOptions,
+        browser: features.browser?.backupOptions,
+        desktop: features.desktop?.backupOptions,
+      },
+      securityFeatures: {
+        mobile: features.mobile?.securityFeatures,
+        browser: features.browser?.securityFeatures,
+        desktop: features.desktop?.securityFeatures,
+      },
+      accountType: {
+        mobile: features.mobile?.accountType,
+        browser: features.browser?.accountType,
+        desktop: features.desktop?.accountType,
+      },
+      availableTestnets: {
+        mobile: features.mobile?.availableTestnets,
+        browser: features.browser?.availableTestnets,
+        desktop: features.desktop?.availableTestnets,
+      },
+      license: {
+        mobile: features.mobile?.license,
+        browser: features.browser?.license,
+        desktop: features.desktop?.license,
+      },
+      connectionMethods: {
+        mobile: features.mobile?.connectionMethods,
+        browser: features.browser?.connectionMethods,
+        desktop: features.desktop?.connectionMethods,
+      },
+      modularity: {
+        mobile: features.mobile?.modularity,
+        browser: features.browser?.modularity,
+        desktop: features.desktop?.modularity,
+      },
     };
 
     return row;
@@ -41,19 +82,25 @@ export default function ComparisonTable(): JSX.Element {
     'ensCompatibility',
     'backupOptions',
     'securityFeatures',
+    'connectionMethods',
     'deviceCompatibility',
     'accountType',
+    'modularity',
     'availableTestnets',
+    'license',
   ];
 
   const fieldToHeaderName: Record<string, string> = {
-    accountType: 'Type',
     deviceCompatibility: 'Devices',
+    accountType: 'Type',
     chainCompatibility: 'Chains',
     ensCompatibility: 'ENS',
     backupOptions: 'Backup',
     securityFeatures: 'Security',
     availableTestnets: 'Testnets',
+    license: 'License',
+    connectionMethods: 'Connection',
+    modularity: 'Modularity',
   };
 
   const subcategoryMapping: Record<string, string> = {
@@ -79,6 +126,12 @@ export default function ComparisonTable(): JSX.Element {
     polygon: 'Polygon',
     gnosis: 'Gnosis',
     bnbSmartChain: 'Binance Chain',
+    configurable: 'Configurable',
+    autoswitch: 'Autoswitch',
+    walletConnect: 'WalletConnect',
+    injected: 'Injected',
+    embedded: 'Embedded',
+    inappBrowser: 'In-App Browser',
   };
 
   const handleShowMore = (id: string): void => {
@@ -108,13 +161,13 @@ export default function ComparisonTable(): JSX.Element {
               py={1.5}
               ml={-0.5}
             >
-              <Typography color={compatibility.mobile ? '#FAFDFF' : '#3f4350'}>
+              <Typography color={compatibility.mobile ? '#E6C2FF' : '#3f4350'}>
                 <PhoneAndroidIcon />
               </Typography>
-              <Typography color={compatibility.browser ? '#FAFDFF' : '#3f4350'}>
+              <Typography color={compatibility.browser ? '#C3C7FF' : '#3f4350'}>
                 <LanguageIcon />
               </Typography>
-              <Typography color={compatibility.desktop ? '#FAFDFF' : '#3f4350'}>
+              <Typography color={compatibility.desktop ? '#C2D9FF' : '#3f4350'}>
                 <DesktopWindowsIcon />
               </Typography>
             </Box>
@@ -123,7 +176,7 @@ export default function ComparisonTable(): JSX.Element {
       };
     }
 
-    if (field === 'accountType') {
+    if (field === 'accountType' || field === 'license') {
       return {
         field,
         headerName: fieldToHeaderName[field],
@@ -131,7 +184,9 @@ export default function ComparisonTable(): JSX.Element {
         hideSortIcons: true,
         disableColumnMenu: true,
         renderCell: params => {
-          const accountType = params.value as Record<string, boolean>;
+          const firstNonUndefinedValue = Object.values(params.value).find(
+            value => value !== undefined
+          );
           return (
             <Box
               display="flex"
@@ -141,9 +196,24 @@ export default function ComparisonTable(): JSX.Element {
               width="100%"
               py={1.5}
             >
-              {accountType.eoa && <Typography color={'#FAFDFF'}>EOA</Typography>}
-              {accountType.erc4337 && <Typography color={'#FAFDFF'}>4337</Typography>}
-              {accountType.safe && <Typography color={'#FAFDFF'}>Safe</Typography>}
+              {firstNonUndefinedValue === 'EOA' && <Typography color={'#FAFDFF'}>EOA</Typography>}
+              {firstNonUndefinedValue === '4337' && <Typography color={'#FAFDFF'}>4337</Typography>}
+              {firstNonUndefinedValue === 'SAFE' && <Typography color={'#FAFDFF'}>Safe</Typography>}
+              {firstNonUndefinedValue === 'OPEN_SOURCE' && (
+                <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+                  Open Source
+                </Typography>
+              )}
+              {firstNonUndefinedValue === 'SOURCE_AVAILABLE' && (
+                <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+                  Source Available
+                </Typography>
+              )}
+              {firstNonUndefinedValue === 'PROPRIETARY' && (
+                <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+                  Proprietary
+                </Typography>
+              )}
             </Box>
           );
         },
@@ -163,9 +233,19 @@ export default function ComparisonTable(): JSX.Element {
         return trueCount;
       },
       renderCell: params => {
-        const values = Object.values(params.row[field] as Record<string, boolean>);
-        const trueCount = values.filter(Boolean).length;
-        const totalCount = values.length;
+        const mobile = params.row[field]?.mobile;
+        const browser = params.row[field]?.browser;
+        const desktop = params.row[field]?.desktop;
+
+        const mobileValues = Object.values(mobile ?? {});
+        const browserValues = Object.values(browser ?? {});
+        const desktopValues = Object.values(desktop ?? {});
+        const totalCount = Math.max(
+          mobileValues.length,
+          browserValues.length,
+          desktopValues.length
+        );
+
         if (totalCount === 1) {
           return (
             <Box
@@ -176,13 +256,80 @@ export default function ComparisonTable(): JSX.Element {
               justifyContent="left"
               py={1.5}
             >
-              {values[0] ? <CheckIcon /> : <CloseIcon />}
+              {mobileValues[0] === true ||
+              browserValues[0] === true ||
+              desktopValues[0] === true ? (
+                <CheckIcon />
+              ) : (
+                <CloseIcon />
+              )}
             </Box>
           );
         }
+
+        const mobileTrueCount = mobileValues.filter(Boolean).length;
+        const browserTrueCount = browserValues.filter(Boolean).length;
+        const desktopTrueCount = desktopValues.filter(Boolean).length;
+
+        const trueCounts = [mobileTrueCount, browserTrueCount, desktopTrueCount].filter(
+          count => count > 0
+        );
+        const minTrueCount = trueCounts.length > 0 ? Math.min(...trueCounts) : 0;
+
+        const inputs = [mobile, browser, desktop].filter(input => input != null);
+        const checkValues =
+          inputs.length > 0
+            ? Object.fromEntries(
+                Object.entries(inputs[0]).map(([key]) => {
+                  const values = inputs.map(input => input[key]);
+                  let result;
+                  if (values.every(value => value !== false)) {
+                    result = 'true';
+                  } else if (values.some(value => value === true)) {
+                    result = 'some';
+                  } else {
+                    result = 'false';
+                  }
+                  return [key, result];
+                })
+              )
+            : {};
+
+        const renderSubBar = (
+          deviceValues: any[],
+          deviceTrueCount: number,
+          color: string
+        ): React.ReactElement | null => {
+          return deviceValues.length > 0 ? (
+            <div
+              style={{
+                display: 'flex',
+                maxHeight: '3px',
+                width: '100%',
+                paddingBottom: '5px',
+              }}
+            >
+              {[...Array(totalCount)].map((_, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: `${100 / totalCount}%`,
+                    backgroundColor: index < deviceTrueCount ? color : '#3f4350',
+                    marginRight: index !== totalCount - 1 ? '2px' : undefined,
+                    borderRadius:
+                      index === 0 ? '5px 0 0 5px' : index === totalCount - 1 ? '0 5px 5px 0' : '0',
+                    minHeight: '2px',
+                  }}
+                />
+              ))}
+            </div>
+          ) : null;
+        };
+
         return (
           <Box
             display="flex"
+            flexDirection="column"
             alignItems="center"
             height="100%"
             width="100%"
@@ -197,7 +344,7 @@ export default function ComparisonTable(): JSX.Element {
               width="100%"
             >
               <Typography variant="body2" pt={1} style={{ marginRight: '10px' }}>
-                {`${trueCount}/${totalCount}`}
+                {`${minTrueCount}/${totalCount}`}
               </Typography>
               <div
                 style={{
@@ -208,30 +355,33 @@ export default function ComparisonTable(): JSX.Element {
                   paddingBottom: '8px',
                 }}
               >
-                {values
-                  .sort((a, b) => (b === a ? 0 : b ? 1 : -1)) // Sort so that true values come first
-                  .map((value, index, array) => (
-                    <div
-                      key={index}
-                      style={{
-                        width: `${100 / totalCount}%`,
-                        backgroundColor: value ? '#80ffa2' : '#3f4350',
-                        marginRight: index !== array.length - 1 ? '2px' : undefined,
-                        borderRadius:
-                          index === 0
-                            ? '5px 0 0 5px'
-                            : index === array.length - 1
-                              ? '0 5px 5px 0'
-                              : '0',
-                        minHeight: '6px',
-                      }}
-                    />
-                  ))}
+                {[...Array(totalCount)].map((_, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      width: `${100 / totalCount}%`,
+                      backgroundColor: index < minTrueCount ? '#80ffa2' : '#3f4350',
+                      marginRight: index !== totalCount - 1 ? '2px' : undefined,
+                      borderRadius:
+                        index === 0
+                          ? '5px 0 0 5px'
+                          : index === totalCount - 1
+                            ? '0 5px 5px 0'
+                            : '0',
+                      minHeight: '6px',
+                    }}
+                  />
+                ))}
               </div>
               {expandedRows[params.id.toString()] && (
-                <ul style={{ textAlign: 'left', width: '100%', padding: 0, listStyleType: 'none' }}>
-                  {Object.entries(params.row[field] as Record<string, boolean>).map(
-                    ([key, value]) => (
+                <>
+                  {renderSubBar(mobileValues, mobileTrueCount, '#E6C2FF')}
+                  {renderSubBar(browserValues, browserTrueCount, '#C3C7FF')}
+                  {renderSubBar(desktopValues, desktopTrueCount, '#C2D9FF')}
+                  <ul
+                    style={{ textAlign: 'left', width: '100%', padding: 0, listStyleType: 'none' }}
+                  >
+                    {Object.entries(checkValues as Record<string, string>).map(([key, value]) => (
                       <li key={key}>
                         <div
                           style={{
@@ -241,17 +391,19 @@ export default function ComparisonTable(): JSX.Element {
                             gap: '4px',
                           }}
                         >
-                          {value ? (
+                          {value === 'true' ? (
                             <CheckIcon fontSize="inherit" color="success" />
+                          ) : value === 'some' ? (
+                            <DataUsageRounded fontSize="inherit" color="inherit" />
                           ) : (
                             <CloseIcon fontSize="inherit" />
                           )}
                           <span>{subcategoryMapping[key] ?? key}</span>
                         </div>
                       </li>
-                    )
-                  )}
-                </ul>
+                    ))}
+                  </ul>
+                </>
               )}
             </Box>
           </Box>
@@ -305,7 +457,7 @@ export default function ComparisonTable(): JSX.Element {
               rel="noopener noreferrer"
               color="text.primary"
             >
-              <Typography variant="body2" fontSize="10px" pt={1}>
+              <Typography variant="body2" fontSize="10px">
                 what people are saying
               </Typography>
             </Link>
@@ -321,7 +473,7 @@ export default function ComparisonTable(): JSX.Element {
       <DataGrid
         rows={rows}
         columns={columns}
-        getRowHeight={row => (expandedRows[row.id.toString()] ? 200 : 50)}
+        getRowHeight={row => (expandedRows[row.id.toString()] ? 230 : 50)}
         density="compact"
         disableRowSelectionOnClick
       />

@@ -47,9 +47,11 @@ export const wallets: Record<string, Info> = {
         embedded: false,
         inappBrowser: true,
       },
-      modularity: false,
+      modularity: {
+        modularity: false,
+      },
     },
-    desktop: {
+    browser: {
       // TO-DO
       accountType: 'EOA',
       chainCompatibility: {
@@ -94,7 +96,9 @@ export const wallets: Record<string, Info> = {
         embedded: false,
         inappBrowser: true,
       },
-      modularity: true,
+      modularity: {
+        modularity: true,
+      },
     },
   },
 };
