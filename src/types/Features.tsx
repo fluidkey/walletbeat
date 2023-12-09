@@ -1,15 +1,8 @@
 export interface Features {
-  deviceCompatibility: {
-    mobile: boolean;
-    desktop: boolean;
-    browser: boolean;
-  };
-  accountType: {
-    eoa: boolean;
-    erc4337: boolean;
-    safe: boolean;
-  };
+  accountType: 'EOA' | '4337' | 'SAFE';
   chainCompatibility: {
+    configurable: boolean;
+    autoswitch: boolean;
     ethereum: boolean;
     optimism: boolean;
     arbitrum: boolean;
@@ -42,4 +35,12 @@ export interface Features {
   availableTestnets: {
     availableTestnets: boolean;
   };
+  license: 'OPEN_SOURCE' | 'SOURCE_AVAILABLE' | 'PROPRIETARY';
+  connectionMethods: {
+    walletConnect: boolean;
+    injected: boolean;
+    embedded: boolean;
+    inappBrowser: boolean;
+  };
+  modularity: boolean;
 }
