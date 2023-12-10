@@ -534,4 +534,50 @@ export const wallets: Record<string, Info> = {
       },
     },
   },
+  Tokenary: {
+    url: 'https://lil.org/',
+    deviceCompatibility: {
+      mobile: true,
+      desktop: true,
+      browser: true,
+    },
+    accountType: {
+      eoa: true,
+      erc4337: false,
+      safe: false,
+    },
+    chainCompatibility: {
+      ethereum: true,
+      optimism: true,
+      arbitrum: true,
+      base: true,
+      polygon: true,
+      gnosis: true,
+      bnbSmartChain: true,
+    },
+    ensCompatibility: {
+      mainnet: false,
+      subDomains: false,
+      offchain: false,
+      L2s: false,
+      customDomains: false,
+      freeUsernames: false,
+    },
+    backupOptions: {
+      cloud: false,
+      local: true,
+      socialRecovery: false,
+    },
+    securityFeatures: {
+      multisig: false,
+      MPC: false,
+      keyRotation: false,
+      transactionScanning: false,
+      limitsAndTimelocks: false,
+      hardwareWalletSupport: false,
+    },
+    availableTestnets: {
+      availableTestnets: true,
+    },
+  },
 };
