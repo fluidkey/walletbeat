@@ -1,7 +1,8 @@
 import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import ComparisonTable from '@/components/ui/organisms/Table';
-import Link from 'next/link';
+import NextLink from 'next/link';
+import MuiLink from '@mui/material/Link';
 
 export default function Home(): JSX.Element {
   return (
@@ -23,7 +24,7 @@ export default function Home(): JSX.Element {
         </Typography>
         <ComparisonTable />
         <Box my={6} mb={10} mx={1}>
-          <Link href="https://github.com/fluidkey/walletbeat" target="_blank">
+          <NextLink href="https://github.com/fluidkey/walletbeat" target="_blank">
             <Box color="text.primary">
               <Button
                 variant="outlined"
@@ -37,7 +38,7 @@ export default function Home(): JSX.Element {
                 Contribute
               </Button>
             </Box>
-          </Link>
+          </NextLink>
         </Box>
       </Box>
       <Typography variant="h6" px={2} width="100%" maxWidth="sm">
@@ -165,8 +166,50 @@ export default function Home(): JSX.Element {
         by providing a transparent repository of feature availability, encouraging wallet providers
         to improve their offering.
       </Typography>
-      <Typography variant="body2" fontWeight={400} mt={1} mb={16} px={2} width="100%" maxWidth="sm">
+      <Typography variant="body2" fontWeight={400} mt={1} mb={8} px={2} width="100%" maxWidth="sm">
         Contribute by adding a wallet or updating existing data with a PR in the project GitHub.
+      </Typography>
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        my={4}
+        px={2}
+        width="100%"
+        maxWidth="sm"
+        textAlign="center"
+      >
+        an open source project instigated by{' '}
+        <MuiLink
+          component={NextLink}
+          underline="hover"
+          color="text.primary"
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              color: 'primary.main',
+            },
+          }}
+          href="https://fluidkey.com"
+          target="_blank"
+        >
+          Fluidkey
+        </MuiLink>{' '}
+        <br /> reach out at{' '}
+        <MuiLink
+          component={NextLink}
+          underline="hover"
+          color="text.primary"
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              color: 'primary.main',
+            },
+          }}
+          href="mailto:hey@fluidkey.com"
+          target="_blank"
+        >
+          hey@fluidkey.com
+        </MuiLink>
       </Typography>
     </Box>
   );

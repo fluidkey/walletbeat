@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { wallets } from '@/data/data';
+import { fieldToHeaderName, subcategoryMapping } from '@/data/mapping';
 import { Box, Typography, Link } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -12,7 +13,7 @@ import LanguageIcon from '@mui/icons-material/Language';
 import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { DataUsageRounded, OpenInNewRounded } from '@mui/icons-material';
+import { OpenInNewRounded } from '@mui/icons-material';
 
 export default function ComparisonTable(): JSX.Element {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
@@ -22,6 +23,11 @@ export default function ComparisonTable(): JSX.Element {
       id: index,
       name,
       url: features.url,
+      submittedByName: features.submittedByName,
+      submittedByUrl: features.submittedByUrl,
+      updatedAt: features.updatedAt,
+      updatedByName: features.updatedByName,
+      updatedByUrl: features.updatedByUrl,
       deviceCompatibility: {
         mobile: Boolean(features.mobile),
         browser: Boolean(features.browser),
@@ -31,21 +37,25 @@ export default function ComparisonTable(): JSX.Element {
         mobile: features.mobile?.chainCompatibility,
         browser: features.browser?.chainCompatibility,
         desktop: features.desktop?.chainCompatibility,
+        issues: features.issues?.chainCompatibility,
       },
       ensCompatibility: {
         mobile: features.mobile?.ensCompatibility,
         browser: features.browser?.ensCompatibility,
         desktop: features.desktop?.ensCompatibility,
+        issues: features.issues?.ensCompatibility,
       },
       backupOptions: {
         mobile: features.mobile?.backupOptions,
         browser: features.browser?.backupOptions,
         desktop: features.desktop?.backupOptions,
+        issues: features.issues?.backupOptions,
       },
       securityFeatures: {
         mobile: features.mobile?.securityFeatures,
         browser: features.browser?.securityFeatures,
         desktop: features.desktop?.securityFeatures,
+        issues: features.issues?.securityFeatures,
       },
       accountType: {
         mobile: features.mobile?.accountType,
@@ -56,6 +66,7 @@ export default function ComparisonTable(): JSX.Element {
         mobile: features.mobile?.availableTestnets,
         browser: features.browser?.availableTestnets,
         desktop: features.desktop?.availableTestnets,
+        issues: features.issues?.availableTestnets,
       },
       license: {
         mobile: features.mobile?.license,
@@ -66,11 +77,13 @@ export default function ComparisonTable(): JSX.Element {
         mobile: features.mobile?.connectionMethods,
         browser: features.browser?.connectionMethods,
         desktop: features.desktop?.connectionMethods,
+        issues: features.issues?.connectionMethods,
       },
       modularity: {
         mobile: features.mobile?.modularity,
         browser: features.browser?.modularity,
         desktop: features.desktop?.modularity,
+        issues: features.issues?.modularity,
       },
     };
 
@@ -90,50 +103,6 @@ export default function ComparisonTable(): JSX.Element {
     'license',
   ];
 
-  const fieldToHeaderName: Record<string, string> = {
-    deviceCompatibility: 'Devices',
-    accountType: 'Type',
-    chainCompatibility: 'Chains',
-    ensCompatibility: 'ENS',
-    backupOptions: 'Backup',
-    securityFeatures: 'Security',
-    availableTestnets: 'Testnets',
-    license: 'License',
-    connectionMethods: 'Connection',
-    modularity: 'Modularity',
-  };
-
-  const subcategoryMapping: Record<string, string> = {
-    socialRecovery: 'Social Recovery',
-    cloud: 'Cloud Backup',
-    local: 'Manual Backup',
-    multisig: 'Multisig',
-    MPC: 'MPC',
-    keyRotation: 'Key Rotation',
-    transactionScanning: 'Scanning',
-    limitsAndTimelocks: 'Limits',
-    hardwareWalletSupport: 'Hardware',
-    mainnet: 'Mainnet',
-    subDomains: 'Subdomains',
-    offchain: 'Offchain',
-    L2s: 'L2s',
-    customDomains: 'Custom',
-    freeUsernames: 'Usernames',
-    ethereum: 'Ethereum',
-    optimism: 'Optimism',
-    arbitrum: 'Arbitrum',
-    base: 'Base',
-    polygon: 'Polygon',
-    gnosis: 'Gnosis',
-    bnbSmartChain: 'Binance Chain',
-    configurable: 'Configurable',
-    autoswitch: 'Autoswitch',
-    walletConnect: 'WalletConnect',
-    injected: 'Injected',
-    embedded: 'Embedded',
-    inappBrowser: 'In-App Browser',
-  };
-
   const handleShowMore = (id: string): void => {
     setExpandedRows(prevState => ({
       ...prevState,
@@ -146,7 +115,7 @@ export default function ComparisonTable(): JSX.Element {
       return {
         field,
         headerName: fieldToHeaderName[field],
-        headerAlign: 'left',
+        headerAlign: 'center',
         hideSortIcons: true,
         disableColumnMenu: true,
         renderCell: params => {
@@ -156,18 +125,17 @@ export default function ComparisonTable(): JSX.Element {
               display="flex"
               gap={0.5}
               alignItems="flex-start"
-              justifyContent="space-between"
+              justifyContent="center"
               height="100%"
               py={1.5}
-              ml={-0.5}
             >
-              <Typography color={compatibility.mobile ? '#E6C2FF' : '#3f4350'}>
+              <Typography color={compatibility.mobile ? '#FAFDFF' : '#3f4350'}>
                 <PhoneAndroidIcon />
               </Typography>
-              <Typography color={compatibility.browser ? '#C3C7FF' : '#3f4350'}>
+              <Typography color={compatibility.browser ? '#FAFDFF' : '#3f4350'}>
                 <LanguageIcon />
               </Typography>
-              <Typography color={compatibility.desktop ? '#C2D9FF' : '#3f4350'}>
+              <Typography color={compatibility.desktop ? '#FAFDFF' : '#3f4350'}>
                 <DesktopWindowsIcon />
               </Typography>
             </Box>
@@ -180,7 +148,7 @@ export default function ComparisonTable(): JSX.Element {
       return {
         field,
         headerName: fieldToHeaderName[field],
-        headerAlign: 'left',
+        headerAlign: 'center',
         hideSortIcons: true,
         disableColumnMenu: true,
         renderCell: params => {
@@ -191,7 +159,7 @@ export default function ComparisonTable(): JSX.Element {
             <Box
               display="flex"
               alignItems="flex-start"
-              justifyContent="left"
+              justifyContent="center"
               height="100%"
               width="100%"
               py={1.5}
@@ -206,7 +174,7 @@ export default function ComparisonTable(): JSX.Element {
               )}
               {firstNonUndefinedValue === 'SOURCE_AVAILABLE' && (
                 <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                  Source Available
+                  Source Visible
                 </Typography>
               )}
               {firstNonUndefinedValue === 'PROPRIETARY' && (
@@ -223,7 +191,7 @@ export default function ComparisonTable(): JSX.Element {
     return {
       field,
       headerName: fieldToHeaderName[field],
-      headerAlign: 'left',
+      headerAlign: field === 'availableTestnets' || field === 'modularity' ? 'center' : 'left',
       type: 'boolean',
       hideSortIcons: true,
       disableColumnMenu: true,
@@ -236,6 +204,7 @@ export default function ComparisonTable(): JSX.Element {
         const mobile = params.row[field]?.mobile;
         const browser = params.row[field]?.browser;
         const desktop = params.row[field]?.desktop;
+        const issues = params.row[field]?.issues;
 
         const mobileValues = Object.values(mobile ?? {});
         const browserValues = Object.values(browser ?? {});
@@ -253,7 +222,7 @@ export default function ComparisonTable(): JSX.Element {
               alignItems="flex-start"
               height="100%"
               width="100%"
-              justifyContent="left"
+              justifyContent="center"
               py={1.5}
             >
               {mobileValues[0] === true ||
@@ -286,7 +255,10 @@ export default function ComparisonTable(): JSX.Element {
                   if (values.every(value => value !== false)) {
                     result = 'true';
                   } else if (values.some(value => value === true)) {
-                    result = 'some';
+                    const trueKey = ['mobile', 'browser', 'desktop'].find(
+                      (inputKey, index) => values[index] === true
+                    );
+                    result = trueKey;
                   } else {
                     result = 'false';
                   }
@@ -294,6 +266,8 @@ export default function ComparisonTable(): JSX.Element {
                 })
               )
             : {};
+
+        console.log(checkValues);
 
         return (
           <Box
@@ -332,13 +306,11 @@ export default function ComparisonTable(): JSX.Element {
                       backgroundColor:
                         index < minTrueCount
                           ? '#80ffa2'
-                          : index < mobileTrueCount
-                            ? '#E6C2FF'
-                            : index < browserTrueCount
-                              ? '#C3C7FF'
-                              : index < desktopTrueCount
-                                ? '#C2D9FF'
-                                : '#3f4350',
+                          : index < mobileTrueCount ||
+                              index < browserTrueCount ||
+                              index < desktopTrueCount
+                            ? '#A7ACB9'
+                            : '#3f4350',
                       marginRight: index !== totalCount - 1 ? '2px' : undefined,
                       borderRadius:
                         index === 0
@@ -368,12 +340,22 @@ export default function ComparisonTable(): JSX.Element {
                         >
                           {value === 'true' ? (
                             <CheckIcon fontSize="inherit" color="success" />
-                          ) : value === 'some' ? (
-                            <DataUsageRounded fontSize="inherit" color="inherit" />
+                          ) : value === 'mobile' ? (
+                            <PhoneAndroidIcon fontSize="inherit" color="inherit" />
+                          ) : value === 'browser' ? (
+                            <LanguageIcon fontSize="inherit" color="inherit" />
+                          ) : value === 'desktop' ? (
+                            <DesktopWindowsIcon fontSize="inherit" color="inherit" />
                           ) : (
                             <CloseIcon fontSize="inherit" />
                           )}
-                          <span>{subcategoryMapping[key] ?? key}</span>
+                          {issues?.[key] != null ? (
+                            <Link href={issues?.[key]} target="_blank">
+                              {subcategoryMapping[key] ?? key}
+                            </Link>
+                          ) : (
+                            subcategoryMapping[key] ?? key
+                          )}
                         </div>
                       </li>
                     ))}
@@ -418,7 +400,7 @@ export default function ComparisonTable(): JSX.Element {
             <IconButton
               size="small"
               onClick={event => {
-                event.stopPropagation(); // Prevent the row click event
+                event.stopPropagation();
                 handleShowMore(params.id.toString());
               }}
             >
@@ -426,16 +408,30 @@ export default function ComparisonTable(): JSX.Element {
             </IconButton>
           </Box>
           {expandedRows[params.id.toString()] && (
-            <Link
-              href={`https://searchcaster.xyz/search?text=${params.value}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              color="text.primary"
-            >
-              <Typography variant="body2" fontSize="10px">
-                what people are saying
-              </Typography>
-            </Link>
+            <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%">
+              <Link href={`https://searchcaster.xyz/search?text=${params.value}`} target="_blank">
+                <Typography variant="body2" fontSize="10px">
+                  what people are saying
+                </Typography>
+              </Link>
+              <Box>
+                <Typography variant="body2" fontSize="10px">
+                  Submitted by{' '}
+                  <Link href={params.row.submittedByUrl} target="_blank">
+                    {params.row.submittedByName}
+                  </Link>
+                </Typography>
+                <Typography variant="body2" fontSize="10px" pt={2}>
+                  Updated on {params.row.updatedAt}
+                </Typography>
+                <Typography variant="body2" fontSize="10px" pb={6}>
+                  by{' '}
+                  <Link href={params.row.updatedByUrl} target="_blank">
+                    {params.row.updatedByName}
+                  </Link>
+                </Typography>
+              </Box>
+            </Box>
           )}
         </Box>
       ),
