@@ -20,6 +20,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: false,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: true,
@@ -68,6 +69,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: false,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: true,
@@ -129,6 +131,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: false,
         bnbSmartChain: true,
+        avalanche: false,
       },
       ensCompatibility: {
         mainnet: true,
@@ -185,6 +188,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: true,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: true,
@@ -233,6 +237,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: true,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: true,
@@ -289,6 +294,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: false,
         bnbSmartChain: true,
+        avalanche: false,
       },
       ensCompatibility: {
         mainnet: true,
@@ -337,6 +343,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: false,
         bnbSmartChain: true,
+        avalanche: false,
       },
       ensCompatibility: {
         mainnet: true,
@@ -393,6 +400,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: true,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: true,
@@ -441,6 +449,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: true,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: true,
@@ -497,6 +506,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: true,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: true,
@@ -553,6 +563,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: true,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: false,
@@ -601,6 +612,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: true,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: false,
@@ -649,6 +661,7 @@ export const wallets: Record<string, Info> = {
         polygon: true,
         gnosis: true,
         bnbSmartChain: true,
+        avalanche: true,
       },
       ensCompatibility: {
         mainnet: false,

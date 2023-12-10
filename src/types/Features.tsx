@@ -10,6 +10,7 @@ export interface Features {
     polygon: boolean;
     gnosis: boolean;
     bnbSmartChain: boolean;
+    avalanche: boolean;
   };
   ensCompatibility: {
     mainnet: boolean;

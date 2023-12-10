@@ -9,6 +9,7 @@ export interface Issues {
     polygon?: string[];
     gnosis?: string[];
     bnbSmartChain?: string[];
+    avalanche?: string[];
   };
   ensCompatibility?: {
     mainnet?: string[];

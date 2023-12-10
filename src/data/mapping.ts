@@ -40,4 +40,5 @@ export const subcategoryMapping: Record<string, string> = {
   injected: 'Injected',
   embedded: 'Embedded',
   inappBrowser: 'In-App Browser',
+  avalanche: 'Avalanche',
 };
