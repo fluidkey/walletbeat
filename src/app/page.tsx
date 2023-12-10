@@ -74,6 +74,12 @@ export default function Home(): JSX.Element {
         chains that are present in the wallet by default or that can be added without custom
         configuration are considered.
       </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
+        Chain <b>configurability</b>, i.e. the ability to add custom chains, is also benchmarked.
+        Finally,
+        <b> autoswitch</b> refers to the ability to automatically switch between chains without
+        prompting the user.
+      </Typography>
       <Typography variant="body1" mt={3} px={2} width="100%" maxWidth="sm">
         ENS
       </Typography>
@@ -138,6 +144,19 @@ export default function Home(): JSX.Element {
         <b>Hardware</b>: whether the wallet can be used with hardware wallets (e.g. Ledger).
       </Typography>
       <Typography variant="body1" mt={3} px={2} width="100%" maxWidth="sm">
+        Connection
+      </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
+        <b>WalletConnect</b>: whether the wallet can connect to dapps using WalletConnect.
+      </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
+        <b>Injected</b>: whether the wallet can connect to dapps using a provider injected into the
+        browser window.
+      </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
+        <b>In-App Browser</b>: whether the wallet can connect to dapps using an in-app browser.
+      </Typography>
+      <Typography variant="body1" mt={3} px={2} width="100%" maxWidth="sm">
         Devices
       </Typography>
       <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
@@ -151,10 +170,30 @@ export default function Home(): JSX.Element {
         Type of the underlying account - EOA, 4337, Safe.
       </Typography>
       <Typography variant="body1" mt={3} px={2} width="100%" maxWidth="sm">
+        Modularity
+      </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
+        Whether the wallet allows for modules and plugins to add new features to the wallet.
+      </Typography>
+      <Typography variant="body1" mt={3} px={2} width="100%" maxWidth="sm">
         Testnets
       </Typography>
       <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
         Whether the wallet is compatible with testnets.
+      </Typography>
+      <Typography variant="body1" mt={3} px={2} width="100%" maxWidth="sm">
+        License
+      </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
+        <b>Open Source</b>: any license that is defined as open source by the Open Source
+        Initiative.
+      </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
+        <b>Source Visible</b>: any license that allows users to view the source code of the wallet.
+      </Typography>
+      <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
+        <b>Proprietary</b>: any license that does not allow users to view the source code of the
+        wallet.
       </Typography>
       <Typography variant="h6" mt={8} px={2} width="100%" maxWidth="sm">
         Why walletbeat?

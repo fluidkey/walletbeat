@@ -267,8 +267,6 @@ export default function ComparisonTable(): JSX.Element {
               )
             : {};
 
-        console.log(checkValues);
-
         return (
           <Box
             display="flex"

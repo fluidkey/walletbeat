@@ -9,11 +9,11 @@ Contribute data on wallets that haven't been added to walletbeat yet or update e
 Suggested features to add to walletbeat are listed below with credits to the person who suggested them.
 
 ## Wallet Benchmarks
-- [ ] Split **Chains** score into two parts: *configurability* and *default chains* ([@danfinlay](https://warpcast.com/danfinlay/0xa8ffa1dd))
-- [ ] Benchmark *Mobile* / *Browser* / *Desktop* versions separately ([@keccers.eth](https://warpcast.com/keccers.eth/0x9898e139) & [@slobo.eth](https://warpcast.com/slobo.eth/0x7e21b2c8))
-- [ ] Add **Connection Methods** - e.g. *WalletConnect*, *browser extension*, etc. ([@alexgrover.eth](https://warpcast.com/alexgrover.eth/0x67353a3e))
-- [ ] Add **Open Source** benchmark ([@hm](https://warpcast.com/hm/0xcb3eb766))
-- [ ] Add **Plugin Support** benchmark, i.e. modularity ([@cqb](https://warpcast.com/cqb/0x808aac21))
+- [X] Split **Chains** score into two parts: *configurability* and *default chains* ([@danfinlay](https://warpcast.com/danfinlay/0xa8ffa1dd))
+- [X] Benchmark *Mobile* / *Browser* / *Desktop* versions separately ([@keccers.eth](https://warpcast.com/keccers.eth/0x9898e139) & [@slobo.eth](https://warpcast.com/slobo.eth/0x7e21b2c8))
+- [X] Add **Connection Methods** - e.g. *WalletConnect*, *browser extension*, etc. ([@alexgrover.eth](https://warpcast.com/alexgrover.eth/0x67353a3e))
+- [X] Add **Open Source** benchmark ([@hm](https://warpcast.com/hm/0xcb3eb766))
+- [X] Add **Plugin Support** benchmark, i.e. modularity ([@cqb](https://warpcast.com/cqb/0x808aac21))
 
 ## Wallets to be added
 - [ ] Rabby ([@kugusha.eth](https://warpcast.com/kugusha.eth/0x2fa5604d)) 
