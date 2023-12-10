@@ -57,7 +57,6 @@ export const wallets: Record<string, Info> = {
       },
     },
     browser: {
-      // TO-DO
       accountType: 'EOA',
       chainCompatibility: {
         configurable: true,
