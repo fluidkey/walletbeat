@@ -5,9 +5,9 @@ export const wallets: Record<string, Info> = {
     url: 'https://metamask.io/',
     submittedByName: '@moritz',
     submittedByUrl: 'https://warpcast.com/moritz/',
-    updatedAt: '09/12/2023',
-    updatedByName: '@moritz',
-    updatedByUrl: 'https://warpcast.com/moritz/',
+    updatedAt: '11/12/2023',
+    updatedByName: '@kien-ngo',
+    updatedByUrl: 'https://github.com/kien-ngo',
     mobile: {
       accountType: 'EOA',
       chainCompatibility: {
@@ -116,9 +116,9 @@ export const wallets: Record<string, Info> = {
     url: 'https://wallet.uniswap.org/',
     submittedByName: '@slobo.eth',
     submittedByUrl: 'https://warpcast.com/slobo.eth/',
-    updatedAt: '10/12/2023',
-    updatedByName: '@moritz',
-    updatedByUrl: 'https://warpcast.com/moritz/',
+    updatedAt: '11/12/2023',
+    updatedByName: '@kien-ngo',
+    updatedByUrl: 'https://github.com/kien-ngo',
     mobile: {
       accountType: 'EOA',
       chainCompatibility: {
@@ -173,9 +173,9 @@ export const wallets: Record<string, Info> = {
     url: 'https://www.coinbase.com/wallet/',
     submittedByName: '@moritz',
     submittedByUrl: 'https://warpcast.com/moritz/',
-    updatedAt: '10/12/2023',
-    updatedByName: '@moritz',
-    updatedByUrl: 'https://warpcast.com/moritz/',
+    updatedAt: '11/12/2023',
+    updatedByName: '@kien-ngo',
+    updatedByUrl: 'https://github.com/kien-ngo',
     mobile: {
       accountType: 'EOA',
       chainCompatibility: {
@@ -279,9 +279,9 @@ export const wallets: Record<string, Info> = {
     url: 'https://rainbow.me/',
     submittedByName: '@moritz',
     submittedByUrl: 'https://warpcast.com/moritz/',
-    updatedAt: '10/12/2023',
-    updatedByName: '@moritz',
-    updatedByUrl: 'https://warpcast.com/moritz/',
+    updatedAt: '11/12/2023',
+    updatedByName: '@kien-ngo',
+    updatedByUrl: 'https://github.com/kien-ngo',
     mobile: {
       accountType: 'EOA',
       chainCompatibility: {
@@ -385,9 +385,9 @@ export const wallets: Record<string, Info> = {
     url: 'https://app.safe.global/',
     submittedByName: '@moritz',
     submittedByUrl: 'https://warpcast.com/moritz/',
-    updatedAt: '10/12/2023',
-    updatedByName: '@moritz',
-    updatedByUrl: 'https://warpcast.com/moritz/',
+    updatedAt: '11/12/2023',
+    updatedByName: '@kien-ngo',
+    updatedByUrl: 'https://github.com/kien-ngo',
     mobile: {
       accountType: 'SAFE',
       chainCompatibility: {
@@ -491,9 +491,9 @@ export const wallets: Record<string, Info> = {
     url: 'https://obvious.technology/',
     submittedByName: '@jebui',
     submittedByUrl: 'https://warpcast.com/jebui/',
-    updatedAt: '10/12/2023',
-    updatedByName: '@moritz',
-    updatedByUrl: 'https://warpcast.com/moritz/',
+    updatedAt: '11/12/2023',
+    updatedByName: '@kien-ngo',
+    updatedByUrl: 'https://github.com/kien-ngo',
     mobile: {
       accountType: '4337',
       chainCompatibility: {
@@ -548,9 +548,9 @@ export const wallets: Record<string, Info> = {
     url: 'https://lil.org/',
     submittedByName: '@grachyov',
     submittedByUrl: 'https://github.com/grachyov',
-    updatedAt: '10/12/2023',
-    updatedByName: '@grachyov',
-    updatedByUrl: 'https://github.com/grachyov',
+    updatedAt: '11/12/2023',
+    updatedByName: '@kien-ngo',
+    updatedByUrl: 'https://github.com/kien-ngo',
     mobile: {
       accountType: 'EOA',
       chainCompatibility: {
