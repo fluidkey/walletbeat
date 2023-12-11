@@ -110,6 +110,69 @@ export const wallets: Record<string, Info> = {
       },
     },
   },
+  import { type Info } from '@/types/Info';
+
+export const wallets: Record<string, Info> = {
+  // ... other wallets ...
+
+  Zerion: {
+    url: 'https://zerion.io',
+    submittedByName: '@abishekdharshan',
+    submittedByUrl: 'https://warpcast.com/abishekinguout/',
+    updatedAt: '11/12/2023',
+    updatedByName: '@abishekdharshan',
+    updatedByUrl: 'https://warpcast.com/abishekinguout/',
+    mobile: {
+      accountType: 'EOA',
+      chainCompatibility: {
+        configurable: true,
+        autoswitch: true,
+        ethereum: true,
+        optimism: true,
+        arbitrum: true,
+        base: true,
+        polygon: true,
+        gnosis: true,
+        bnbSmartChain: true,
+        celo: true,
+        // ... all chains supported under custom network support ...
+      },
+      ensCompatibility: {
+        mainnet: true,
+        subDomains: true,
+        offchain: true,
+        L2s: true,
+        customDomains: true,
+        freeUsernames: true,
+      },
+      backupOptions: {
+        cloud: true,
+        local: false,
+        socialRecovery: false,
+      },
+      securityFeatures: {
+        multisig: false,
+        MPC: false,
+        keyRotation: false,
+        transactionScanning: false,
+        limitsAndTimelocks: false,
+        hardwareWalletSupport: true,
+      },
+      availableTestnets: {
+        availableTestnets: true,
+      },
+      license: 'OPEN_SOURCE',
+      connectionMethods: {
+        walletConnect: true,
+        injected: true,
+        embedded: false,
+        inappBrowser: true,
+      },
+      modularity: {
+        modularity: false,
+      },
+    },
+  },
   'Uniswap Wallet': {
     url: 'https://wallet.uniswap.org/',
     submittedByName: '@slobo.eth',
