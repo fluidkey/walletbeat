@@ -22,4 +22,4 @@ Suggested features to add to walletbeat are listed below with credits to the per
 ## Product Improvements
 - [ ] Dedicated page for each wallet with detailed breakdown and news ([@jayme](https://warpcast.com/jayme/0x0ac43cd2) & [@alvesjtiago.eth](https://warpcast.com/alvesjtiago.eth/0xad9fca27))
 - [ ] Email notifications to follow updates ([@jayme](https://warpcast.com/jayme/0x0ac43cd2))
-- [ ] Add section for non-EVM networks additional supports (bitcoin, NEAR, etc.) ([@ispeaknerd](https://warpcast.com/ispeaknerd))
+- [ ] Add section for non-EVM network support (Bitcoin, NEAR, etc.) ([@ispeaknerd](https://warpcast.com/ispeaknerd))
