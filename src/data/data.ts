@@ -686,7 +686,7 @@ export const wallets: Record<string, Info> = {
       },
     },
   },
-  'Exodus': {
+  Exodus: {
     url: 'https://www.exodus.com/',
     submittedByName: '@ispeaknerd',
     submittedByUrl: 'https://warpcast.com/ispeaknerd/',
