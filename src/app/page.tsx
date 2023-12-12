@@ -16,7 +16,7 @@ export default function Home(): JSX.Element {
         justifyContent="center"
         px={2}
       >
-        <Typography variant="h1" fontWeight={600} mt={6} maxWidth="90vw">
+        <Typography variant="h1" fontWeight={600} mt={4} maxWidth="90vw">
           ~ walletbeat
         </Typography>
         <Typography variant="h5" mb={6} textAlign="center" fontWeight={300} maxWidth="90vw">
