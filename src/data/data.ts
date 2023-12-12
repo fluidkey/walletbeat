@@ -1065,5 +1065,5 @@ export const wallets: Record<string, Info> = {
         modularity: false,
       },
     },
-  }
+  },
 };
