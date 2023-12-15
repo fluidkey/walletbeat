@@ -706,7 +706,8 @@ export const wallets: Record<string, Info> = {
         modularity: false,
       },
     },
-    desktop: {
+    /**
+     * desktop: {
       accountType: 'EOA',
       chainCompatibility: {
         configurable: false,
@@ -755,6 +756,7 @@ export const wallets: Record<string, Info> = {
         modularity: false,
       },
     },
+    */
   },
   Tokenary: {
     url: 'https://lil.org/',
