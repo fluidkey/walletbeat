@@ -24,3 +24,4 @@ Suggested features to add to walletbeat are listed below with credits to the per
 - [ ] Email notifications to follow updates ([@jayme](https://warpcast.com/jayme/0x0ac43cd2))
 - [ ] Add section for non-EVM network support (Bitcoin, NEAR, etc.) ([@ispeaknerd](https://warpcast.com/ispeaknerd))
 - [ ] Add auto-lock security toggle ([@ispeaknerd](https://warpcast.com/ispeaknerd))
+- [ ] Add additional default EVM networks (Solana, Scroll, zkSync Era, ...) ([@ispeaknerd](https://warpcast.com/ispeaknerd))
