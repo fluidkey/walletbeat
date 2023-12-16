@@ -706,57 +706,6 @@ export const wallets: Record<string, Info> = {
         modularity: false,
       },
     },
-    /**
-     * desktop: {
-      accountType: 'EOA',
-      chainCompatibility: {
-        configurable: false,
-        autoswitch: true,
-        ethereum: true,
-        optimism: true,
-        arbitrum: true,
-        base: true,
-        polygon: true,
-        gnosis: true,
-        bnbSmartChain: true,
-        avalanche: true,
-      },
-      ensCompatibility: {
-        mainnet: false,
-        subDomains: false,
-        offchain: false,
-        L2s: false,
-        customDomains: false,
-        freeUsernames: false,
-      },
-      backupOptions: {
-        cloud: false,
-        local: true,
-        socialRecovery: false,
-      },
-      securityFeatures: {
-        multisig: false,
-        MPC: false,
-        keyRotation: false,
-        transactionScanning: false,
-        limitsAndTimelocks: false,
-        hardwareWalletSupport: false,
-      },
-      availableTestnets: {
-        availableTestnets: true,
-      },
-      license: 'OPEN_SOURCE',
-      connectionMethods: {
-        walletConnect: false,
-        injected: true,
-        embedded: false,
-        inappBrowser: false,
-      },
-      modularity: {
-        modularity: false,
-      },
-    },
-    */
   },
   Tokenary: {
     url: 'https://lil.org/',
