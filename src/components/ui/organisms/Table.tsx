@@ -196,9 +196,21 @@ export default function ComparisonTable(): JSX.Element {
       hideSortIcons: true,
       disableColumnMenu: true,
       valueGetter: params => {
-        const values = Object.values(params.value as Record<string, boolean>);
-        const trueCount = values.filter(Boolean).length;
-        return trueCount;
+        const mobile = params.row[field]?.mobile;
+        const browser = params.row[field]?.browser;
+        const desktop = params.row[field]?.desktop;
+        const mobileValues = Object.values(mobile ?? {});
+        const browserValues = Object.values(browser ?? {});
+        const desktopValues = Object.values(desktop ?? {});
+        const mobileTrueCount = mobileValues.filter(Boolean).length;
+        const browserTrueCount = browserValues.filter(Boolean).length;
+        const desktopTrueCount = desktopValues.filter(Boolean).length;
+
+        const trueCounts = [mobileTrueCount, browserTrueCount, desktopTrueCount].filter(
+          count => count > 0
+        );
+        const minTrueCount = trueCounts.length > 0 ? Math.min(...trueCounts) : 0;
+        return minTrueCount;
       },
       renderCell: params => {
         const mobile = params.row[field]?.mobile;
@@ -372,6 +384,27 @@ export default function ComparisonTable(): JSX.Element {
       headerName: 'Wallet',
       width: 190,
       type: 'string',
+      valueGetter: params => {
+        const countFields = fields.slice(0, 5);
+        let totalMinTrueCount = 0;
+        for (const field of countFields) {
+          const mobile = params.row[field]?.mobile;
+          const browser = params.row[field]?.browser;
+          const desktop = params.row[field]?.desktop;
+          const mobileValues = Object.values(mobile ?? {});
+          const browserValues = Object.values(browser ?? {});
+          const desktopValues = Object.values(desktop ?? {});
+          const mobileTrueCount = mobileValues.filter(Boolean).length;
+          const browserTrueCount = browserValues.filter(Boolean).length;
+          const desktopTrueCount = desktopValues.filter(Boolean).length;
+
+          const trueCounts = [mobileTrueCount, browserTrueCount, desktopTrueCount].filter(
+            count => count > 0
+          );
+          totalMinTrueCount += trueCounts.length > 0 ? Math.min(...trueCounts) : 0;
+        }
+        return totalMinTrueCount;
+      },
       renderCell: params => (
         <Box
           display="flex"
@@ -383,7 +416,7 @@ export default function ComparisonTable(): JSX.Element {
           <Box display="flex" alignItems="center" gap={1} justifyContent="flex-start" pt={1}>
             <Box display="flex" alignItems="center">
               <Typography fontSize="inherit" style={{ display: 'flex', alignItems: 'center' }}>
-                {params.value}
+                {params.row.name}
               </Typography>
               <Link
                 href={params.row.url}
@@ -445,6 +478,11 @@ export default function ComparisonTable(): JSX.Element {
         getRowHeight={row => (expandedRows[row.id.toString()] ? 230 : 50)}
         density="compact"
         disableRowSelectionOnClick
+        initialState={{
+          sorting: {
+            sortModel: [{ field: 'name', sort: 'desc' }],
+          },
+        }}
       />
     </Box>
   );
