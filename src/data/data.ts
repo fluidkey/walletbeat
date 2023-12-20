@@ -1441,7 +1441,7 @@ export const wallets: Record<string, Info> = {
       },
     },
   },
-  'Gemwallet': {
+  Gemwallet: {
     url: 'https://gemwallet.com',
     submittedByName: '@0xh3rman',
     submittedByUrl: 'https://twitter.com/0xh3rman',
