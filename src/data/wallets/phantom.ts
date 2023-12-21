@@ -36,7 +36,7 @@ export const phantom: Info = {
       },
       securityFeatures: {
         multisig: false,
-        MPC: true,
+        MPC: false,
         keyRotation: false,
         transactionScanning: true,
         limitsAndTimelocks: false,
@@ -85,7 +85,7 @@ export const phantom: Info = {
       },
       securityFeatures: {
         multisig: false,
-        MPC: true,
+        MPC: false,
         keyRotation: false,
         transactionScanning: true,
         limitsAndTimelocks: false,
