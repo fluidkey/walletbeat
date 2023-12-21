@@ -28,6 +28,7 @@ export default function ComparisonTable(): JSX.Element {
       updatedAt: features.updatedAt,
       updatedByName: features.updatedByName,
       updatedByUrl: features.updatedByUrl,
+      repoUrl: features.repoUrl,
       deviceCompatibility: {
         mobile: Boolean(features.mobile),
         browser: Boolean(features.browser),
@@ -167,20 +168,42 @@ export default function ComparisonTable(): JSX.Element {
               {firstNonUndefinedValue === 'EOA' && <Typography color={'#FAFDFF'}>EOA</Typography>}
               {firstNonUndefinedValue === '4337' && <Typography color={'#FAFDFF'}>4337</Typography>}
               {firstNonUndefinedValue === 'SAFE' && <Typography color={'#FAFDFF'}>Safe</Typography>}
-              {firstNonUndefinedValue === 'OPEN_SOURCE' && (
-                <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                  Open Source
-                </Typography>
-              )}
-              {firstNonUndefinedValue === 'SOURCE_AVAILABLE' && (
-                <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                  Source Visible
-                </Typography>
-              )}
-              {firstNonUndefinedValue === 'PROPRIETARY' && (
-                <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                  Proprietary
-                </Typography>
+              {params.row.repoUrl != null ? (
+                <Link href={params.row.repoUrl} target="_blank">
+                  {firstNonUndefinedValue === 'OPEN_SOURCE' && (
+                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+                      Open Source
+                    </Typography>
+                  )}
+                  {firstNonUndefinedValue === 'SOURCE_AVAILABLE' && (
+                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+                      Source Visible
+                    </Typography>
+                  )}
+                  {firstNonUndefinedValue === 'PROPRIETARY' && (
+                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+                      Proprietary
+                    </Typography>
+                  )}
+                </Link>
+              ) : (
+                <>
+                  {firstNonUndefinedValue === 'OPEN_SOURCE' && (
+                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+                      Open Source
+                    </Typography>
+                  )}
+                  {firstNonUndefinedValue === 'SOURCE_AVAILABLE' && (
+                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+                      Source Visible
+                    </Typography>
+                  )}
+                  {firstNonUndefinedValue === 'PROPRIETARY' && (
+                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+                      Proprietary
+                    </Typography>
+                  )}
+                </>
               )}
             </Box>
           );

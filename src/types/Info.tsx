@@ -8,6 +8,7 @@ export interface Info {
   updatedAt: string;
   updatedByName: string;
   updatedByUrl: string;
+  repoUrl?: string;
   mobile?: Features;
   browser?: Features;
   desktop?: Features;
