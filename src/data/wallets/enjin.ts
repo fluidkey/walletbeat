@@ -10,7 +10,7 @@ export const enjin: Info = {
   mobile: {
     accountType: 'EOA',
     chainCompatibility: {
-      configurable: false,
+      configurable: true,
       autoswitch: false,
       ethereum: true,
       polygon: true,
@@ -31,14 +31,14 @@ export const enjin: Info = {
     },
     backupOptions: {
       cloud: false,
-      local: false,
+      local: true,
       socialRecovery: false,
     },
     securityFeatures: {
       multisig: false,
       MPC: false,
       keyRotation: false,
-      transactionScanning: true,
+      transactionScanning: false,
       limitsAndTimelocks: false,
       hardwareWalletSupport: true,
     },
