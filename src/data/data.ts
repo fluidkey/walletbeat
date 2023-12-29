@@ -15,6 +15,9 @@ import { exodus } from './wallets/exodus';
 import { tokenpocket } from './wallets/tokenpocket';
 import { gemwallet } from './wallets/gemwallet';
 import { phantom } from './wallets/phantom';
+import { aurox } from './wallets/aurox';
+import { welldone } from './wallets/welldone';
+import { enjin } from './wallets/enjin';
 
 export const wallets: Record<string, Info> = {
   Metamask: metamask,
@@ -33,4 +36,7 @@ export const wallets: Record<string, Info> = {
   TokenPocket: tokenpocket,
   Gemwallet: gemwallet,
   Phantom: phantom,
+  'Aurox Wallet': aurox,
+  'Welldone Wallet': welldone,
+  'Enjin Wallet': enjin,
 };
