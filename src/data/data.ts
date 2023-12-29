@@ -18,6 +18,7 @@ import { phantom } from './wallets/phantom';
 import { aurox } from './wallets/aurox';
 import { welldone } from './wallets/welldone';
 import { enjin } from './wallets/enjin';
+import { _1inch } from './wallets/1inch';
 
 export const wallets: Record<string, Info> = {
   Metamask: metamask,
@@ -39,4 +40,5 @@ export const wallets: Record<string, Info> = {
   'Aurox Wallet': aurox,
   'Welldone Wallet': welldone,
   'Enjin Wallet': enjin,
+  '1inch Wallet': _1inch,
 };
