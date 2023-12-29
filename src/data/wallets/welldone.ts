@@ -10,16 +10,16 @@ export const welldone: Info = {
   browser: {
     accountType: 'EOA',
     chainCompatibility: {
-      configurable: true,
+      configurable: false,
       autoswitch: false,
       ethereum: true,
-      optimism: false,
-      arbitrum: false,
+      optimism: true,
+      arbitrum: true,
       base: false,
-      polygon: false,
-      gnosis: false,
-      bnbSmartChain: false,
-      avalanche: false,
+      polygon: true,
+      gnosis: true,
+      bnbSmartChain: true,
+      avalanche: true,
     },
     ensCompatibility: {
       mainnet: false,
@@ -31,7 +31,7 @@ export const welldone: Info = {
     },
     backupOptions: {
       cloud: false,
-      local: false,
+      local: true,
       socialRecovery: false,
     },
     securityFeatures: {
@@ -45,7 +45,7 @@ export const welldone: Info = {
     availableTestnets: {
       availableTestnets:true,
     },
-    license: 'OPEN_SOURCE',
+    license: 'PROPRIETARY',
     connectionMethods: {
       walletConnect: false,
       injected: true,
