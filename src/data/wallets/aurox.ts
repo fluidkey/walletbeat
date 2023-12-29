@@ -11,7 +11,7 @@ export const aurox: Info = {
     accountType: 'EOA',
     chainCompatibility: {
       configurable: true,
-      autoswitch: true,
+      autoswitch: false,
       ethereum: true,
       optimism: true,
       arbitrum: true,
@@ -31,7 +31,7 @@ export const aurox: Info = {
     },
     backupOptions: {
       cloud: false,
-      local: false,
+      local: true,
       socialRecovery: false,
     },
     securityFeatures: {
@@ -47,7 +47,7 @@ export const aurox: Info = {
     },
     license: 'OPEN_SOURCE',
     connectionMethods: {
-      walletConnect: true,
+      walletConnect: false,
       injected: true,
       embedded: false,
       inappBrowser: false,
