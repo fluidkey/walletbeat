@@ -27,7 +27,6 @@ import { alpha } from './wallets/alpha';
 import { blocto } from './wallets/blocto';
 import { block } from './wallets/block';
 import { frontier } from './wallets/frontier';
-import { frame } from './wallets/frame';
 
 export const wallets: Record<string, Info> = {
   Metamask: metamask,
@@ -58,5 +57,4 @@ export const wallets: Record<string, Info> = {
   'Blocto': blocto,
   BlockWallet: block,
   'Frontier Wallet': frontier,
-  'Frame Wallet': frame,
 };
