@@ -19,6 +19,15 @@ import { aurox } from './wallets/aurox';
 import { welldone } from './wallets/welldone';
 import { enjin } from './wallets/enjin';
 import { _1inch } from './wallets/1inch';
+import { safepal } from './wallets/safepal';
+import { core } from './wallets/core';
+import { klever } from './wallets/klever';
+import { bitget } from './wallets/bitget';
+import { alpha } from './wallets/alpha';
+import { blocto } from './wallets/blocto';
+import { block } from './wallets/block';
+import { frontier } from './wallets/frontier';
+import { frame } from './wallets/frame';
 
 export const wallets: Record<string, Info> = {
   Metamask: metamask,
@@ -41,4 +50,13 @@ export const wallets: Record<string, Info> = {
   'Welldone Wallet': welldone,
   'Enjin Wallet': enjin,
   '1inch Wallet': _1inch,
+  Safepal: safepal,
+  'Core Wallet': core,
+  'Klever Wallet': klever,
+  'Bitget Wallet': bitget,
+  'Alpha Wallet': alpha,
+  'Blocto': blocto,
+  BlockWallet: block,
+  'Frontier Wallet': frontier,
+  'Frame Wallet': frame,
 };
