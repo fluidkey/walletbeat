@@ -55,5 +55,5 @@ export const _1inch: Info = {
     modularity: {
       modularity: false,
     },
-  }
-};  
+  },
+};

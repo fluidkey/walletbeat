@@ -43,7 +43,7 @@ export const welldone: Info = {
       hardwareWalletSupport: true,
     },
     availableTestnets: {
-      availableTestnets:true,
+      availableTestnets: true,
     },
     license: 'PROPRIETARY',
     connectionMethods: {

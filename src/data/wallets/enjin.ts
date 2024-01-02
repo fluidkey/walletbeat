@@ -55,5 +55,5 @@ export const enjin: Info = {
     modularity: {
       modularity: false,
     },
-  }
-};  
+  },
+};
