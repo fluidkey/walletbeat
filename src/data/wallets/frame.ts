@@ -31,7 +31,7 @@ export const frame: Info = {
     },
     backupOptions: {
       cloud: false,
-      local: true,
+      local: false,
       socialRecovery: false,
     },
     securityFeatures: {
@@ -48,7 +48,7 @@ export const frame: Info = {
     license: 'OPEN_SOURCE',
     connectionMethods: {
       walletConnect: false,
-      injected: false,
+      injected: true,
       embedded: true,
       inappBrowser: true,
     },
