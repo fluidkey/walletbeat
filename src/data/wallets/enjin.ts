@@ -4,7 +4,7 @@ export const enjin: Info = {
   url: 'https://enjin.io/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
-  updatedAt: '29/12/2023',
+  updatedAt: '02/01/2024',
   updatedByName: '@timmykwesi',
   updatedByUrl: 'https://warpcast.com/timmykwesi',
   mobile: {
@@ -25,7 +25,7 @@ export const enjin: Info = {
       mainnet: true,
       subDomains: false,
       offchain: false,
-      L2s: false,
+      L2s: true,
       customDomains: false,
       freeUsernames: false,
     },

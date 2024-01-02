@@ -4,7 +4,7 @@ export const _1inch: Info = {
   url: 'https://1inch.io/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
-  updatedAt: '29/12/2023',
+  updatedAt: '02/01/2024',
   updatedByName: '@timmykwesi',
   updatedByUrl: 'https://warpcast.com/timmykwesi',
   mobile: {
@@ -23,9 +23,9 @@ export const _1inch: Info = {
     },
     ensCompatibility: {
       mainnet: true,
-      subDomains: false,
+      subDomains: true,
       offchain: false,
-      L2s: false,
+      L2s: true,
       customDomains: false,
       freeUsernames: false,
     },
