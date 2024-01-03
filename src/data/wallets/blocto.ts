@@ -13,7 +13,7 @@ export const blocto: Info = {
       configurable: true,
       autoswitch: false,
       ethereum: true,
-      polygon: true, 
+      polygon: true,
       arbitrum: true,
       avalanche: true,
       base: false,
@@ -55,5 +55,5 @@ export const blocto: Info = {
     modularity: {
       modularity: false,
     },
-  }
-};  
+  },
+};

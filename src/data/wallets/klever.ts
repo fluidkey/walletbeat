@@ -55,5 +55,5 @@ export const klever: Info = {
     modularity: {
       modularity: false,
     },
-  }
-};  
+  },
+};
