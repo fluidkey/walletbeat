@@ -54,7 +54,7 @@ export const wallets: Record<string, Info> = {
   'Klever Wallet': klever,
   'Bitget Wallet': bitget,
   'Alpha Wallet': alpha,
-  'Blocto': blocto,
+  Blocto: blocto,
   BlockWallet: block,
   'Frontier Wallet': frontier,
 };
