@@ -1,7 +1,7 @@
 import { type Info } from '@/types/Info';
 
-export const _1inch: Info = {
-  url: 'https://1inch.io/',
+export const alpha: Info = {
+  url: 'https://alphawallet.com/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
   updatedAt: '02/01/2024',
@@ -16,7 +16,7 @@ export const _1inch: Info = {
       polygon: true,
       arbitrum: true,
       avalanche: true,
-      base: true,
+      base: false,
       bnbSmartChain: true,
       gnosis: true,
       optimism: true,
@@ -30,7 +30,7 @@ export const _1inch: Info = {
       freeUsernames: false,
     },
     backupOptions: {
-      cloud: true,
+      cloud: false,
       local: true,
       socialRecovery: false,
     },
@@ -40,12 +40,12 @@ export const _1inch: Info = {
       keyRotation: false,
       transactionScanning: false,
       limitsAndTimelocks: false,
-      hardwareWalletSupport: true,
+      hardwareWalletSupport: false,
     },
     availableTestnets: {
-      availableTestnets: false,
+      availableTestnets: true,
     },
-    license: 'PROPRIETARY',
+    license: 'OPEN_SOURCE',
     connectionMethods: {
       walletConnect: true,
       injected: false,

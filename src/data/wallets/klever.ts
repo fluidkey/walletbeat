@@ -1,10 +1,10 @@
 import { type Info } from '@/types/Info';
 
-export const _1inch: Info = {
-  url: 'https://1inch.io/',
+export const klever: Info = {
+  url: 'https://klever.io/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
-  updatedAt: '02/01/2024',
+  updatedAt: '02/12/2023',
   updatedByName: '@timmykwesi',
   updatedByUrl: 'https://warpcast.com/timmykwesi',
   mobile: {
@@ -14,23 +14,23 @@ export const _1inch: Info = {
       autoswitch: false,
       ethereum: true,
       polygon: true,
-      arbitrum: true,
-      avalanche: true,
-      base: true,
+      arbitrum: false,
+      avalanche: false,
+      base: false,
       bnbSmartChain: true,
-      gnosis: true,
-      optimism: true,
+      gnosis: false,
+      optimism: false,
     },
     ensCompatibility: {
-      mainnet: true,
-      subDomains: true,
+      mainnet: false,
+      subDomains: false,
       offchain: false,
-      L2s: true,
+      L2s: false,
       customDomains: false,
       freeUsernames: false,
     },
     backupOptions: {
-      cloud: true,
+      cloud: false,
       local: true,
       socialRecovery: false,
     },

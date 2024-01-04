@@ -1,36 +1,36 @@
 import { type Info } from '@/types/Info';
 
-export const _1inch: Info = {
-  url: 'https://1inch.io/',
-  submittedByName: '@timmmykwesi',
+export const block: Info = {
+  url: 'https://blockwallet.io/',
+  submittedByName: '@timmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
   updatedAt: '02/01/2024',
   updatedByName: '@timmykwesi',
   updatedByUrl: 'https://warpcast.com/timmykwesi',
-  mobile: {
+  browser: {
     accountType: 'EOA',
     chainCompatibility: {
       configurable: true,
       autoswitch: false,
       ethereum: true,
-      polygon: true,
-      arbitrum: true,
-      avalanche: true,
-      base: true,
-      bnbSmartChain: true,
-      gnosis: true,
       optimism: true,
+      arbitrum: true,
+      base: false,
+      polygon: true,
+      gnosis: true,
+      bnbSmartChain: true,
+      avalanche: true,
     },
     ensCompatibility: {
       mainnet: true,
       subDomains: true,
       offchain: false,
-      L2s: true,
+      L2s: false,
       customDomains: false,
       freeUsernames: false,
     },
     backupOptions: {
-      cloud: true,
+      cloud: false,
       local: true,
       socialRecovery: false,
     },
@@ -43,14 +43,14 @@ export const _1inch: Info = {
       hardwareWalletSupport: true,
     },
     availableTestnets: {
-      availableTestnets: false,
+      availableTestnets: true,
     },
-    license: 'PROPRIETARY',
+    license: 'OPEN_SOURCE',
     connectionMethods: {
-      walletConnect: true,
-      injected: false,
+      walletConnect: false,
+      injected: true,
       embedded: false,
-      inappBrowser: true,
+      inappBrowser: false,
     },
     modularity: {
       modularity: false,

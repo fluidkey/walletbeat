@@ -1,10 +1,10 @@
 import { type Info } from '@/types/Info';
 
-export const _1inch: Info = {
-  url: 'https://1inch.io/',
+export const safepal: Info = {
+  url: 'https://www.safepal.com/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
-  updatedAt: '02/01/2024',
+  updatedAt: '02/01/2023',
   updatedByName: '@timmykwesi',
   updatedByUrl: 'https://warpcast.com/timmykwesi',
   mobile: {
@@ -23,7 +23,7 @@ export const _1inch: Info = {
     },
     ensCompatibility: {
       mainnet: true,
-      subDomains: true,
+      subDomains: false,
       offchain: false,
       L2s: true,
       customDomains: false,
@@ -43,7 +43,7 @@ export const _1inch: Info = {
       hardwareWalletSupport: true,
     },
     availableTestnets: {
-      availableTestnets: false,
+      availableTestnets: true,
     },
     license: 'PROPRIETARY',
     connectionMethods: {
@@ -51,6 +51,55 @@ export const _1inch: Info = {
       injected: false,
       embedded: false,
       inappBrowser: true,
+    },
+    modularity: {
+      modularity: false,
+    },
+  },
+  browser: {
+    accountType: 'EOA',
+    chainCompatibility: {
+      configurable: true,
+      autoswitch: false,
+      ethereum: true,
+      polygon: true,
+      arbitrum: true,
+      avalanche: true,
+      base: true,
+      bnbSmartChain: true,
+      gnosis: true,
+      optimism: true,
+    },
+    ensCompatibility: {
+      mainnet: true,
+      subDomains: false,
+      offchain: false,
+      L2s: true,
+      customDomains: false,
+      freeUsernames: false,
+    },
+    backupOptions: {
+      cloud: false,
+      local: true,
+      socialRecovery: false,
+    },
+    securityFeatures: {
+      multisig: false,
+      MPC: false,
+      keyRotation: false,
+      transactionScanning: true,
+      limitsAndTimelocks: false,
+      hardwareWalletSupport: true,
+    },
+    availableTestnets: {
+      availableTestnets: true,
+    },
+    license: 'PROPRIETARY',
+    connectionMethods: {
+      walletConnect: false,
+      injected: true,
+      embedded: false,
+      inappBrowser: false,
     },
     modularity: {
       modularity: false,
