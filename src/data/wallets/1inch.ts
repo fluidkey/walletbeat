@@ -23,7 +23,7 @@ export const _1inch: Info = {
     },
     ensCompatibility: {
       mainnet: true,
-      subDomains: true,
+      subDomains: false,
       offchain: false,
       L2s: true,
       customDomains: false,

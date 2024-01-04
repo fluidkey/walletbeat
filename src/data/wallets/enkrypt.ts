@@ -1,29 +1,29 @@
 import { type Info } from '@/types/Info';
 
-export const blocto: Info = {
-  url: 'https://blocto.io/',
-  submittedByName: '@timmmykwesi',
+export const enkrypt: Info = {
+  url: 'https://www.enkrypt.com/',
+  submittedByName: '@timmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
-  updatedAt: '02/01/2024',
+  updatedAt: '04/01/2024',
   updatedByName: '@timmykwesi',
   updatedByUrl: 'https://warpcast.com/timmykwesi',
-  mobile: {
-    accountType: '4337',
+  browser: {
+    accountType: 'EOA',
     chainCompatibility: {
       configurable: true,
-      autoswitch: true,
+      autoswitch: false,
       ethereum: true,
-      polygon: true, 
-      arbitrum: true,
-      avalanche: true,
-      base: false,
-      bnbSmartChain: true,
-      gnosis: false,
       optimism: true,
+      arbitrum: true,
+      base: true,
+      polygon: true,
+      gnosis: true,
+      bnbSmartChain: true,
+      avalanche: true,
     },
     ensCompatibility: {
       mainnet: true,
-      subDomains: false,
+      subDomains: true,
       offchain: false,
       L2s: false,
       customDomains: false,
@@ -31,7 +31,7 @@ export const blocto: Info = {
     },
     backupOptions: {
       cloud: false,
-      local: false,
+      local: true,
       socialRecovery: false,
     },
     securityFeatures: {
@@ -40,20 +40,20 @@ export const blocto: Info = {
       keyRotation: false,
       transactionScanning: false,
       limitsAndTimelocks: false,
-      hardwareWalletSupport: false,
+      hardwareWalletSupport: true,
     },
     availableTestnets: {
-      availableTestnets: false,
+      availableTestnets: true,
     },
-    license: 'PROPRIETARY',
+    license: 'OPEN_SOURCE',
     connectionMethods: {
-      walletConnect: true,
-      injected: false,
+      walletConnect: false,
+      injected: true,
       embedded: false,
-      inappBrowser: true,
+      inappBrowser: false,
     },
     modularity: {
       modularity: false,
     },
-  }
-};  
+  },
+};

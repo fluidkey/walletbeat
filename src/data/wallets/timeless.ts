@@ -1,37 +1,37 @@
 import { type Info } from '@/types/Info';
 
-export const blocto: Info = {
-  url: 'https://blocto.io/',
+export const timeless: Info = {
+  url: 'https://timelesswallet.xyz/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
-  updatedAt: '02/01/2024',
+  updatedAt: '04/01/2024',
   updatedByName: '@timmykwesi',
   updatedByUrl: 'https://warpcast.com/timmykwesi',
   mobile: {
     accountType: '4337',
     chainCompatibility: {
-      configurable: true,
-      autoswitch: true,
+      configurable: false,
+      autoswitch: false,
       ethereum: true,
-      polygon: true, 
-      arbitrum: true,
-      avalanche: true,
+      polygon: false,
+      arbitrum: false,
+      avalanche: false,
       base: false,
-      bnbSmartChain: true,
+      bnbSmartChain: false,
       gnosis: false,
-      optimism: true,
+      optimism: false,
     },
     ensCompatibility: {
       mainnet: true,
-      subDomains: false,
+      subDomains: true,
       offchain: false,
-      L2s: false,
+      L2s: true,
       customDomains: false,
       freeUsernames: false,
     },
     backupOptions: {
       cloud: false,
-      local: false,
+      local: true,
       socialRecovery: false,
     },
     securityFeatures: {
@@ -45,15 +45,15 @@ export const blocto: Info = {
     availableTestnets: {
       availableTestnets: false,
     },
-    license: 'PROPRIETARY',
+    license: 'OPEN_SOURCE',
     connectionMethods: {
       walletConnect: true,
       injected: false,
       embedded: false,
-      inappBrowser: true,
+      inappBrowser: false,
     },
     modularity: {
       modularity: false,
     },
-  }
-};  
+  },
+};

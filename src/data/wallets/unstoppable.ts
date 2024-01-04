@@ -1,59 +1,59 @@
 import { type Info } from '@/types/Info';
 
-export const blocto: Info = {
-  url: 'https://blocto.io/',
+export const unstoppable: Info = {
+  url: 'https://unstoppable.money/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
-  updatedAt: '02/01/2024',
+  updatedAt: '04/01/2024',
   updatedByName: '@timmykwesi',
   updatedByUrl: 'https://warpcast.com/timmykwesi',
   mobile: {
     accountType: '4337',
     chainCompatibility: {
-      configurable: true,
+      configurable: false,
       autoswitch: true,
       ethereum: true,
-      polygon: true, 
+      polygon: true,
       arbitrum: true,
       avalanche: true,
       base: false,
       bnbSmartChain: true,
-      gnosis: false,
+      gnosis: true,
       optimism: true,
     },
     ensCompatibility: {
       mainnet: true,
-      subDomains: false,
+      subDomains: true,
       offchain: false,
-      L2s: false,
+      L2s: true,
       customDomains: false,
       freeUsernames: false,
     },
     backupOptions: {
-      cloud: false,
-      local: false,
+      cloud: true,
+      local: true,
       socialRecovery: false,
     },
     securityFeatures: {
       multisig: false,
       MPC: false,
       keyRotation: false,
-      transactionScanning: false,
-      limitsAndTimelocks: false,
+      transactionScanning: true,
+      limitsAndTimelocks: true,
       hardwareWalletSupport: false,
     },
     availableTestnets: {
       availableTestnets: false,
     },
-    license: 'PROPRIETARY',
+    license: 'OPEN_SOURCE',
     connectionMethods: {
       walletConnect: true,
       injected: false,
       embedded: false,
-      inappBrowser: true,
+      inappBrowser: false,
     },
     modularity: {
       modularity: false,
     },
-  }
-};  
+  },
+};
