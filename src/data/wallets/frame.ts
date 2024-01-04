@@ -7,18 +7,18 @@ export const frame: Info = {
   updatedAt: '02/01/2024',
   updatedByName: '@zakimzf',
   updatedByUrl: 'https://github.com/zakimzf',
-  mobile: {
+  desktop: {
     accountType: 'EOA',
     chainCompatibility: {
       configurable: true,
-      autoswitch: false,
+      autoswitch: true,
       ethereum: true,
       polygon: true,
       arbitrum: true,
-      avalanche: true,
+      avalanche: false,
       base: true,
-      bnbSmartChain: true,
-      gnosis: true,
+      bnbSmartChain: false,
+      gnosis: false,
       optimism: true,
     },
     ensCompatibility: {
@@ -38,7 +38,7 @@ export const frame: Info = {
       multisig: false,
       MPC: false,
       keyRotation: false,
-      transactionScanning: false,
+      transactionScanning: true,
       limitsAndTimelocks: false,
       hardwareWalletSupport: true,
     },
@@ -50,7 +50,7 @@ export const frame: Info = {
       walletConnect: false,
       injected: true,
       embedded: true,
-      inappBrowser: true,
+      inappBrowser: false,
     },
     modularity: {
       modularity: false,
