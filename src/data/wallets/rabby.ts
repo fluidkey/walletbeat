@@ -1,12 +1,12 @@
 import { type Info } from '@/types/Info';
 
 export const rabby: Info = {
-    url: 'https://rabby.io/',
-    submittedByName: '@timmmykwesi',
-    submittedByUrl: 'https://warpcast.com/timmykwesi',
-    updatedAt: '04/01/2024',
-    updatedByName: '@timmykwesi',
-    updatedByUrl: 'https://warpcast.com/timmykwesi',
+  url: 'https://rabby.io/',
+  submittedByName: '@timmmykwesi',
+  submittedByUrl: 'https://warpcast.com/timmykwesi',
+  updatedAt: '04/01/2024',
+  updatedByName: '@timmykwesi',
+  updatedByUrl: 'https://warpcast.com/timmykwesi',
   browser: {
     accountType: 'EOA',
     chainCompatibility: {
