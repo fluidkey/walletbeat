@@ -19,6 +19,7 @@ import { aurox } from './wallets/aurox';
 import { welldone } from './wallets/welldone';
 import { enjin } from './wallets/enjin';
 import { _1inch } from './wallets/1inch';
+import { frame } from './wallets/frame';
 import { safepal } from './wallets/safepal';
 import { core } from './wallets/core';
 import { klever } from './wallets/klever';
@@ -55,12 +56,13 @@ export const wallets: Record<string, Info> = {
   'Welldone Wallet': welldone,
   'Enjin Wallet': enjin,
   '1inch Wallet': _1inch,
+  'Frame Wallet': frame,
   Safepal: safepal,
   'Core Wallet': core,
   'Klever Wallet': klever,
   'Bitget Wallet': bitget,
   'Alpha Wallet': alpha,
-  'Blocto': blocto,
+  Blocto: blocto,
   BlockWallet: block,
   'Frontier Wallet': frontier,
   'Pillar Wallet': pillar,

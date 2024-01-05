@@ -1,23 +1,23 @@
 import { type Info } from '@/types/Info';
 
-export const blocto: Info = {
-  url: 'https://blocto.io/',
-  submittedByName: '@timmmykwesi',
-  submittedByUrl: 'https://warpcast.com/timmykwesi',
+export const frame: Info = {
+  url: 'https://frame.sh/',
+  submittedByName: '@zakimzf',
+  submittedByUrl: 'https://github.com/zakimzf',
   updatedAt: '02/01/2024',
-  updatedByName: '@timmykwesi',
-  updatedByUrl: 'https://warpcast.com/timmykwesi',
-  mobile: {
-    accountType: '4337',
+  updatedByName: '@zakimzf',
+  updatedByUrl: 'https://github.com/zakimzf',
+  desktop: {
+    accountType: 'EOA',
     chainCompatibility: {
       configurable: true,
       autoswitch: true,
       ethereum: true,
       polygon: true,
       arbitrum: true,
-      avalanche: true,
-      base: false,
-      bnbSmartChain: true,
+      avalanche: false,
+      base: true,
+      bnbSmartChain: false,
       gnosis: false,
       optimism: true,
     },
@@ -38,19 +38,19 @@ export const blocto: Info = {
       multisig: false,
       MPC: false,
       keyRotation: false,
-      transactionScanning: false,
+      transactionScanning: true,
       limitsAndTimelocks: false,
-      hardwareWalletSupport: false,
+      hardwareWalletSupport: true,
     },
     availableTestnets: {
-      availableTestnets: false,
+      availableTestnets: true,
     },
-    license: 'PROPRIETARY',
+    license: 'OPEN_SOURCE',
     connectionMethods: {
-      walletConnect: true,
-      injected: false,
-      embedded: false,
-      inappBrowser: true,
+      walletConnect: false,
+      injected: true,
+      embedded: true,
+      inappBrowser: false,
     },
     modularity: {
       modularity: false,

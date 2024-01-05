@@ -55,5 +55,5 @@ export const alpha: Info = {
     modularity: {
       modularity: false,
     },
-  }
-};  
+  },
+};
