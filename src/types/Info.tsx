@@ -2,6 +2,7 @@ import { type Features } from './Features';
 import { type Issues } from './Issues';
 
 export interface Info {
+  name: string;
   url: string;
   submittedByName: string;
   submittedByUrl: string;

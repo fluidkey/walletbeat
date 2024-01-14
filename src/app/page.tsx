@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Button, Typography } from '@mui/material';
-import ComparisonTable from '@/components/ui/organisms/Table';
+// import ComparisonTable from '@/components/ui/organisms/Table';
+import Table from '@/components/ui/organisms/MaterialReactTable';
 import NextLink from 'next/link';
 import MuiLink from '@mui/material/Link';
 
@@ -22,7 +23,7 @@ export default function Home(): JSX.Element {
         <Typography variant="h5" mb={6} textAlign="center" fontWeight={300} maxWidth="90vw">
           An open repository of EVM-compatible wallets.
         </Typography>
-        <ComparisonTable />
+        <Table />
         <Box my={6} mb={10} mx={1}>
           <NextLink href="https://github.com/fluidkey/walletbeat" target="_blank">
             <Box color="text.primary">

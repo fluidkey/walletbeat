@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const tokenary: Info = {
+  name: 'Tokenary',
   url: 'https://lil.org/',
   submittedByName: '@grachyov',
   submittedByUrl: 'https://github.com/grachyov',

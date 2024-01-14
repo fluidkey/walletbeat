@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const pillar: Info = {
+  name: 'Pillar Wallet',
   url: 'https://www.pillar.fi/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

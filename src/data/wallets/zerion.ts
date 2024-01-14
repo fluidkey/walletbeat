@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const zerion: Info = {
+  name: 'Zerion',
   url: 'https://zerion.io/',
   submittedByName: '@ispeaknerd',
   submittedByUrl: 'https://github.com/ispeaknerd',

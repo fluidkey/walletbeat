@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const bitget: Info = {
+  name: 'Bitget Wallet',
   url: 'https://web3.bitget.com/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

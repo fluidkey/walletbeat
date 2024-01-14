@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const blocto: Info = {
+  name: 'Blocto',
   url: 'https://blocto.io/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

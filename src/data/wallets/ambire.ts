@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const ambire: Info = {
+  name: 'Ambire Wallet',
   url: 'https://ambire.com',
   submittedByName: '@jordan-enev',
   submittedByUrl: 'https://github.com/jordan-enev',

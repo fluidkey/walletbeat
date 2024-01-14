@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const tokenpocket: Info = {
+  name: 'TokenPocket',
   url: 'https://tokenpocket.pro/',
   submittedByName: '@chendatony31',
   submittedByUrl: 'https://github.com/chendatony31',

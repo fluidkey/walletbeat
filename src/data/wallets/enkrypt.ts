@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const enkrypt: Info = {
+  name: 'Enkrypt Wallet',
   url: 'https://www.enkrypt.com/',
   submittedByName: '@timmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

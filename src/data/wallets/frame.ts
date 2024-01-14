@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const frame: Info = {
+  name: 'Frame Wallet',
   url: 'https://frame.sh/',
   submittedByName: '@zakimzf',
   submittedByUrl: 'https://github.com/zakimzf',

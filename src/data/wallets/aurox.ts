@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const aurox: Info = {
+  name: 'Aurox Wallet',
   url: 'https://getaurox.com/',
   submittedByName: '@timmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

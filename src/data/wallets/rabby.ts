@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const rabby: Info = {
+  name: 'Rabby',
   url: 'https://rabby.io/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

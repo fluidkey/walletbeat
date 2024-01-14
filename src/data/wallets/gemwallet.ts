@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const gemwallet: Info = {
+  name: 'Gemwallet',
   url: 'https://gemwallet.com',
   submittedByName: '@0xh3rman',
   submittedByUrl: 'https://twitter.com/0xh3rman',

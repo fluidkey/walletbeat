@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const timeless: Info = {
+  name: 'Timeless X',
   url: 'https://timelesswallet.xyz/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

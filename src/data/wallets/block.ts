@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const block: Info = {
+  name: 'BlockWallet',
   url: 'https://blockwallet.io/',
   submittedByName: '@timmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

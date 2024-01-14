@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const phantom: Info = {
+  name: 'Phantom',
   url: 'https://phantom.app',
   submittedByName: '@pirosb3',
   submittedByUrl: 'https://github.com/pirosb3',

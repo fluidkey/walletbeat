@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const uniswap: Info = {
+  name: 'Uniswap Wallet',
   url: 'https://wallet.uniswap.org/',
   submittedByName: '@slobo.eth',
   submittedByUrl: 'https://warpcast.com/slobo.eth/',

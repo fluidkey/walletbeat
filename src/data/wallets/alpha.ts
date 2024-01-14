@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const alpha: Info = {
+  name: 'Alpha Wallet',
   url: 'https://alphawallet.com/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

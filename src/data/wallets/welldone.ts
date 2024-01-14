@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const welldone: Info = {
+  name: 'Welldone Wallet',
   url: 'https://welldonestudio.io/',
   submittedByName: '@timmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

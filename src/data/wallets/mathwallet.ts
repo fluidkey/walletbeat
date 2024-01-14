@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const mathwallet: Info = {
+  name: 'Math Wallet',
   url: 'https://mathwallet.org/',
   submittedByName: '@ispeaknerd',
   submittedByUrl: 'https://github.com/ispeaknerd',

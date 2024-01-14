@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const safepal: Info = {
+  name: 'SafePal',
   url: 'https://www.safepal.com/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

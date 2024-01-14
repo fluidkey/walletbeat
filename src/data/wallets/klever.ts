@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const klever: Info = {
+  name: 'Klever Wallet',
   url: 'https://klever.io/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

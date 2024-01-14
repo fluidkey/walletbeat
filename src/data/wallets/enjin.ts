@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const enjin: Info = {
+  name: 'Enjin Wallet',
   url: 'https://enjin.io/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

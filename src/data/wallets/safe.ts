@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const safe: Info = {
+  name: 'Safe Wallet',
   url: 'https://app.safe.global/',
   submittedByName: '@moritz',
   submittedByUrl: 'https://warpcast.com/moritz/',

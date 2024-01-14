@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const core: Info = {
+  name: 'Core Wallet',
   url: 'https://core.app/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

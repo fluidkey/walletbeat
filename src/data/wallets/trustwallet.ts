@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const trustwallet: Info = {
+  name: 'Trust Wallet',
   url: 'https://trustwallet.com/',
   submittedByName: '@ispeaknerd',
   submittedByUrl: 'https://github.com/ispeaknerd',

@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const den: Info = {
+  name: 'Den',
   url: 'https://onchainden.com/',
   submittedByName: '@jierlich',
   submittedByUrl: 'https://warpcast.com/jierlich',

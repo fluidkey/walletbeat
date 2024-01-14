@@ -14,8 +14,19 @@ import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { OpenInNewRounded } from '@mui/icons-material';
+import { makeStyles } from '@mui/styles';
+
+const useStyles = makeStyles({
+  sticky: {
+    position: 'sticky',
+    top: 0,
+    zIndex: 1,
+    backgroundColor: 'white',
+  },
+});
 
 export default function ComparisonTable(): JSX.Element {
+  const classes = useStyles();
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
   const rows = Object.entries(wallets).map(([name, features], index) => {
@@ -407,6 +418,8 @@ export default function ComparisonTable(): JSX.Element {
       headerName: 'Wallet',
       width: 190,
       type: 'string',
+      headerClassName: classes.sticky,
+      cellClassName: classes.sticky,
       valueGetter: params => {
         const countFields = fields.slice(0, 5);
         let totalMinTrueCount = 0;

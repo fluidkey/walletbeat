@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const unstoppable: Info = {
+  name: 'Unstoppable',
   url: 'https://unstoppable.money/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

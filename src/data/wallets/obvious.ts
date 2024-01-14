@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const obvious: Info = {
+  name: 'Obvious',
   url: 'https://obvious.technology/',
   submittedByName: '@jebui',
   submittedByUrl: 'https://warpcast.com/jebui/',

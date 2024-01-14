@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const coinbase: Info = {
+  name: 'Coinbase Wallet',
   url: 'https://www.coinbase.com/wallet/',
   submittedByName: '@moritz',
   submittedByUrl: 'https://warpcast.com/moritz/',

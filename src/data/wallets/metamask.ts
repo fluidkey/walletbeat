@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const metamask: Info = {
+  name: 'MetaMask',
   url: 'https://metamask.io/',
   submittedByName: '@moritz',
   submittedByUrl: 'https://warpcast.com/moritz/',

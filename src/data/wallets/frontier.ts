@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const frontier: Info = {
+  name: 'Frontier Wallet',
   url: 'https://www.frontier.xyz/',
   submittedByName: '@timmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

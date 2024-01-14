@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const _1inch: Info = {
+  name: '1inch Wallet',
   url: 'https://1inch.io/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',

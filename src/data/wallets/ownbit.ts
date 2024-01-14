@@ -1,6 +1,7 @@
 import { type Info } from '@/types/Info';
 
 export const ownbit: Info = {
+  name: 'Ownbit',
   url: 'https://ownbit.io/',
   submittedByName: '@timmmykwesi',
   submittedByUrl: 'https://warpcast.com/timmykwesi',
