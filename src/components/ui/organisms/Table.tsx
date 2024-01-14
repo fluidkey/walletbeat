@@ -405,7 +405,7 @@ export default function ComparisonTable(): JSX.Element {
     {
       field: 'name',
       headerName: 'Wallet',
-      width: 190,
+      width: 160,
       type: 'string',
       valueGetter: params => {
         const countFields = fields.slice(0, 5);
@@ -437,8 +437,18 @@ export default function ComparisonTable(): JSX.Element {
           height="100%"
         >
           <Box display="flex" alignItems="center" gap={1} justifyContent="flex-start" pt={1}>
-            <Box display="flex" alignItems="center">
-              <Typography fontSize="inherit" style={{ display: 'flex', alignItems: 'center' }}>
+            <Box
+              display="flex"
+              alignItems="center"
+              sx={{
+                fontSize: '0.8rem !important',
+              }}
+            >
+              <Typography
+                fontSize="0.85rem !important"
+                fontWeight={700}
+                style={{ display: 'flex', alignItems: 'center' }}
+              >
                 {params.row.name}
               </Typography>
               <Link
@@ -494,7 +504,7 @@ export default function ComparisonTable(): JSX.Element {
   ];
 
   return (
-    <Box maxWidth="100%" height="100%" width="fit-content" overflow="auto">
+    <Box maxWidth="100%" height="70vh" width="fit-content" overflow="auto">
       <DataGrid
         rows={rows}
         columns={columns}
@@ -504,6 +514,16 @@ export default function ComparisonTable(): JSX.Element {
         initialState={{
           sorting: {
             sortModel: [{ field: 'name', sort: 'desc' }],
+          },
+        }}
+        disableVirtualization={true}
+        sx={{
+          '& .MuiDataGrid-cell:first-child': {
+            position: 'sticky',
+            left: 0,
+            zIndex: 1,
+            backgroundColor: 'background.default',
+            borderRight: '1px solid #141519',
           },
         }}
       />
