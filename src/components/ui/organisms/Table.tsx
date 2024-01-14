@@ -519,6 +519,20 @@ export default function ComparisonTable(): JSX.Element {
             sortModel: [{ field: 'name', sort: 'desc' }],
           },
         }}
+        sx={{
+          '& .MuiDataGrid-cell:first-child': {
+            position: 'sticky',
+            left: 0,
+            zIndex: 1,
+            backgroundColor: 'white',
+          },
+          '& .MuiDataGrid-columnHeader:first-child': {
+            position: 'sticky',
+            left: 0,
+            zIndex: 1,
+            backgroundColor: 'white',
+          },
+        }}
       />
     </Box>
   );
