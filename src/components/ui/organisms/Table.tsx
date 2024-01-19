@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
-import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { wallets } from '@/data/data';
 import { fieldToHeaderName, subcategoryMapping } from '@/data/mapping';
-import { Box, Typography, Link } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
-import LanguageIcon from '@mui/icons-material/Language';
-import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
+import { OpenInNewRounded } from '@mui/icons-material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
-import { OpenInNewRounded } from '@mui/icons-material';
+import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import LanguageIcon from '@mui/icons-material/Language';
+import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
+import { Box, Link, Typography } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
+import { useState } from 'react';
 
 export default function ComparisonTable(): JSX.Element {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
@@ -473,7 +473,10 @@ export default function ComparisonTable(): JSX.Element {
           </Box>
           {expandedRows[params.id.toString()] && (
             <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%">
-              <Link href={`https://searchcaster.xyz/search?text=${params.value}`} target="_blank">
+              <Link
+                href={`https://searchcaster.xyz/search?text=${params.row.name}`}
+                target="_blank"
+              >
                 <Typography variant="body2" fontSize="10px">
                   what people are saying
                 </Typography>
