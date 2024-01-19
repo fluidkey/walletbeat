@@ -1,39 +1,38 @@
 import { type Info } from '@/types/Info';
-import { metamask } from './wallets/metamask';
-import { uniswap } from './wallets/uniswap';
+import { _1inch } from './wallets/1inch';
+import { ambire } from './wallets/ambire';
+import { aurox } from './wallets/aurox';
+import { bitget } from './wallets/bitget';
+import { block } from './wallets/block';
+import { blocto } from './wallets/blocto';
 import { coinbase } from './wallets/coinbase';
+import { core } from './wallets/core';
+import { den } from './wallets/den';
+import { enjin } from './wallets/enjin';
+import { enkrypt } from './wallets/enkrypt';
+import { exodus } from './wallets/exodus';
+import { frame } from './wallets/frame';
+import { frontier } from './wallets/frontier';
+import { gemwallet } from './wallets/gemwallet';
+import { klever } from './wallets/klever';
+import { mathwallet } from './wallets/mathwallet';
+import { metamask } from './wallets/metamask';
+import { obvious } from './wallets/obvious';
+import { ownbit } from './wallets/ownbit';
+import { phantom } from './wallets/phantom';
+import { pillar } from './wallets/pillar';
+import { rabby } from './wallets/rabby';
 import { rainbow } from './wallets/rainbow';
 import { safe } from './wallets/safe';
-import { den } from './wallets/den';
-import { obvious } from './wallets/obvious';
-import { zerion } from './wallets/zerion';
-import { tokenary } from './wallets/tokenary';
-import { ambire } from './wallets/ambire';
-import { trustwallet } from './wallets/trustwallet';
-import { mathwallet } from './wallets/mathwallet';
-import { exodus } from './wallets/exodus';
-import { tokenpocket } from './wallets/tokenpocket';
-import { gemwallet } from './wallets/gemwallet';
-import { phantom } from './wallets/phantom';
-import { aurox } from './wallets/aurox';
-import { welldone } from './wallets/welldone';
-import { enjin } from './wallets/enjin';
-import { _1inch } from './wallets/1inch';
-import { frame } from './wallets/frame';
 import { safepal } from './wallets/safepal';
-import { core } from './wallets/core';
-import { klever } from './wallets/klever';
-import { bitget } from './wallets/bitget';
-import { alpha } from './wallets/alpha';
-import { blocto } from './wallets/blocto';
-import { block } from './wallets/block';
-import { frontier } from './wallets/frontier';
-import { pillar } from './wallets/pillar';
-import { ownbit } from './wallets/ownbit';
-import { unstoppable } from './wallets/unstoppable';
-import { enkrypt } from './wallets/enkrypt';
 import { timeless } from './wallets/timeless';
-import { rabby } from './wallets/rabby';
+import { tokenary } from './wallets/tokenary';
+import { tokenpocket } from './wallets/tokenpocket';
+import { trustwallet } from './wallets/trustwallet';
+import { uniswap } from './wallets/uniswap';
+import { unstoppable } from './wallets/unstoppable';
+import { welldone } from './wallets/welldone';
+import { zerion } from './wallets/zerion';
 
 export const wallets: Record<string, Info> = {
   Metamask: metamask,
@@ -61,7 +60,6 @@ export const wallets: Record<string, Info> = {
   Core: core,
   Klever: klever,
   Bitget: bitget,
-  Alpha: alpha,
   Blocto: blocto,
   BlockWallet: block,
   Frontier: frontier,
