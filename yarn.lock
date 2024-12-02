@@ -1160,10 +1160,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001406":
-  version: 1.0.30001540
-  resolution: "caniuse-lite@npm:1.0.30001540"
-  checksum: f5071207aa5d3bb5584d2d7d90a37103562d792df9e407e6dc1c64857ef25444420c7dd3e0bec53f7365c9dcbaab471135b246f5a39027078722c05aa1049405
+"caniuse-lite@npm:^1.0.30001406, caniuse-lite@npm:^1.0.30001684":
+  version: 1.0.30001684
+  resolution: "caniuse-lite@npm:1.0.30001684"
+  checksum: 446485ca3d9caf408a339a44636a86a2b119ec247492393ae661cd93dccd6668401dd2dfec1e149be4e44563cd1e23351b44453a52fa2c2f19e2bf3287c865f6
   languageName: node
   linkType: hard
 
@@ -2892,6 +2892,7 @@ __metadata:
     "@types/react-dom": "npm:^18.3.1"
     "@typescript-eslint/eslint-plugin": "npm:^6.13.1"
     "@typescript-eslint/parser": "npm:^6.13.1"
+    caniuse-lite: "npm:^1.0.30001684"
     eslint: "npm:^8.54.0"
     eslint-config-next: "npm:^14.0.1"
     eslint-config-prettier: "npm:^9.0.0"
