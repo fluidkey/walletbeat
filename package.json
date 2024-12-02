@@ -16,13 +16,13 @@
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "^6.1.9",
     "@mui/x-data-grid": "^6.18.2",
-    "next": "^14.0.1",
-    "next-plausible": "^3.11.3",
+    "next": "^15.0.3",
+    "next-plausible": "^3.12.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^14.0.1",
+    "@next/bundle-analyzer": "^15.0.3",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
