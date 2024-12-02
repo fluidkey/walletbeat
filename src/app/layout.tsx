@@ -14,7 +14,7 @@ const workSans = Work_Sans({
   subsets: ['latin'],
 });
 
-export default function RootLayout({ children }: { children: React.ReactNode }): JSX.Element {
+export default function RootLayout({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
     <html lang="en">
       <head>

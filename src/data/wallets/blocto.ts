@@ -1,4 +1,4 @@
-import { type Info } from '@/types/Info';
+import type { Info } from '@/types/Info';
 
 export const blocto: Info = {
   url: 'https://blocto.io/',

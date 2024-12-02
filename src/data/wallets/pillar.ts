@@ -1,4 +1,4 @@
-import { type Info } from '@/types/Info';
+import type { Info } from '@/types/Info';
 
 export const pillar: Info = {
   url: 'https://www.pillar.fi/',

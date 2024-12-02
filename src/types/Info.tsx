@@ -1,5 +1,5 @@
-import { type Features } from './Features';
-import { type Issues } from './Issues';
+import type { Features } from './Features';
+import type { Issues } from './Issues';
 
 export interface Info {
   url: string;

@@ -1,4 +1,4 @@
-import { type Info } from '@/types/Info';
+import type { Info } from '@/types/Info';
 
 export const coinbase: Info = {
   url: 'https://www.coinbase.com/wallet/',

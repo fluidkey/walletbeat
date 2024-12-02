@@ -1,4 +1,4 @@
-import { type Info } from '@/types/Info';
+import type { Info } from '@/types/Info';
 
 export const _1inch: Info = {
   url: 'https://1inch.io/',

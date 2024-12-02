@@ -1,4 +1,4 @@
-import { type Info } from '@/types/Info';
+import type { Info } from '@/types/Info';
 import { _1inch } from './wallets/1inch';
 import { ambire } from './wallets/ambire';
 import { aurox } from './wallets/aurox';

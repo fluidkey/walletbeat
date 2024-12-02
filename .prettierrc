@@ -5,7 +5,7 @@
   "tabWidth": 2,
   "semi": true,
   "jsxSingleQuote": false,
-  "jsxBracketSameLine": false,
+  "bracketSameLine": false,
   "arrowParens": "avoid",
   "endOfLine": "auto"
 }

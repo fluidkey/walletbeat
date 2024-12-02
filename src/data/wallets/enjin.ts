@@ -1,4 +1,4 @@
-import { type Info } from '@/types/Info';
+import type { Info } from '@/types/Info';
 
 export const enjin: Info = {
   url: 'https://enjin.io/',

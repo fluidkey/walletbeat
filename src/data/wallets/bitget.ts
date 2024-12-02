@@ -1,4 +1,4 @@
-import { type Info } from '@/types/Info';
+import type { Info } from '@/types/Info';
 
 export const bitget: Info = {
   url: 'https://web3.bitget.com/',

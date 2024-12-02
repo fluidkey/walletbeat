@@ -1,4 +1,4 @@
-import { type Info } from '@/types/Info';
+import type { Info } from '@/types/Info';
 
 export const metamask: Info = {
   url: 'https://metamask.io/',

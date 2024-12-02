@@ -4,7 +4,7 @@ import ComparisonTable from '@/components/ui/organisms/Table';
 import NextLink from 'next/link';
 import MuiLink from '@mui/material/Link';
 
-export default function Home(): JSX.Element {
+export default function Home(): React.JSX.Element {
   return (
     <Box maxWidth="100vw" display="flex" flexDirection="column" alignItems="center">
       <Box
