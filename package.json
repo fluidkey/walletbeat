@@ -10,11 +10,11 @@
     "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest"
   },
   "dependencies": {
-    "@emotion/cache": "latest",
-    "@emotion/react": "latest",
-    "@emotion/styled": "latest",
+    "@emotion/cache": "^11.13.5",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^5.14.16",
-    "@mui/material": "latest",
+    "@mui/material": "^6.1.9",
     "@mui/x-data-grid": "^6.18.2",
     "next": "^14.0.1",
     "next-plausible": "^3.11.3",
@@ -23,9 +23,9 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^14.0.1",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
     "@typescript-eslint/parser": "^6.13.1",
     "eslint": "^8.54.0",
@@ -38,7 +38,7 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.2",
     "prettier": "^3.1.0",
-    "typescript": "latest"
+    "typescript": "^5.7.2"
   },
   "packageManager": "yarn@4.0.2"
 }
