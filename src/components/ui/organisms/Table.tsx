@@ -2,6 +2,7 @@
 
 import { wallets } from '@/data/data';
 import { fieldToHeaderName, subcategoryMapping } from '@/data/mapping';
+import type { AccountType, License } from '@/types/Features';
 import { OpenInNewRounded } from '@mui/icons-material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -15,7 +16,10 @@ import IconButton from '@mui/material/IconButton';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
 
-export default function ComparisonTable(): JSX.Element {
+const shortRowHeight = 50;
+const expandedRowHeight = 230;
+
+export default function ComparisonTable(): React.JSX.Element {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
   const rows = Object.entries(wallets).map(([name, features], index) => {
@@ -90,19 +94,13 @@ export default function ComparisonTable(): JSX.Element {
 
     return row;
   });
-
-  const fields = [
-    'chainCompatibility',
-    'ensCompatibility',
-    'backupOptions',
-    'securityFeatures',
-    'connectionMethods',
-    'deviceCompatibility',
-    'accountType',
-    'modularity',
-    'availableTestnets',
-    'license',
-  ];
+  type WalletRow = (typeof rows)[0];
+  interface PerPlatform<T> {
+    mobile?: T;
+    browser?: T;
+    desktop?: T;
+    issues?: { [k in keyof T]?: string[] };
+  }
 
   const handleShowMore = (id: string): void => {
     setExpandedRows(prevState => ({
@@ -111,258 +109,268 @@ export default function ComparisonTable(): JSX.Element {
     }));
   };
 
-  const createColumnDef = (field: string): GridColDef => {
-    if (field === 'deviceCompatibility') {
-      return {
-        field,
-        headerName: fieldToHeaderName[field],
-        headerAlign: 'center',
-        hideSortIcons: true,
-        disableColumnMenu: true,
-        renderCell: params => {
-          const compatibility = params.value as Record<string, boolean>;
-          return (
-            <Box
-              display="flex"
-              gap={0.5}
-              alignItems="flex-start"
-              justifyContent="center"
-              height="100%"
-              py={1.5}
-            >
-              <Typography color={compatibility.mobile ? '#FAFDFF' : '#3f4350'}>
-                <PhoneAndroidIcon />
-              </Typography>
-              <Typography color={compatibility.browser ? '#FAFDFF' : '#3f4350'}>
-                <LanguageIcon />
-              </Typography>
-              <Typography color={compatibility.desktop ? '#FAFDFF' : '#3f4350'}>
-                <DesktopWindowsIcon />
-              </Typography>
-            </Box>
-          );
-        },
+  const deviceCompatColumn: GridColDef<WalletRow, PerPlatform<boolean>> = {
+    field: 'deviceCompatibility',
+    headerName: fieldToHeaderName.deviceCompatibility,
+    headerAlign: 'center',
+    hideSortIcons: true,
+    disableColumnMenu: true,
+    renderCell: params => {
+      const compatibility = params.value;
+      const colors = {
+        mobile: (compatibility?.mobile ?? false) ? '#FAFDFF' : '#3f4350',
+        browser: (compatibility?.browser ?? false) ? '#FAFDFF' : '#3f4350',
+        desktop: (compatibility?.desktop ?? false) ? '#FAFDFF' : '#3f4350',
       };
-    }
+      return (
+        <Box
+          display="flex"
+          gap={0.5}
+          alignItems="flex-start"
+          justifyContent="center"
+          height="100%"
+          py={1.5}
+        >
+          <Typography color={colors.mobile}>
+            <PhoneAndroidIcon />
+          </Typography>
+          <Typography color={colors.browser}>
+            <LanguageIcon />
+          </Typography>
+          <Typography color={colors.desktop}>
+            <DesktopWindowsIcon />
+          </Typography>
+        </Box>
+      );
+    },
+  };
 
-    if (field === 'accountType' || field === 'license') {
-      return {
-        field,
-        headerName: fieldToHeaderName[field],
-        headerAlign: 'center',
-        hideSortIcons: true,
-        disableColumnMenu: true,
-        renderCell: params => {
-          const firstNonUndefinedValue = Object.values(params.value).find(
-            value => value !== undefined
-          );
-          return (
-            <Box
-              display="flex"
-              alignItems="flex-start"
-              justifyContent="center"
-              height="100%"
-              width="100%"
-              py={1.5}
-            >
-              {firstNonUndefinedValue === 'EOA' && <Typography color={'#FAFDFF'}>EOA</Typography>}
-              {firstNonUndefinedValue === '4337' && <Typography color={'#FAFDFF'}>4337</Typography>}
-              {firstNonUndefinedValue === 'SAFE' && <Typography color={'#FAFDFF'}>Safe</Typography>}
-              {params.row.repoUrl != null ? (
-                <Link href={params.row.repoUrl} target="_blank">
-                  {firstNonUndefinedValue === 'OPEN_SOURCE' && (
-                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                      Open Source
-                    </Typography>
-                  )}
-                  {firstNonUndefinedValue === 'SOURCE_AVAILABLE' && (
-                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                      Source Visible
-                    </Typography>
-                  )}
-                  {firstNonUndefinedValue === 'PROPRIETARY' && (
-                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                      Proprietary
-                    </Typography>
-                  )}
-                </Link>
-              ) : (
-                <>
-                  {firstNonUndefinedValue === 'OPEN_SOURCE' && (
-                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                      Open Source
-                    </Typography>
-                  )}
-                  {firstNonUndefinedValue === 'SOURCE_AVAILABLE' && (
-                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                      Source Visible
-                    </Typography>
-                  )}
-                  {firstNonUndefinedValue === 'PROPRIETARY' && (
-                    <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
-                      Proprietary
-                    </Typography>
-                  )}
-                </>
-              )}
-            </Box>
-          );
-        },
-      };
-    }
+  const accountTypeColumn: GridColDef<WalletRow, PerPlatform<AccountType>> = {
+    field: 'accountType',
+    headerName: fieldToHeaderName.accountType,
+    headerAlign: 'center',
+    hideSortIcons: true,
+    disableColumnMenu: true,
+    renderCell: params => {
+      const firstNonUndefinedValue = [
+        params.value?.mobile,
+        params.value?.browser,
+        params.value?.desktop,
+      ].find(value => value !== undefined);
+      return (
+        <Box
+          display="flex"
+          alignItems="flex-start"
+          justifyContent="center"
+          height="100%"
+          width="100%"
+          py={1.5}
+        >
+          {firstNonUndefinedValue === 'EOA' && <Typography color={'#FAFDFF'}>EOA</Typography>}
+          {firstNonUndefinedValue === '4337' && <Typography color={'#FAFDFF'}>4337</Typography>}
+          {firstNonUndefinedValue === 'SAFE' && <Typography color={'#FAFDFF'}>Safe</Typography>}
+        </Box>
+      );
+    },
+  };
 
-    return {
-      field,
-      headerName: fieldToHeaderName[field],
-      headerAlign: field === 'availableTestnets' || field === 'modularity' ? 'center' : 'left',
-      type: 'boolean',
-      hideSortIcons: true,
-      disableColumnMenu: true,
-      valueGetter: (value, row, column, apiRef) => {
-        const mobile = row[field]?.mobile;
-        const browser = row[field]?.browser;
-        const desktop = row[field]?.desktop;
-        const mobileValues = Object.values(mobile ?? {});
-        const browserValues = Object.values(browser ?? {});
-        const desktopValues = Object.values(desktop ?? {});
-        const mobileTrueCount = mobileValues.filter(Boolean).length;
-        const browserTrueCount = browserValues.filter(Boolean).length;
-        const desktopTrueCount = desktopValues.filter(Boolean).length;
-
-        const trueCounts = [mobileTrueCount, browserTrueCount, desktopTrueCount].filter(
-          count => count > 0
+  const licenseColumn: GridColDef<WalletRow, PerPlatform<License>> = {
+    field: 'license',
+    headerName: fieldToHeaderName.license,
+    headerAlign: 'center',
+    hideSortIcons: true,
+    disableColumnMenu: true,
+    renderCell: params => {
+      const firstNonUndefinedValue = [
+        params.value?.mobile,
+        params.value?.browser,
+        params.value?.desktop,
+      ].find(value => value !== undefined);
+      const license = {
+        undefined: 'Unknown',
+        OPEN_SOURCE: 'Open Source',
+        SOURCE_AVAILABLE: 'Source Visible',
+        PROPRIETARY: 'Proprietary',
+      }[firstNonUndefinedValue ?? 'undefined'];
+      let licenseTag = (
+        <Typography style={{ fontSize: '11px' }} pt={0.5} color={'#FAFDFF'}>
+          {license}
+        </Typography>
+      );
+      if (params.row.repoUrl != null) {
+        licenseTag = (
+          <Link href={params.row.repoUrl} target="_blank">
+            {licenseTag}
+          </Link>
         );
-        const minTrueCount = trueCounts.length > 0 ? Math.min(...trueCounts) : 0;
-        return minTrueCount;
-      },
-      renderCell: params => {
-        const mobile = params.row[field]?.mobile;
-        const browser = params.row[field]?.browser;
-        const desktop = params.row[field]?.desktop;
-        const issues = params.row[field]?.issues;
+      }
+      return (
+        <Box
+          display="flex"
+          alignItems="flex-start"
+          justifyContent="center"
+          height="100%"
+          width="100%"
+          py={1.5}
+        >
+          {licenseTag}
+        </Box>
+      );
+    },
+  };
 
-        const mobileValues = Object.values(mobile ?? {});
-        const browserValues = Object.values(browser ?? {});
-        const desktopValues = Object.values(desktop ?? {});
-        const totalCount = Math.max(
-          mobileValues.length,
-          browserValues.length,
-          desktopValues.length
-        );
+  const createColumnDef = <T extends object>(
+    field: string,
+    getField: (row: WalletRow) => PerPlatform<T>
+  ): GridColDef<WalletRow, number, PerPlatform<T>> => ({
+    field,
+    headerName: fieldToHeaderName[field],
+    headerAlign: field === 'availableTestnets' || field === 'modularity' ? 'center' : 'left',
+    hideSortIcons: true,
+    disableColumnMenu: true,
+    valueGetter: (value: PerPlatform<T>) => {
+      const mobileValues = Object.values(value.mobile ?? {});
+      const browserValues = Object.values(value.browser ?? {});
+      const desktopValues = Object.values(value.desktop ?? {});
+      const mobileTrueCount = mobileValues.filter(Boolean).length;
+      const browserTrueCount = browserValues.filter(Boolean).length;
+      const desktopTrueCount = desktopValues.filter(Boolean).length;
+      const trueCounts = [mobileTrueCount, browserTrueCount, desktopTrueCount].filter(
+        count => count > 0
+      );
+      const minTrueCount = trueCounts.length > 0 ? Math.min(...trueCounts) : 0;
+      return minTrueCount;
+    },
+    renderCell: params => {
+      const value = getField(params.row);
+      const mobile = value.mobile;
+      const browser = value.browser;
+      const desktop = value.desktop;
 
-        if (totalCount === 1) {
-          return (
-            <Box
-              display="flex"
-              alignItems="flex-start"
-              height="100%"
-              width="100%"
-              justifyContent="center"
-              py={1.5}
-            >
-              {mobileValues[0] === true ||
-              browserValues[0] === true ||
-              desktopValues[0] === true ? (
-                <CheckIcon />
-              ) : (
-                <CloseIcon />
-              )}
-            </Box>
-          );
-        }
+      const mobileValues = Object.values(mobile ?? {});
+      const browserValues = Object.values(browser ?? {});
+      const desktopValues = Object.values(desktop ?? {});
+      const totalCount = Math.max(mobileValues.length, browserValues.length, desktopValues.length);
 
-        const mobileTrueCount = mobileValues.filter(Boolean).length;
-        const browserTrueCount = browserValues.filter(Boolean).length;
-        const desktopTrueCount = desktopValues.filter(Boolean).length;
-
-        const trueCounts = [mobileTrueCount, browserTrueCount, desktopTrueCount].filter(
-          count => count > 0
-        );
-        const minTrueCount = trueCounts.length > 0 ? Math.min(...trueCounts) : 0;
-
-        const inputs = [mobile, browser, desktop].filter(input => input != null);
-        const checkValues =
-          inputs.length > 0
-            ? Object.fromEntries(
-                Object.entries(inputs[0]).map(([key]) => {
-                  const values = inputs.map(input => input[key]);
-                  let result;
-                  if (values.every(value => value !== false)) {
-                    result = 'true';
-                  } else if (values.some(value => value === true)) {
-                    const trueKey = ['mobile', 'browser', 'desktop'].find(
-                      (inputKey, index) => values[index] === true
-                    );
-                    result = trueKey;
-                  } else {
-                    result = 'false';
-                  }
-                  return [key, result];
-                })
-              )
-            : {};
-
+      if (totalCount === 1) {
         return (
           <Box
             display="flex"
-            flexDirection="column"
-            alignItems="center"
+            alignItems="flex-start"
             height="100%"
             width="100%"
             justifyContent="center"
+            py={1.5}
           >
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="flex-start"
-              justifyContent="flex-start"
-              height="100%"
-              width="100%"
+            {mobileValues[0] === true || browserValues[0] === true || desktopValues[0] === true ? (
+              <CheckIcon />
+            ) : (
+              <CloseIcon />
+            )}
+          </Box>
+        );
+      }
+
+      const mobileTrueCount = mobileValues.filter(Boolean).length;
+      const browserTrueCount = browserValues.filter(Boolean).length;
+      const desktopTrueCount = desktopValues.filter(Boolean).length;
+
+      const trueCounts = [mobileTrueCount, browserTrueCount, desktopTrueCount].filter(
+        count => count > 0
+      );
+      const minTrueCount = trueCounts.length > 0 ? Math.min(...trueCounts) : 0;
+
+      const inputs = [mobile, browser, desktop].filter(input => input != null);
+      type checkResult = 'true' | 'false' | 'mobile' | 'browser' | 'desktop';
+      interface checkValue {
+        result: checkResult;
+        issueLink: string | null;
+      }
+      const checkValues: Partial<{ [k in keyof T]: checkValue }> = {};
+      if (inputs.length > 0) {
+        for (const key in inputs[0]) {
+          const values = inputs.map(input => input[key]);
+          let result: checkResult = 'true';
+          if (!values.every(value => value !== false)) {
+            result =
+              (['mobile', 'browser', 'desktop'] as const).find(
+                (inputKey, index) => values[index] === true
+              ) ?? 'false';
+          }
+          let issueLink: string | null = null;
+          if (value.issues?.[key] != null && value.issues[key].length > 0) {
+            issueLink = value.issues[key][0];
+          }
+          checkValues[key] = { result, issueLink };
+        }
+      }
+
+      return (
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          height="100%"
+          width="100%"
+          justifyContent="center"
+        >
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="flex-start"
+            justifyContent="flex-start"
+            height="100%"
+            width="100%"
+          >
+            <Typography variant="body2" pt={1} style={{ marginRight: '10px' }}>
+              {`${minTrueCount}/${totalCount}`}
+            </Typography>
+            <div
+              style={{
+                display: 'flex',
+                minHeight: '12px',
+                width: '100%',
+                paddingTop: '2px',
+                paddingBottom: '8px',
+              }}
             >
-              <Typography variant="body2" pt={1} style={{ marginRight: '10px' }}>
-                {`${minTrueCount}/${totalCount}`}
-              </Typography>
-              <div
-                style={{
-                  display: 'flex',
-                  minHeight: '12px',
-                  width: '100%',
-                  paddingTop: '2px',
-                  paddingBottom: '8px',
-                }}
-              >
-                {[...Array(totalCount)].map((_, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      width: `${100 / totalCount}%`,
-                      backgroundColor:
-                        index < minTrueCount
-                          ? '#80ffa2'
-                          : index < mobileTrueCount ||
-                              index < browserTrueCount ||
-                              index < desktopTrueCount
-                            ? '#A7ACB9'
-                            : '#3f4350',
-                      marginRight: index !== totalCount - 1 ? '2px' : undefined,
-                      borderRadius:
-                        index === 0
-                          ? '5px 0 0 5px'
-                          : index === totalCount - 1
-                            ? '0 5px 5px 0'
-                            : '0',
-                      minHeight: '6px',
-                    }}
-                  />
-                ))}
-              </div>
-              {expandedRows[params.id.toString()] && (
-                <>
-                  <ul
-                    style={{ textAlign: 'left', width: '100%', padding: 0, listStyleType: 'none' }}
-                  >
-                    {Object.entries(checkValues as Record<string, string>).map(([key, value]) => (
-                      <li key={key}>
+              {Array.from({ length: totalCount }, (_, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: `${100 / totalCount}%`, // eslint-disable-line @typescript-eslint/no-magic-numbers -- 100 for percentage
+                    backgroundColor:
+                      index < minTrueCount
+                        ? '#80ffa2'
+                        : index < mobileTrueCount ||
+                            index < browserTrueCount ||
+                            index < desktopTrueCount
+                          ? '#A7ACB9'
+                          : '#3f4350',
+                    marginRight: index !== totalCount - 1 ? '2px' : undefined,
+                    borderRadius:
+                      index === 0 ? '5px 0 0 5px' : index === totalCount - 1 ? '0 5px 5px 0' : '0',
+                    minHeight: '6px',
+                  }}
+                />
+              ))}
+            </div>
+            {expandedRows[params.id.toString()] && (
+              <ul style={{ textAlign: 'left', width: '100%', padding: 0, listStyleType: 'none' }}>
+                {(() => {
+                  const expandedList = [];
+                  for (const key in checkValues) {
+                    const checkValue = checkValues[key];
+                    if (typeof checkValue === 'undefined') {
+                      continue;
+                    }
+                    expandedList.push(
+                      <li
+                        key={key}
+                        style={{
+                          lineHeight: '1em',
+                        }}
+                      >
                         <div
                           style={{
                             display: 'flex',
@@ -371,139 +379,151 @@ export default function ComparisonTable(): JSX.Element {
                             gap: '4px',
                           }}
                         >
-                          {value === 'true' ? (
+                          {checkValue.result === 'true' ? (
                             <CheckIcon fontSize="inherit" color="success" />
-                          ) : value === 'mobile' ? (
+                          ) : checkValue.result === 'mobile' ? (
                             <PhoneAndroidIcon fontSize="inherit" color="inherit" />
-                          ) : value === 'browser' ? (
+                          ) : checkValue.result === 'browser' ? (
                             <LanguageIcon fontSize="inherit" color="inherit" />
-                          ) : value === 'desktop' ? (
+                          ) : checkValue.result === 'desktop' ? (
                             <DesktopWindowsIcon fontSize="inherit" color="inherit" />
                           ) : (
                             <CloseIcon fontSize="inherit" />
                           )}
-                          {issues?.[key] != null ? (
-                            <Link href={issues?.[key]} target="_blank">
-                              {subcategoryMapping[key] ?? key}
+                          {checkValue.issueLink !== null ? (
+                            <Link href={checkValue.issueLink} target="_blank">
+                              {subcategoryMapping[key]}
                             </Link>
                           ) : (
-                            subcategoryMapping[key] ?? key
+                            subcategoryMapping[key]
                           )}
                         </div>
                       </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </Box>
+                    );
+                  }
+                  return expandedList;
+                })()}
+              </ul>
+            )}
           </Box>
-        );
-      },
-    };
-  };
-  const columns: GridColDef[] = [
-    {
-      field: 'name',
-      headerName: 'Wallet',
-      width: 160,
-      type: 'string',
-      valueGetter: (value, row, column, apiRef) => {
-        const countFields = fields.slice(0, 5);
-        let totalMinTrueCount = 0;
-        for (const field of countFields) {
-          const mobile = row[field]?.mobile;
-          const browser = row[field]?.browser;
-          const desktop = row[field]?.desktop;
-          const mobileValues = Object.values(mobile ?? {});
-          const browserValues = Object.values(browser ?? {});
-          const desktopValues = Object.values(desktop ?? {});
-          const mobileTrueCount = mobileValues.filter(Boolean).length;
-          const browserTrueCount = browserValues.filter(Boolean).length;
-          const desktopTrueCount = desktopValues.filter(Boolean).length;
-
-          const trueCounts = [mobileTrueCount, browserTrueCount, desktopTrueCount].filter(
-            count => count > 0
-          );
-          totalMinTrueCount += trueCounts.length > 0 ? Math.min(...trueCounts) : 0;
-        }
-        return totalMinTrueCount;
-      },
-      renderCell: params => (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="flex-start"
-          justifyContent="flex-start"
-          height="100%"
-        >
-          <Box display="flex" alignItems="center" gap={1} justifyContent="flex-start" pt={1}>
-            <Box
-              display="flex"
-              alignItems="center"
-              sx={{
-                fontSize: '0.8rem !important',
-              }}
-            >
-              <Typography
-                fontSize="0.85rem !important"
-                fontWeight={700}
-                style={{ display: 'flex', alignItems: 'center' }}
-              >
-                {params.row.name}
-              </Typography>
-              <Link
-                href={params.row.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                color="text.primary"
-                style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }}
-              >
-                <OpenInNewRounded color="inherit" fontSize="inherit" />
-              </Link>
-            </Box>
-            <IconButton
-              size="small"
-              onClick={event => {
-                event.stopPropagation();
-                handleShowMore(params.id.toString());
-              }}
-            >
-              {expandedRows[params.id.toString()] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
-          </Box>
-          {expandedRows[params.id.toString()] && (
-            <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%">
-              <Link
-                href={`https://searchcaster.xyz/search?text=${params.row.name}`}
-                target="_blank"
-              >
-                <Typography variant="body2" fontSize="10px">
-                  what people are saying
-                </Typography>
-              </Link>
-              <Box>
-                <Typography variant="body2" fontSize="10px">
-                  Submitted by{' '}
-                  <Link href={params.row.submittedByUrl} target="_blank">
-                    {params.row.submittedByName}
-                  </Link>
-                </Typography>
-                <Typography variant="body2" fontSize="10px" pt={2}>
-                  Updated on {params.row.updatedAt}
-                </Typography>
-                <Typography variant="body2" fontSize="10px" pb={6}>
-                  by{' '}
-                  <Link href={params.row.updatedByUrl} target="_blank">
-                    {params.row.updatedByName}
-                  </Link>
-                </Typography>
-              </Box>
-            </Box>
-          )}
         </Box>
-      ),
+      );
     },
-    ...fields.map(field => createColumnDef(field)),
+  });
+
+  const walletNameColumn: GridColDef<WalletRow, number> = {
+    field: 'name',
+    headerName: 'Wallet',
+    width: 160,
+    type: 'string',
+    valueGetter: (_: never, row: WalletRow) => {
+      let totalMinTrueCount = 0;
+      for (const subfeature of [
+        row.chainCompatibility,
+        row.ensCompatibility,
+        row.backupOptions,
+        row.securityFeatures,
+        row.connectionMethods,
+      ]) {
+        const mobileValues = Object.values(subfeature.mobile ?? {});
+        const browserValues = Object.values(subfeature.browser ?? {});
+        const desktopValues = Object.values(subfeature.desktop ?? {});
+        const mobileTrueCount = mobileValues.filter(Boolean).length;
+        const browserTrueCount = browserValues.filter(Boolean).length;
+        const desktopTrueCount = desktopValues.filter(Boolean).length;
+
+        const trueCounts = [mobileTrueCount, browserTrueCount, desktopTrueCount].filter(
+          count => count > 0
+        );
+        totalMinTrueCount += trueCounts.length > 0 ? Math.min(...trueCounts) : 0;
+      }
+      return totalMinTrueCount;
+    },
+    renderCell: params => (
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="flex-start"
+        justifyContent="flex-start"
+        height="100%"
+      >
+        <Box display="flex" alignItems="center" gap={1} justifyContent="flex-start" pt={1}>
+          <Box
+            display="flex"
+            alignItems="center"
+            sx={{
+              fontSize: '0.8rem !important',
+            }}
+          >
+            <Typography
+              fontSize="0.85rem !important"
+              fontWeight={700}
+              style={{ display: 'flex', alignItems: 'center' }}
+            >
+              {params.row.name}
+            </Typography>
+            <Link
+              href={params.row.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              color="text.primary"
+              style={{ display: 'flex', alignItems: 'center', marginLeft: '4px' }}
+            >
+              <OpenInNewRounded color="inherit" fontSize="inherit" />
+            </Link>
+          </Box>
+          <IconButton
+            size="small"
+            onClick={event => {
+              event.stopPropagation();
+              handleShowMore(params.id.toString());
+            }}
+          >
+            {expandedRows[params.id.toString()] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+        </Box>
+        {expandedRows[params.id.toString()] && (
+          <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%">
+            <Link href={`https://searchcaster.xyz/search?text=${params.row.name}`} target="_blank">
+              <Typography variant="body2" fontSize="10px">
+                what people are saying
+              </Typography>
+            </Link>
+            <Box>
+              <Typography variant="body2" fontSize="10px">
+                Submitted by{' '}
+                <Link href={params.row.submittedByUrl} target="_blank">
+                  {params.row.submittedByName}
+                </Link>
+              </Typography>
+              <Typography variant="body2" fontSize="10px" pt={2}>
+                Updated on {params.row.updatedAt}
+              </Typography>
+              <Typography variant="body2" fontSize="10px" pb={6}>
+                by{' '}
+                <Link href={params.row.updatedByUrl} target="_blank">
+                  {params.row.updatedByName}
+                </Link>
+              </Typography>
+            </Box>
+          </Box>
+        )}
+      </Box>
+    ),
+  };
+
+  const columns: GridColDef[] = [
+    walletNameColumn,
+    createColumnDef('chainCompatibility', row => row.chainCompatibility),
+    createColumnDef('ensCompatibility', row => row.ensCompatibility),
+    createColumnDef('backupOptions', row => row.backupOptions),
+    createColumnDef('securityFeatures', row => row.securityFeatures),
+    createColumnDef('connectionMethods', row => row.connectionMethods),
+    deviceCompatColumn,
+    accountTypeColumn,
+    createColumnDef('modularity', row => row.modularity),
+    createColumnDef('availableTestnets', row => row.availableTestnets),
+    licenseColumn,
   ];
 
   return (
@@ -511,7 +531,7 @@ export default function ComparisonTable(): JSX.Element {
       <DataGrid
         rows={rows}
         columns={columns}
-        getRowHeight={row => (expandedRows[row.id.toString()] ? 230 : 50)}
+        getRowHeight={row => (expandedRows[row.id.toString()] ? expandedRowHeight : shortRowHeight)}
         density="compact"
         disableRowSelectionOnClick
         initialState={{

@@ -1,5 +1,8 @@
+export type AccountType = 'EOA' | '4337' | 'SAFE';
+export type License = 'OPEN_SOURCE' | 'SOURCE_AVAILABLE' | 'PROPRIETARY';
+
 export interface Features {
-  accountType: 'EOA' | '4337' | 'SAFE';
+  accountType: AccountType;
   chainCompatibility: {
     configurable: boolean;
     autoswitch: boolean;
@@ -36,7 +39,7 @@ export interface Features {
   availableTestnets: {
     availableTestnets: boolean;
   };
-  license: 'OPEN_SOURCE' | 'SOURCE_AVAILABLE' | 'PROPRIETARY';
+  license: License;
   connectionMethods: {
     walletConnect: boolean;
     injected: boolean;

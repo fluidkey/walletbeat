@@ -5,7 +5,7 @@ import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default [
   {
-    ignores: ['src/components/ThemeRegistry', 'src/components/ui/organisms/Table.tsx'],
+    ignores: ['src/components/ThemeRegistry'],
   },
   love,
   {
