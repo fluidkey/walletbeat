@@ -218,10 +218,10 @@ export default function ComparisonTable(): JSX.Element {
       type: 'boolean',
       hideSortIcons: true,
       disableColumnMenu: true,
-      valueGetter: params => {
-        const mobile = params.row[field]?.mobile;
-        const browser = params.row[field]?.browser;
-        const desktop = params.row[field]?.desktop;
+      valueGetter: (value, row, column, apiRef) => {
+        const mobile = row[field]?.mobile;
+        const browser = row[field]?.browser;
+        const desktop = row[field]?.desktop;
         const mobileValues = Object.values(mobile ?? {});
         const browserValues = Object.values(browser ?? {});
         const desktopValues = Object.values(desktop ?? {});
@@ -407,13 +407,13 @@ export default function ComparisonTable(): JSX.Element {
       headerName: 'Wallet',
       width: 160,
       type: 'string',
-      valueGetter: params => {
+      valueGetter: (value, row, column, apiRef) => {
         const countFields = fields.slice(0, 5);
         let totalMinTrueCount = 0;
         for (const field of countFields) {
-          const mobile = params.row[field]?.mobile;
-          const browser = params.row[field]?.browser;
-          const desktop = params.row[field]?.desktop;
+          const mobile = row[field]?.mobile;
+          const browser = row[field]?.browser;
+          const desktop = row[field]?.desktop;
           const mobileValues = Object.values(mobile ?? {});
           const browserValues = Object.values(browser ?? {});
           const desktopValues = Object.values(desktop ?? {});
