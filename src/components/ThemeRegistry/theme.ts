@@ -1,6 +1,8 @@
 import { createTheme, type ThemeOptions, lighten } from '@mui/material/styles';
 import type {} from '@mui/x-data-grid/themeAugmentation';
 
+/* eslint @typescript-eslint/no-magic-numbers: 0 -- A theme file will have numbers and hex codes in it, this is normal. */
+
 const themeOptions: ThemeOptions = {
   palette: {
     mode: 'dark',

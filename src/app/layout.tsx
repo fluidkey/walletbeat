@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry';
 import { Work_Sans } from 'next/font/google';
 import PlausibleProvider from 'next-plausible';
