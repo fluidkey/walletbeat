@@ -17,7 +17,9 @@ export interface NextAppDirEmotionCacheProviderProps {
 }
 
 // Adapted from https://github.com/garronej/tss-react/blob/main/src/next/appDir.tsx
-export default function NextAppDirEmotionCacheProvider(props: NextAppDirEmotionCacheProviderProps) {
+export default function NextAppDirEmotionCacheProvider(
+  props: NextAppDirEmotionCacheProviderProps
+): React.ReactNode {
   const { options, CacheProvider = DefaultCacheProvider, children } = props;
 
   const [registry] = React.useState(() => {
@@ -30,12 +32,12 @@ export default function NextAppDirEmotionCacheProvider(props: NextAppDirEmotionC
       if (cache.inserted[serialized.name] === undefined) {
         inserted.push({
           name: serialized.name,
-          isGlobal: !selector,
+          isGlobal: selector === '',
         });
       }
       return prevInsert(...args);
     };
-    const flush = () => {
+    const flush = (): typeof inserted => {
       const prevInserted = inserted;
       inserted = [];
       return prevInserted;
@@ -43,7 +45,7 @@ export default function NextAppDirEmotionCacheProvider(props: NextAppDirEmotionC
     return { cache, flush };
   });
 
-  useServerInsertedHTML(() => {
+  useServerInsertedHTML((): React.ReactNode => {
     const inserted = registry.flush();
     if (inserted.length === 0) {
       return null;
@@ -75,16 +77,11 @@ export default function NextAppDirEmotionCacheProvider(props: NextAppDirEmotionC
           <style
             key={name}
             data-emotion={`${registry.cache.key}-global ${name}`}
-            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: style }}
           />
         ))}
-        {styles && (
-          <style
-            data-emotion={dataEmotionAttribute}
-            // eslint-disable-next-line react/no-danger
-            dangerouslySetInnerHTML={{ __html: styles }}
-          />
+        {styles !== '' && (
+          <style data-emotion={dataEmotionAttribute} dangerouslySetInnerHTML={{ __html: styles }} />
         )}
       </React.Fragment>
     );

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import ComparisonTable from '@/components/ui/organisms/Table';
 import NextLink from 'next/link';
@@ -199,11 +199,11 @@ export default function Home(): React.JSX.Element {
         Why walletbeat?
       </Typography>
       <Typography variant="body2" fontWeight={400} mt={1} px={2} width="100%" maxWidth="sm">
-        Walletbeat is an MVP built out of necessity. There currently isn't any repository
+        Walletbeat is an MVP built out of necessity. There currently isn&apos;t any repository
         transparently listing wallet features. Many features such as full ENS compatibility should
-        be standard across all wallets, but unfortunately aren't yet. Walletbeat aims to change this
-        by providing a transparent repository of feature availability, encouraging wallet providers
-        to improve their offering.
+        be standard across all wallets, but unfortunately aren&apos;t yet. Walletbeat aims to change
+        this by providing a transparent repository of feature availability, encouraging wallet
+        providers to improve their offering.
       </Typography>
       <Typography variant="body2" fontWeight={400} mt={1} mb={8} px={2} width="100%" maxWidth="sm">
         Contribute by adding a wallet or updating existing data with a PR in the project GitHub.

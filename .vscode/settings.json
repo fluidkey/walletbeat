@@ -1,5 +1,15 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "cSpell.words": ["autoswitch", "offchain", "subfeature", "Timelocks"]
+  "cSpell.words": [
+    "autoswitch",
+    "codesandbox",
+    "Fluidkey",
+    "mjsx",
+    "mtsx",
+    "offchain",
+    "subfeature",
+    "Timelocks",
+    "walletbeat"
+  ]
 }
