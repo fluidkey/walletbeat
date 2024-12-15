@@ -23,12 +23,7 @@ export default [
     },
     rules: {
       complexity: 'off',
-      '@typescript-eslint/no-magic-numbers': [
-        'error',
-        {
-          ignore: [0, 1],
-        },
-      ],
+      '@typescript-eslint/no-magic-numbers': 'off',
       '@typescript-eslint/prefer-destructuring': 'off',
       '@typescript-eslint/no-inferrable-types': 'off',
     },

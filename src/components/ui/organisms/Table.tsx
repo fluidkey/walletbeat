@@ -338,7 +338,7 @@ export default function ComparisonTable(): React.JSX.Element {
                 <div
                   key={index}
                   style={{
-                    width: `${100 / totalCount}%`, // eslint-disable-line @typescript-eslint/no-magic-numbers -- 100 for percentage
+                    width: `${100 / totalCount}%`,
                     backgroundColor:
                       index < minTrueCount
                         ? '#80ffa2'

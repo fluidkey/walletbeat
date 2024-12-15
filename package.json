@@ -16,6 +16,7 @@
     "@mui/icons-material": "^6.1.9",
     "@mui/material": "^6.1.9",
     "@mui/system": "^6.1.9",
+    "@mui/x-charts": "^7.23.0",
     "@mui/x-data-grid": "^7.23.0",
     "next": "^15.0.3",
     "next-plausible": "^3.12.4",
