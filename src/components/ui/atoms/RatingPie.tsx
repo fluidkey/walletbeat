@@ -3,8 +3,7 @@
 import { type NonEmptyArray, nonEmptyGet, nonEmptyMap } from '@/types/utils/non-empty';
 import { PieChart } from '@mui/x-charts/PieChart';
 import type React from 'react';
-import { styled } from '@mui/material/styles';
-import { useDrawingArea } from '@mui/x-charts/hooks';
+import { styled, type Theme } from '@mui/material/styles';
 import type { PieItemIdentifier, PieValueType } from '@mui/x-charts';
 
 export interface PieSlice {
@@ -34,6 +33,7 @@ export interface PieRatings {
   hoverEffect?: boolean;
   hoverRadiusFraction?: number;
   centerLabel?: string;
+  centerLabelHeightFraction?: number;
 }
 
 function sliceToData(slice: PieSlice): PieValueType {
@@ -54,17 +54,49 @@ function sliceToData(slice: PieSlice): PieValueType {
   };
 }
 
-const StyledText = styled('text')(({ theme }) => ({
-  fill: theme.palette.text.primary,
-  textAnchor: 'middle',
-  dominantBaseline: 'central',
-  fontSize: 20,
-}));
+/**
+ * MUI's PieChart appears to get the center of the pie chart off by this fixed
+ * number of pixels.
+ */
+const pieChartCenterError = -5;
 
-function PieCenterLabel({ children }: { children: React.ReactNode }): React.JSX.Element {
-  const { width, height, left, top } = useDrawingArea();
+function PieCenterLabel({
+  arc,
+  cx,
+  cy,
+  fontSize,
+  color,
+  children,
+}: {
+  arc: Arc;
+  cx: number;
+  cy: number;
+  fontSize: number;
+  color: string | ((theme: Theme) => string);
+  children: React.ReactNode;
+}): React.JSX.Element {
+  const StyledText = styled('text')(({ theme }) => ({
+    fill: typeof color === 'string' ? color : color(theme),
+    textAnchor: 'middle',
+    dominantBaseline: 'central',
+    fontSize,
+  }));
+  const { x, y } = (() => {
+    switch (arc) {
+      case Arc.TOP_HALF:
+        return {
+          x: cx - pieChartCenterError,
+          y: cy - fontSize / 2,
+        };
+      case Arc.FULL:
+        return {
+          x: cx - pieChartCenterError,
+          y: cy,
+        };
+    }
+  })();
   return (
-    <StyledText x={left + width / 2} y={top + height / 2}>
+    <StyledText x={x} y={y}>
       {children}
     </StyledText>
   );
@@ -73,12 +105,6 @@ function PieCenterLabel({ children }: { children: React.ReactNode }): React.JSX.
 function computeArcLabel(innerRadius: number, outerRadius: number): number {
   return Math.floor((innerRadius + outerRadius) / 2);
 }
-
-/**
- * MUI's PieChart appears to get the center of the pie chart off by this fixed
- * number of pixels.
- */
-const pieChartCxError = -5;
 
 export function RatingPie({
   slices,
@@ -92,6 +118,7 @@ export function RatingPie({
   hoverEffect = true,
   hoverRadiusFraction = 1.0,
   centerLabel = '',
+  centerLabelHeightFraction = 0.3,
 }: PieRatings): React.JSX.Element {
   const { maxRadius, startAngle, endAngle, cx, cy } = (() => {
     switch (arc) {
@@ -100,16 +127,16 @@ export function RatingPie({
           maxRadius: height,
           startAngle: -90,
           endAngle: 90,
-          cx: width / 2 + pieChartCxError,
-          cy: height,
+          cx: width / 2 + pieChartCenterError,
+          cy: height + pieChartCenterError,
         };
       case Arc.FULL:
         return {
           maxRadius: height,
           startAngle: -90,
           endAngle: 270,
-          cx: width / 2 + pieChartCxError,
-          cy: height / 2,
+          cx: width / 2 + pieChartCenterError,
+          cy: height / 2 + pieChartCenterError,
         };
     }
   })();
@@ -169,7 +196,17 @@ export function RatingPie({
       onItemClick={handleClick}
       slotProps={{ legend: { hidden: true, padding: 0 } }}
     >
-      {centerLabel === '' ? null : <PieCenterLabel>{centerLabel}</PieCenterLabel>}
+      {centerLabel === '' ? null : (
+        <PieCenterLabel
+          arc={arc}
+          color={theme => theme.palette.text.primary}
+          fontSize={height * centerLabelHeightFraction}
+          cx={cx}
+          cy={cy}
+        >
+          {centerLabel}
+        </PieCenterLabel>
+      )}
     </PieChart>
   );
 }
