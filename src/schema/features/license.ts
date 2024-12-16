@@ -1,3 +1,5 @@
+import type { LabeledUrl } from '../url';
+
 /**
  * An enum of licenses mapping to their SPDX ID.
  * https://spdx.org/licenses/
@@ -88,12 +90,15 @@ export function licenseSourceIsVisible(license: License): boolean {
  * @param license The license to get the URL of.
  * @returns The SPDX URL of the license.
  */
-export function licenseURL(license: License): string | null {
+export function licenseUrl(license: License): LabeledUrl | null {
   if (license === License.PROPRIETARY) {
     return null;
   }
   if (license === License.UNLICENSED_VISIBLE) {
     return null;
   }
-  return `https://spdx.org/licenses/${license}.html`;
+  return {
+    url: `https://spdx.org/licenses/${license}.html`,
+    label: licenseName(license),
+  };
 }

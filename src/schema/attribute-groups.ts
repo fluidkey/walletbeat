@@ -162,14 +162,13 @@ function scoreGroup<Vs extends ValueSet>(evaluations: EvaluatedGroup<Vs>): numbe
         score += 1.0;
         break;
       case Rating.PARTIAL:
-        score += 1.0 / (numCriteria + 1);
+        score += 0.5;
         break;
       case Rating.NO:
-        score -= 1.0;
         break;
       case Rating.UNRATED:
         break;
     }
   }
-  return score;
+  return score / numCriteria;
 }
