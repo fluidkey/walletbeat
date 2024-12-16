@@ -2,6 +2,7 @@ import type { NonEmptyArray, NonEmptyRecord } from '@/types/utils/non-empty';
 import type { ResolvedFeatures } from './features';
 import type { AtLeastOneVariant } from './variants';
 import type { Url } from './url';
+import type { Score } from './score';
 
 /**
  * Rating is an enum that should be visually meaningful.
@@ -82,6 +83,28 @@ export interface Value {
    * proprietary.
    */
   rating: Rating;
+
+  /**
+   * A score representing this value on this specific attribute.
+   * For any given Attribute, there should be at least one way to get a
+   * score of 1.0.
+   * If unspecified, the score is derived  using `defaultRatingScore`.
+   */
+  score?: Score;
+}
+
+/** The numerical score corresponding to a rating by default. */
+export function defaultRatingScore(rating: Rating): Score {
+  switch (rating) {
+    case Rating.NO:
+      return 0.0;
+    case Rating.PARTIAL:
+      return 0.5;
+    case Rating.YES:
+      return 1.0;
+    case Rating.UNRATED:
+      return 0.0;
+  }
 }
 
 /**
@@ -120,6 +143,7 @@ export interface Attribute<V extends Value> {
    */
   id: string;
 
+  /** An icon representing the attribute. Shown on rating charts. */
   icon: string;
 
   /** A very short, human-readable name of the attribute.
@@ -195,7 +219,7 @@ export interface AttributeGroup<Vs extends ValueSet> {
    * @param evaluations The set of evaluated attributes.
    * @return A score between 0.0 (lowest) and 1.0 (highest).
    */
-  score: (evaluations: EvaluatedGroup<Vs>) => number;
+  score: (evaluations: EvaluatedGroup<Vs>) => Score;
 }
 
 /**
