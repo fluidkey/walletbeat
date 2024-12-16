@@ -5,12 +5,18 @@ import { daimo } from '../entities/daimo';
 import { binance } from '../entities/binance';
 import { openExchangeRates } from '../entities/open-exchange-rates';
 import { polymutex } from '../contributors/polymutex';
+import { paragraph } from '@/types/text';
 
 export const daimoBeta: Wallet = {
   metadata: {
     id: 'daimo',
     displayName: 'Daimo',
     iconExtension: 'svg',
+    blurb: paragraph(`
+      Daimo aims to replicate a Venmo-like experience onchain.
+      It focuses on cheap stablecoin payments and fast onramp and
+      offramp of USD / USDC with minimal fees.
+    `),
     url: 'https://daimo.com',
     repoUrl: 'https://github.com/daimo-eth/daimo',
     contributors: [polymutex],

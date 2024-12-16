@@ -2,6 +2,7 @@ import { resolveFeatures, type ResolvedFeatures, type WalletFeatures } from './f
 import { type AtLeastOneVariant, Variant } from './variants';
 import { aggregateAttributes, evaluateAttributes, type EvaluationTree } from './attribute-groups';
 import { type NonEmptyArray, nonEmptyRemap } from '@/types/utils/non-empty';
+import type { Paragraph } from '@/types/text';
 import type { Url } from './url';
 
 /** A contributor to walletbeat. */
@@ -28,6 +29,12 @@ export interface WalletMetadata {
    * added to make the image aspect ratio be 1:1 (square).
    */
   iconExtension: 'png' | 'svg';
+
+  /**
+   * A short (two or three sentences) description about the wallet.
+   * This is shown under the wallet's name in expanded view.
+   */
+  blurb: Paragraph;
 
   /** External link to the wallet's website. */
   url: Url;

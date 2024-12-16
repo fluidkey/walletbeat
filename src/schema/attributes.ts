@@ -178,10 +178,23 @@ export type ValueSet = NonEmptyRecord<string, Value>;
  * attribute group.
  */
 export interface AttributeGroup<Vs extends ValueSet> {
+  /** Unique ID of the attribute group. */
   id: string;
+
+  /** A friendly icon for the group. */
   icon: string;
+
+  /** A human-readable name for the group. */
   displayName: string;
+
+  /** The actual set of attributes belonging to this group. */
   attributes: { [K in keyof Vs]: Attribute<Vs[K]> };
+
+  /**
+   * A scoring function for the attributes.
+   * @param evaluations The set of evaluated attributes.
+   * @return A score between 0.0 (lowest) and 1.0 (highest).
+   */
   score: (evaluations: EvaluatedGroup<Vs>) => number;
 }
 

@@ -4,6 +4,7 @@ import type { Info } from '@/types/Info';
 import { deBank } from '../entities/debank';
 import { License } from '@/schema/features/license';
 import { polymutex } from '../contributors/polymutex';
+import { paragraph } from '@/types/text';
 
 export const rabby: Info = {
   url: 'https://rabby.io/',
@@ -117,6 +118,10 @@ export const rabbyBeta: Wallet = {
     id: 'rabby',
     displayName: 'Rabby',
     iconExtension: 'svg',
+    blurb: paragraph(`
+      Rabby is a user-friendly Ethereum wallet focusing on smooth UX and security.
+      It features an intuitive transaction preview feature and works on many chains.
+    `),
     url: 'https://rabby.io',
     repoUrl: 'https://github.com/RabbyHub/Rabby',
     contributors: [polymutex],
