@@ -1,6 +1,7 @@
 import type { NonEmptyArray, NonEmptyRecord } from '@/types/utils/non-empty';
 import type { ResolvedFeatures } from './features';
 import type { AtLeastOneVariant } from './variants';
+import type { Url } from './url';
 
 /**
  * Rating is an enum that should be visually meaningful.
@@ -97,7 +98,7 @@ export interface Evaluation<V extends Value> {
    * attribute. For attributes that the wallet does not fulfill, this can
    * be a link to a bug tracker that tracks implementation of the attribute.
    */
-  url?: string;
+  url?: Url;
 }
 
 /**

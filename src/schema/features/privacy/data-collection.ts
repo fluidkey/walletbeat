@@ -1,4 +1,5 @@
 import type { WithRef } from '@/schema/reference';
+import type { Url } from '@/schema/url';
 import type { Dict } from '@/types/utils/dict';
 
 /**
@@ -159,11 +160,11 @@ export interface Entity {
   /** Legal name of the entity, if any. */
   legalName: string | null;
   /** Website of the entity to which data may be sent. */
-  url: string | null;
+  url: Url | null;
   /** The jurisdiction in which the entity is located. */
   jurisdiction: string | null;
   /** The privacy policy URL of the entity. */
-  privacyPolicy: string | null;
+  privacyPolicy: Url | null;
 }
 
 export type QualifiedLeaks = Dict<{

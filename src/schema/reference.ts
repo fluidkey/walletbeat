@@ -17,19 +17,14 @@
  */
 
 import { nonEmptyGet, type NonEmptyArray } from '@/types/utils/non-empty';
-
-/** A URL and a label. Can be converted to a FullyQualifiedReference. */
-export interface LabeledURL {
-  url: string;
-  label: string;
-}
+import { getUrlLabel, isLabeledUrl, isUrl, labeledUrl, type LabeledUrl, type Url } from './url';
 
 /**
  * A loose reference which can be converted to a FullyQualifiedReference.
  */
 export interface LooseReference {
   /** The URL(s) the reference is about. */
-  url: NonEmptyArray<string> | string;
+  url: NonEmptyArray<Url> | Url;
 
   /** The text of the link that goes to `url`; defaults to the domain name of `url`. */
   label?: string;
@@ -46,7 +41,7 @@ export interface LooseReference {
  */
 export interface FullyQualifiedReference {
   /** The URLs and labels the reference is about. */
-  urls: NonEmptyArray<{ url: string; label: string }>;
+  urls: NonEmptyArray<LabeledUrl>;
 
   /** A human-readable string that explains what the reference is about. */
   explanation?: string;
@@ -55,60 +50,33 @@ export interface FullyQualifiedReference {
   lastRetrieved?: string;
 }
 
-type Reference = string | LabeledURL | LooseReference | FullyQualifiedReference;
+type Reference = Url | LooseReference | FullyQualifiedReference;
 
-function isLabeledURL(reference: Reference): reference is LabeledURL {
-  return typeof reference === 'object' && !isLoose(reference);
-}
-
-function isLoose(reference: Reference): reference is LooseReference {
-  return (
-    typeof reference === 'object' &&
-    Object.hasOwn(reference, 'explanation') &&
-    !isFullyQualified(reference)
-  );
-}
-
+/** Type predicate for FullyQualifiedReference. */
 function isFullyQualified(reference: Reference): reference is FullyQualifiedReference {
   return typeof reference === 'object' && Object.hasOwn(reference, 'urls');
 }
 
 type References = Reference | NonEmptyArray<Reference>;
 
+/** An object that can be annotated with References. */
 export type WithRef<T> = T & { ref?: References };
-
-function getDomain(url: string): string {
-  let hostname = new URL(url).hostname;
-  if (hostname.startsWith('www.')) {
-    hostname = hostname.substring('www.'.length);
-  }
-  return hostname;
-}
 
 /** Fully qualify a `Reference`. */
 function toFullyQualified(reference: Reference): FullyQualifiedReference[] {
-  if (typeof reference === 'string') {
-    return [
-      {
-        urls: [{ url: reference, label: getDomain(reference) }],
-      },
-    ];
+  if (isUrl(reference)) {
+    reference = labeledUrl(reference);
+  }
+  if (isLabeledUrl(reference)) {
+    return [{ urls: [reference] }];
   }
   if (isFullyQualified(reference)) {
     return [reference];
   }
-  if (isLabeledURL(reference)) {
-    return [{ urls: [reference] }];
-  }
-  if (typeof reference.url === 'string') {
+  if (isUrl(reference.url)) {
     return [
       {
-        urls: [
-          {
-            url: reference.url,
-            label: reference.label ?? getDomain(reference.url),
-          },
-        ],
+        urls: [labeledUrl(reference.url, reference.label)],
         explanation: reference.explanation,
         lastRetrieved: reference.lastRetrieved,
       },
@@ -118,27 +86,35 @@ function toFullyQualified(reference: Reference): FullyQualifiedReference[] {
     const url = nonEmptyGet(reference.url);
     return [
       {
-        urls: [
-          {
-            url,
-            label: reference.label ?? getDomain(url),
-          },
-        ],
+        urls: [labeledUrl(url, reference.label)],
         explanation: reference.explanation,
         lastRetrieved: reference.lastRetrieved,
       },
     ];
   }
-  return reference.url.map((url, idx) => ({
+  const labelCounter = new Map<string, number>();
+  return reference.url.map(url => {
+    if (isLabeledUrl(url)) {
+      return {
+        urls: [url],
+        explanation: reference.explanation,
+        lastRetrieved: reference.lastRetrieved,
+      };
+    }
+    const label = getUrlLabel(url);
+    const count = labelCounter.get(label) ?? 0;
+    labelCounter.set(label, count + 1);
+    return {
       urls: [
         {
           url,
-          label: reference.label ?? `${getDomain(url)} ${idx + 1}`,
+          label: `${label} ${count + 1}`,
         },
       ],
       explanation: reference.explanation,
       lastRetrieved: reference.lastRetrieved,
-    }));
+    };
+  });
 }
 
 /** Extract references out of `withRef`. */
