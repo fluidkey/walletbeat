@@ -15,6 +15,8 @@ export interface WalletMetadata {
    * ID of the wallet.
    * It is expected that a wallet image exists at
    * `/public/images/wallet/${id}.${iconExtension}`.
+   * Wallet icons should be cropped to touch all edges, then minimal margins
+   * added to make the image aspect ratio be 1:1 (square).
    */
   id: string;
   displayName: string;
