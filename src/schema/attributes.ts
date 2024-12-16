@@ -1,6 +1,8 @@
 import type { NonEmptyArray, NonEmptyRecord } from '@/types/utils/non-empty';
 import type { ResolvedFeatures } from './features';
 import type { AtLeastOneVariant } from './variants';
+import type { Url } from './url';
+import type { Score } from './score';
 
 /**
  * Rating is an enum that should be visually meaningful.
@@ -81,6 +83,28 @@ export interface Value {
    * proprietary.
    */
   rating: Rating;
+
+  /**
+   * A score representing this value on this specific attribute.
+   * For any given Attribute, there should be at least one way to get a
+   * score of 1.0.
+   * If unspecified, the score is derived  using `defaultRatingScore`.
+   */
+  score?: Score;
+}
+
+/** The numerical score corresponding to a rating by default. */
+export function defaultRatingScore(rating: Rating): Score {
+  switch (rating) {
+    case Rating.NO:
+      return 0.0;
+    case Rating.PARTIAL:
+      return 0.5;
+    case Rating.YES:
+      return 1.0;
+    case Rating.UNRATED:
+      return 0.0;
+  }
 }
 
 /**
@@ -97,7 +121,7 @@ export interface Evaluation<V extends Value> {
    * attribute. For attributes that the wallet does not fulfill, this can
    * be a link to a bug tracker that tracks implementation of the attribute.
    */
-  url?: string;
+  url?: Url;
 }
 
 /**
@@ -119,6 +143,7 @@ export interface Attribute<V extends Value> {
    */
   id: string;
 
+  /** An icon representing the attribute. Shown on rating charts. */
   icon: string;
 
   /** A very short, human-readable name of the attribute.
@@ -177,11 +202,24 @@ export type ValueSet = NonEmptyRecord<string, Value>;
  * attribute group.
  */
 export interface AttributeGroup<Vs extends ValueSet> {
+  /** Unique ID of the attribute group. */
   id: string;
+
+  /** A friendly icon for the group. */
   icon: string;
+
+  /** A human-readable name for the group. */
   displayName: string;
+
+  /** The actual set of attributes belonging to this group. */
   attributes: { [K in keyof Vs]: Attribute<Vs[K]> };
-  score: (evaluations: EvaluatedGroup<Vs>) => number;
+
+  /**
+   * A scoring function for the attributes.
+   * @param evaluations The set of evaluated attributes.
+   * @return A score between 0.0 (lowest) and 1.0 (highest).
+   */
+  score: (evaluations: EvaluatedGroup<Vs>) => Score;
 }
 
 /**

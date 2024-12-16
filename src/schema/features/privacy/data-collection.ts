@@ -1,4 +1,5 @@
 import type { WithRef } from '@/schema/reference';
+import type { Url } from '@/schema/url';
 import type { Dict } from '@/types/utils/dict';
 
 /**
@@ -159,11 +160,11 @@ export interface Entity {
   /** Legal name of the entity, if any. */
   legalName: string | null;
   /** Website of the entity to which data may be sent. */
-  url: string | null;
+  url: Url | null;
   /** The jurisdiction in which the entity is located. */
   jurisdiction: string | null;
   /** The privacy policy URL of the entity. */
-  privacyPolicy: string | null;
+  privacyPolicy: Url | null;
 }
 
 export type QualifiedLeaks = Dict<{
@@ -205,8 +206,11 @@ export type QualifiedLeaks = Dict<{
    */
   mempoolTransactions: Leak;
 
-  /** Whether the entity may learn the user's name. */
-  name: Leak;
+  /** Whether the entity may learn a user-selected pseudonym. */
+  pseudonym: Leak;
+
+  /** Whether the entity may learn the user's legal name. */
+  legalName: Leak;
 
   /** Whether the entity may learn the user's email. */
   email: Leak;
@@ -258,7 +262,8 @@ export function inferLeaks(leaks: Partial<Leaks>): WithRef<QualifiedLeaks> {
         leaks.mempoolTransactions
       ) ?? Leak.NEVER,
     mempoolTransactions: leaks.mempoolTransactions ?? Leak.NEVER,
-    name: first(leaks.name, leaks.govId) ?? Leak.NEVER,
+    pseudonym: first(leaks.pseudonym, leaks.email) ?? Leak.NEVER, // Email addresses usually contains at least pseudonym-level information.
+    legalName: first(leaks.legalName, leaks.govId) ?? Leak.NEVER,
     email: first(leaks.email, leaks.cexAccount) ?? Leak.NEVER,
     phone: first(leaks.phone, leaks.cexAccount) ?? Leak.NEVER,
     contacts: leaks.contacts ?? Leak.NEVER,
