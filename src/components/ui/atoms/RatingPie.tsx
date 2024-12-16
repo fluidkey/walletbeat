@@ -118,7 +118,7 @@ export function RatingPie({
   hoverEffect = true,
   hoverRadiusFraction = 1.0,
   centerLabel = '',
-  centerLabelHeightFraction = 0.3,
+  centerLabelHeightFraction = 0.275,
 }: PieRatings): React.JSX.Element {
   const { maxRadius, startAngle, endAngle, cx, cy } = (() => {
     switch (arc) {

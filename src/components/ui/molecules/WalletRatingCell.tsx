@@ -81,6 +81,7 @@ export function WalletRatingCell<Vs extends ValueSet>({
   const evalGroup = evalGroupFn(wallet.overall);
   const evalAttrs = evaluatedAttributes(evalGroup);
   const score = attrGroup.score(evalGroup);
+  const centerLabel = score >= 1.0 ? '\u{1f4af}' /* 100 */ : Math.round(score * 100).toString();
   const slices: NonEmptyArray<PieSlice> = nonEmptyMap(evalAttrs, evaluatedAttr => {
     const icon = evaluatedAttr.evaluation.value.icon ?? evaluatedAttr.attribute.icon;
     return {
@@ -100,7 +101,7 @@ export function WalletRatingCell<Vs extends ValueSet>({
         arc={Arc.TOP_HALF}
         width={ratingPieWidth}
         height={ratingPieHeight}
-        centerLabel={`${Math.round(score * 100)}`}
+        centerLabel={centerLabel}
       />
       {expanded ? (
         <Box height={expandedRowHeight - shortRowHeight} lineHeight="1" gap="4px">
