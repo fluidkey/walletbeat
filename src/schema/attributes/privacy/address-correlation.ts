@@ -49,12 +49,16 @@ export const addressCorrelation: Attribute<AddressCorrelationValue> = {
         { name: 'face', leak: leaks.face },
         { name: 'phone', leak: leaks.phone },
         { name: 'email', leak: leaks.email },
-        { name: 'name', leak: leaks.name },
+        { name: 'name', leak: leaks.legalName },
         { name: 'IP', leak: leaks.ipAddress },
+        { name: 'pseudonym', leak: leaks.pseudonym },
       ]) {
         if (leak >= leaks.walletAddress) {
           return {
-            value: correlated(name, name === 'IP' ? Rating.PARTIAL : Rating.NO),
+            value: correlated(
+              name,
+              name === 'IP' || name === 'pseudonym' ? Rating.PARTIAL : Rating.NO
+            ),
           };
         }
       }

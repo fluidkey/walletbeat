@@ -36,6 +36,7 @@ export const daimoBeta: Wallet = {
                 type: MultiAddressPolicy.ACTIVE_ADDRESS_ONLY,
               },
               mempoolTransactions: Leak.ALWAYS,
+              pseudonym: Leak.ALWAYS,
               ref: [
                 {
                   explanation:
