@@ -4,7 +4,7 @@ import { License } from '@/schema/features/license';
 import { daimo } from '../entities/daimo';
 import { binance } from '../entities/binance';
 import { openExchangeRates } from '../entities/open-exchange-rates';
-import { polymutex } from '../contributors';
+import { polymutex } from '../contributors/polymutex';
 
 export const daimoBeta: Wallet = {
   metadata: {

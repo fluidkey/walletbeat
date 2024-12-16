@@ -3,7 +3,7 @@ import type { Wallet } from '@/schema/wallet';
 import type { Info } from '@/types/Info';
 import { deBank } from '../entities/debank';
 import { License } from '@/schema/features/license';
-import { polymutex } from '../contributors';
+import { polymutex } from '../contributors/polymutex';
 
 export const rabby: Info = {
   url: 'https://rabby.io/',
