@@ -13,25 +13,51 @@ import {
   transparencyAttributeGroup,
 } from '@/schema/attribute-groups';
 import { WalletNameCell } from '../molecules/WalletNameCell';
-
-/** Non-expanded row height. */
-const shortRowHeight = 56;
+import { type Dispatch, type SetStateAction, useState } from 'react';
+import { expandedRowHeight, shortRowHeight } from '../constants';
 
 /** Class handling rendering and scoring a single wallet row. */
 class WalletRow {
   readonly wallet: RatedWallet;
+  readonly expandedRows: Record<string, boolean>;
+  readonly setExpandedRows: Dispatch<SetStateAction<Record<string, boolean>>>;
 
   /** Data table ID; required by DataGrid. */
   readonly id: string;
 
-  constructor(wallet: RatedWallet) {
+  constructor(
+    wallet: RatedWallet,
+    expandedRows: Record<string, boolean>,
+    setExpandedRows: Dispatch<SetStateAction<Record<string, boolean>>>
+  ) {
     this.wallet = wallet;
     this.id = wallet.metadata.id;
+    this.expandedRows = expandedRows;
+    this.setExpandedRows = setExpandedRows;
+  }
+
+  /** Toggle the expanded-ness of the row. */
+  toggleExpanded(): void {
+    this.setExpandedRows(prevState => ({
+      ...prevState,
+      [this.wallet.metadata.id]: !prevState[this.wallet.metadata.id],
+    }));
+  }
+
+  /** Get the height of the row in pixels. */
+  getRowHeight(): number {
+    return this.expandedRows[this.wallet.metadata.id] ? expandedRowHeight : shortRowHeight;
   }
 
   /** Render the "Name" cell. */
   renderName(): React.JSX.Element {
-    return <WalletNameCell wallet={this.wallet}></WalletNameCell>;
+    return (
+      <WalletNameCell
+        wallet={this.wallet}
+        expanded={this.expandedRows[this.wallet.metadata.id]}
+        toggleExpanded={this.toggleExpanded.bind(this)}
+      ></WalletNameCell>
+    );
   }
 
   /** Compute numerical score for an attribute group. */
@@ -48,7 +74,12 @@ class WalletRow {
     evalGroupFn: (tree: EvaluationTree) => EvaluatedGroup<Vs>
   ): React.JSX.Element {
     return (
-      <WalletRatingCell<Vs> wallet={this.wallet} attrGroup={attrGroup} evalGroupFn={evalGroupFn} />
+      <WalletRatingCell<Vs>
+        wallet={this.wallet}
+        attrGroup={attrGroup}
+        evalGroupFn={evalGroupFn}
+        expanded={this.expandedRows[this.wallet.metadata.id]}
+      />
     );
   }
 }
@@ -71,7 +102,10 @@ function walletTableColumn<Vs extends ValueSet>(
 
 /** Main wallet comparison table. */
 export default function WalletTable(): React.JSX.Element {
-  const rows = Object.values(ratedWallets).map(wallet => new WalletRow(wallet));
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const rows = Object.values(ratedWallets).map(
+    wallet => new WalletRow(wallet, expandedRows, setExpandedRows)
+  );
   const walletNameColumn: GridColDef<WalletRow, string> = {
     field: 'displayName',
     headerName: 'Wallet',
@@ -87,15 +121,15 @@ export default function WalletTable(): React.JSX.Element {
   ];
   return (
     <Box maxWidth="100%" height="90vh" width="fit-content" overflow="auto">
-      <DataGrid
+      <DataGrid<WalletRow>
         rows={rows}
         columns={columns}
-        getRowHeight={row => shortRowHeight}
+        getRowHeight={row => (row.model as WalletRow).getRowHeight()} // eslint-disable-line @typescript-eslint/no-unsafe-type-assertion -- The row model is WalletRow.
         density="standard"
         disableRowSelectionOnClick
         initialState={{
           sorting: {
-            sortModel: [{ field: 'name', sort: 'desc' }],
+            sortModel: [{ field: walletNameColumn.field, sort: 'asc' }],
           },
         }}
         disableVirtualization={true}

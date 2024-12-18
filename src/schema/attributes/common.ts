@@ -1,16 +1,21 @@
 import { nonEmptyValues } from '@/types/utils/non-empty';
-import { type Evaluation, Rating, type Value } from '../attributes';
+import { type Attribute, type Evaluation, Rating, type Value } from '../attributes';
 import type { AtLeastOneVariant, Variant } from '../variants';
+import { sentence } from '@/types/text';
 
 /**
  * Helper for constructing "Unrated" values.
  * @param brand Brand string to distinguish `Value` subtypes.
  */
-export function unrated<T>(brand: T): Value & { __brand: T } {
+export function unrated<V extends Value, T>(
+  attribute: Attribute<V>,
+  brand: T
+): Value & { __brand: T } {
   return {
     id: 'unrated',
     rating: Rating.UNRATED,
-    displayName: 'Unrated',
+    displayName: `${attribute.displayName}: Unrated`,
+    walletExplanation: sentence('Walletbeat lacks the information needed to determine this.'),
     __brand: brand,
   };
 }

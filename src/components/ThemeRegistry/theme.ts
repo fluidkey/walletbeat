@@ -91,6 +91,11 @@ const themeOptions: ThemeOptions = {
         fontSize: '0.8rem',
       },
     },
+    caption: {
+      fontWeight: 300,
+      fontSize: '0.65rem',
+      lineHeight: 1,
+    },
   },
   shape: {
     borderRadius: 10,
