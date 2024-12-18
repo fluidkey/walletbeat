@@ -7,9 +7,9 @@ import {
 import {
   type Attribute,
   type AttributeGroup,
+  defaultRatingScore,
   type EvaluatedAttribute,
   type EvaluatedGroup,
-  Rating,
   type Value,
   type ValueSet,
 } from './attributes';
@@ -30,6 +30,9 @@ import {
   multiAddressCorrelation,
   type MultiAddressCorrelationValue,
 } from './attributes/privacy/multi-address-correlation';
+import { type Score, type WeightedScore, weightedScore } from './score';
+import { sentence } from '@/types/text';
+import type { WalletMetadata } from './wallet';
 
 /** A ValueSet for privacy Values. */
 type PrivacyValues = Dict<{
@@ -42,11 +45,18 @@ export const PrivacyAttributeGroup: AttributeGroup<PrivacyValues> = {
   id: 'privacy',
   icon: '\u{1f575}', // Detective
   displayName: 'Privacy',
+  perWalletQuestion: sentence<WalletMetadata>(
+    (walletMetadata: WalletMetadata): string =>
+      `How well does ${walletMetadata.displayName} protect your privacy?`
+  ),
   attributes: {
     addressCorrelation,
     multiAddressCorrelation,
   },
-  score: scoreGroup,
+  score: scoreGroup<PrivacyValues>({
+    addressCorrelation: 1.0,
+    multiAddressCorrelation: 1.0,
+  }),
 };
 
 /** A ValueSet for transparency Values. */
@@ -61,12 +71,20 @@ export const transparencyAttributeGroup: AttributeGroup<TransparencyValues> = {
   id: 'transparency',
   icon: '\u{1f50d}', // Looking glass
   displayName: 'Transparency',
+  perWalletQuestion: sentence<WalletMetadata>(
+    (walletMetadata: WalletMetadata): string =>
+      `How transparent and sustainable is ${walletMetadata.displayName}'s development model?`
+  ),
   attributes: {
     openSource,
     sourceVisibility,
     funding,
   },
-  score: scoreGroup,
+  score: scoreGroup<TransparencyValues>({
+    openSource: 1.0,
+    sourceVisibility: 1.0,
+    funding: 1.0,
+  }),
 };
 
 /** The set of attribute groups that make up wallet attributes. */
@@ -148,28 +166,20 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
 
 /**
  * Generic function for scoring a group of evaluations.
- * Assumes each attribute is worth the same score.
- * @param evaluations A map from attribute name to evaluation.
- * @returns The score of the group of evaluations.
+ * @param weights A map from attribute name to its relative weight.
+ * @returns A function to score of the group of evaluations.
  */
-function scoreGroup<Vs extends ValueSet>(evaluations: EvaluatedGroup<Vs>): number {
-  let score = 0;
-  const numCriteria = Object.values(evaluations).length;
-  for (const evaluatedAttr of Object.values(evaluations)) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- We know all EvaluatedGroup values are EvaluatedAttributes.
-    switch ((evaluatedAttr as EvaluatedAttribute<Value>).evaluation.value.rating) {
-      case Rating.YES:
-        score += 1.0;
-        break;
-      case Rating.PARTIAL:
-        score += 1.0 / (numCriteria + 1);
-        break;
-      case Rating.NO:
-        score -= 1.0;
-        break;
-      case Rating.UNRATED:
-        break;
-    }
-  }
-  return score;
+function scoreGroup<Vs extends ValueSet>(weights: { [k in keyof Vs]: number }): (
+  evaluations: EvaluatedGroup<Vs>
+) => Score {
+  return (evaluations: EvaluatedGroup<Vs>): Score =>
+    weightedScore(
+      nonEmptyRemap(weights, (key: keyof Vs, weight: number): WeightedScore => {
+        const value = evaluations[key].evaluation.value;
+        return {
+          score: value.score ?? defaultRatingScore(value.rating),
+          weight,
+        };
+      })
+    );
 }

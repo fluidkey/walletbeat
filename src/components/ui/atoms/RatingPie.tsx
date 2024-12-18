@@ -3,9 +3,14 @@
 import { type NonEmptyArray, nonEmptyGet, nonEmptyMap } from '@/types/utils/non-empty';
 import { PieChart } from '@mui/x-charts/PieChart';
 import type React from 'react';
-import { styled } from '@mui/material/styles';
-import { useDrawingArea } from '@mui/x-charts/hooks';
-import type { PieItemIdentifier, PieValueType } from '@mui/x-charts';
+import { styled, type Theme } from '@mui/material/styles';
+import type {
+  FadeOptions,
+  HighlightItemData,
+  PieItemIdentifier,
+  PieValueType,
+} from '@mui/x-charts';
+import { useState } from 'react';
 
 export interface PieSlice {
   id: string;
@@ -14,6 +19,7 @@ export interface PieSlice {
   arcLabel: string;
   tooltip: string;
   tooltipValue: string;
+  focusChange?: (focused: boolean) => void;
   click?: (event: React.MouseEvent<SVGPathElement>) => void;
 }
 
@@ -23,6 +29,7 @@ export enum Arc {
 }
 
 export interface PieRatings {
+  pieId: string;
   slices: NonEmptyArray<PieSlice>;
   width: number;
   height: number;
@@ -33,7 +40,9 @@ export interface PieRatings {
   outerRadiusFraction?: number;
   hoverEffect?: boolean;
   hoverRadiusFraction?: number;
+  highlightedSliceId?: string | null;
   centerLabel?: string;
+  centerLabelHeightFraction?: number;
 }
 
 function sliceToData(slice: PieSlice): PieValueType {
@@ -54,17 +63,49 @@ function sliceToData(slice: PieSlice): PieValueType {
   };
 }
 
-const StyledText = styled('text')(({ theme }) => ({
-  fill: theme.palette.text.primary,
-  textAnchor: 'middle',
-  dominantBaseline: 'central',
-  fontSize: 20,
-}));
+/**
+ * MUI's PieChart appears to get the center of the pie chart off by this fixed
+ * number of pixels.
+ */
+const pieChartCenterError = -5;
 
-function PieCenterLabel({ children }: { children: React.ReactNode }): React.JSX.Element {
-  const { width, height, left, top } = useDrawingArea();
+function PieCenterLabel({
+  arc,
+  cx,
+  cy,
+  fontSize,
+  color,
+  children,
+}: {
+  arc: Arc;
+  cx: number;
+  cy: number;
+  fontSize: number;
+  color: string | ((theme: Theme) => string);
+  children: React.ReactNode;
+}): React.JSX.Element {
+  const StyledText = styled('text')(({ theme }) => ({
+    fill: typeof color === 'string' ? color : color(theme),
+    textAnchor: 'middle',
+    dominantBaseline: 'central',
+    fontSize,
+  }));
+  const { x, y } = (() => {
+    switch (arc) {
+      case Arc.TOP_HALF:
+        return {
+          x: cx - pieChartCenterError,
+          y: cy - fontSize / 2,
+        };
+      case Arc.FULL:
+        return {
+          x: cx - pieChartCenterError,
+          y: cy,
+        };
+    }
+  })();
   return (
-    <StyledText x={left + width / 2} y={top + height / 2}>
+    <StyledText x={x} y={y}>
       {children}
     </StyledText>
   );
@@ -74,13 +115,8 @@ function computeArcLabel(innerRadius: number, outerRadius: number): number {
   return Math.floor((innerRadius + outerRadius) / 2);
 }
 
-/**
- * MUI's PieChart appears to get the center of the pie chart off by this fixed
- * number of pixels.
- */
-const pieChartCxError = -5;
-
 export function RatingPie({
+  pieId,
   slices,
   width,
   height,
@@ -91,7 +127,9 @@ export function RatingPie({
   cornerRadiusFraction = 0.1,
   hoverEffect = true,
   hoverRadiusFraction = 1.0,
+  highlightedSliceId = undefined,
   centerLabel = '',
+  centerLabelHeightFraction = 0.275,
 }: PieRatings): React.JSX.Element {
   const { maxRadius, startAngle, endAngle, cx, cy } = (() => {
     switch (arc) {
@@ -100,16 +138,16 @@ export function RatingPie({
           maxRadius: height,
           startAngle: -90,
           endAngle: 90,
-          cx: width / 2 + pieChartCxError,
-          cy: height,
+          cx: width / 2 + pieChartCenterError,
+          cy: height + pieChartCenterError,
         };
       case Arc.FULL:
         return {
           maxRadius: height,
           startAngle: -90,
           endAngle: 270,
-          cx: width / 2 + pieChartCxError,
-          cy: height / 2,
+          cx: width / 2 + pieChartCenterError,
+          cy: height / 2 + pieChartCenterError,
         };
     }
   })();
@@ -117,6 +155,44 @@ export function RatingPie({
   const outerRadius = maxRadius * outerRadiusFraction;
   const cornerRadius = maxRadius * cornerRadiusFraction;
   const hoverRadius = maxRadius * hoverRadiusFraction;
+  const hasFocusHandling = nonEmptyGet(slices).focusChange !== undefined;
+  let handleHighlightChange: ((data: HighlightItemData | null) => void) | undefined = undefined;
+  const [lastFocusedSliceIndex, setLastFocusedSliceIndex] = useState<number | null>(null);
+  if (hasFocusHandling) {
+    handleHighlightChange = (data: HighlightItemData | null) => {
+      const currentFocusedSliceIndex = data === null ? null : (data.dataIndex ?? null);
+      if (lastFocusedSliceIndex === currentFocusedSliceIndex) {
+        return; // No change.
+      }
+      if (
+        lastFocusedSliceIndex !== null &&
+        slices[lastFocusedSliceIndex].focusChange !== undefined
+      ) {
+        slices[lastFocusedSliceIndex].focusChange(false);
+      }
+      if (
+        currentFocusedSliceIndex !== null &&
+        slices[currentFocusedSliceIndex].focusChange !== undefined
+      ) {
+        slices[currentFocusedSliceIndex].focusChange(true);
+      }
+      setLastFocusedSliceIndex(currentFocusedSliceIndex);
+    };
+  }
+  let highlightedItem: HighlightItemData | null | undefined = undefined;
+  let fadeScope: FadeOptions = 'none';
+  if (highlightedSliceId !== undefined) {
+    if (highlightedSliceId === null) {
+      highlightedItem = { seriesId: pieId };
+    } else {
+      const highlightedSliceIndex = slices.findIndex(slice => slice.id === highlightedSliceId);
+      highlightedItem = {
+        seriesId: pieId,
+        dataIndex: highlightedSliceIndex === -1 ? undefined : highlightedSliceIndex,
+      };
+      fadeScope = 'global';
+    }
+  }
   const hasClickHandling = nonEmptyGet(slices).click !== undefined;
   const handleClick = hasClickHandling
     ? (event: React.MouseEvent<SVGPathElement>, itemIdentifier: PieItemIdentifier) => {
@@ -130,6 +206,7 @@ export function RatingPie({
     <PieChart
       series={[
         {
+          id: pieId,
           data: nonEmptyMap(slices, slice => sliceToData(slice)),
           type: 'pie',
           arcLabel: 'label',
@@ -139,7 +216,12 @@ export function RatingPie({
           cornerRadius,
           outerRadius,
           innerRadius,
-          highlightScope: hoverEffect ? { fade: 'global', highlight: 'item' } : undefined,
+          highlightScope: hoverEffect
+            ? {
+                fade: fadeScope,
+                highlight: 'item',
+              }
+            : undefined,
           faded: hoverEffect
             ? {
                 innerRadius,
@@ -166,10 +248,22 @@ export function RatingPie({
       ]}
       width={width}
       height={height}
+      highlightedItem={highlightedItem}
+      onHighlightChange={handleHighlightChange}
       onItemClick={handleClick}
       slotProps={{ legend: { hidden: true, padding: 0 } }}
     >
-      {centerLabel === '' ? null : <PieCenterLabel>{centerLabel}</PieCenterLabel>}
+      {centerLabel === '' ? null : (
+        <PieCenterLabel
+          arc={arc}
+          color={theme => theme.palette.text.primary}
+          fontSize={height * centerLabelHeightFraction}
+          cx={cx}
+          cy={cy}
+        >
+          {centerLabel}
+        </PieCenterLabel>
+      )}
     </PieChart>
   );
 }

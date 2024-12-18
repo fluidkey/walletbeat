@@ -7,6 +7,8 @@ import {
   monetizationStrategyIsUserAligned,
   monetizationStrategyName,
 } from '@/schema/features/monetization';
+import { sentence } from '@/types/text';
+import type { WalletMetadata } from '@/schema/wallet';
 
 const brand = 'attributes.transparency.funding';
 export type FundingValue = Value & {
@@ -18,7 +20,10 @@ function transparent(id: string, sourceName: string): FundingValue {
   return {
     id: `transparent_${id.toLocaleLowerCase()}`,
     rating: Rating.YES,
-    displayName: `Transparent (${sourceName})`,
+    displayName: `Transparent funding (${sourceName})`,
+    walletExplanation: sentence(
+      (walletMetadata: WalletMetadata) => `${walletMetadata.displayName} is transparently funded.`
+    ),
     __brand: brand,
   };
 }
@@ -29,7 +34,11 @@ function extractive(id: string, sourceName: string): FundingValue {
     id: `extractive_${id.toLocaleLowerCase()}`,
     rating: Rating.PARTIAL,
     icon: '\u{1f911}', // Money mouth face
-    displayName: `Extractive${sourceName !== '' ? ` (${sourceName})` : ''}`,
+    displayName: `User-extractive funding${sourceName !== '' ? ` (${sourceName})` : ''}`,
+    walletExplanation: sentence(
+      (walletMetadata: WalletMetadata) =>
+        `${walletMetadata.displayName} is funded through user-extractive means${sourceName !== '' ? ` (${sourceName})` : ''}.`
+    ),
     __brand: brand,
   };
 }
@@ -38,7 +47,10 @@ function extractive(id: string, sourceName: string): FundingValue {
 const unclear: FundingValue = {
   id: 'unclear',
   rating: Rating.NO,
-  displayName: 'Unclear',
+  displayName: 'Unclear funding source',
+  walletExplanation: sentence(
+    (walletMetadata: WalletMetadata) => `How ${walletMetadata.displayName} is funded is unclear.`
+  ),
   __brand: brand,
 };
 
@@ -82,13 +94,13 @@ export const funding: Attribute<FundingValue> = {
   ],
   evaluate: (features: ResolvedFeatures): Evaluation<FundingValue> => {
     if (features.monetization === null) {
-      return { value: unrated(brand) as FundingValue };
+      return { value: unrated(funding, brand) };
     }
     const strategies: MonetizationStrategy[] = [];
     for (const { strategy, value } of monetizationStrategies(features.monetization)) {
       switch (value) {
         case null:
-          return { value: unrated(brand) as FundingValue };
+          return { value: unrated(funding, brand) };
         case true:
           strategies.push(strategy);
           break;
