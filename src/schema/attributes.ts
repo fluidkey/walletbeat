@@ -3,6 +3,8 @@ import type { ResolvedFeatures } from './features';
 import type { AtLeastOneVariant } from './variants';
 import type { Url } from './url';
 import type { Score } from './score';
+import type { Sentence } from '@/types/text';
+import type { WalletMetadata } from './wallet';
 
 /**
  * Rating is an enum that should be visually meaningful.
@@ -61,19 +63,21 @@ export interface Value {
   icon?: string;
 
   /**
-   * A very short, human-readable name for this value.
+   * A very short, human-readable explanation of this value.
+   * Used as tooltip when hovering over the attribute rating in the charts.
+   * This should relate to the attribute's displayName but stand on its own.
    * For example, when evaluating an attribute like open-source licensing,
-   * this could say "Apache 2.0".
-   * This should avoid repeating the displayName of the Attribute as best
-   * as possible. Instead, the concatenation of the Attribute's
-   * displayName and the Value's displayName should make sense.
-   * For example, an Attribute's displayName could be "License" and the
-   * Value's displayName could be "Apache 2.0", because the string
-   * "License: Apache 2.0" makes sense on its own. The Value's displayName
-   * should not be "Apache 2.0 license", because
-   * "License: Apache 2.0 license" would needlessly repeat "license" twice.
+   * this could say "Apache 2.0 license", not just "Apache 2.0" as that would
+   * be meaningless out of context.
    */
   displayName: string;
+
+  /**
+   * A very short, human-readable explanation of this value.
+   * Should be similar to `displayName` but may be formatted with the name
+   * of the wallet.
+   */
+  walletExplanation: Sentence<WalletMetadata>;
 
   /**
    * The visual representation of this value.
@@ -146,13 +150,9 @@ export interface Attribute<V extends Value> {
   /** An icon representing the attribute. Shown on rating charts. */
   icon: string;
 
-  /** A very short, human-readable name of the attribute.
+  /**
+   * A very short, human-readable title for the attribute.
    * Should be no more than 3 or 4 words.
-   * Should make sense when concatenated with a Value's displayName.
-   * For example, for the sourceVisibility attribute, this would just be
-   * "Source", not "Source visibility", because the Value's displayName
-   * will say "Public" or "Private" which already makes it clear that it
-   * is referring to the wallet's source visibility.
    */
   displayName: string;
 
@@ -210,6 +210,13 @@ export interface AttributeGroup<Vs extends ValueSet> {
 
   /** A human-readable name for the group. */
   displayName: string;
+
+  /**
+   * A short question to which this attribute is the answer.
+   * For example, for an attribute group about privacy, a good question
+   * might be "How well does {wallet} protect your privacy?".
+   */
+  perWalletQuestion: Sentence<WalletMetadata>;
 
   /** The actual set of attributes belonging to this group. */
   attributes: { [K in keyof Vs]: Attribute<Vs[K]> };

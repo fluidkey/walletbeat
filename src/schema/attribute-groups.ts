@@ -31,6 +31,8 @@ import {
   type MultiAddressCorrelationValue,
 } from './attributes/privacy/multi-address-correlation';
 import { type Score, type WeightedScore, weightedScore } from './score';
+import { sentence } from '@/types/text';
+import type { WalletMetadata } from './wallet';
 
 /** A ValueSet for privacy Values. */
 type PrivacyValues = Dict<{
@@ -43,6 +45,10 @@ export const PrivacyAttributeGroup: AttributeGroup<PrivacyValues> = {
   id: 'privacy',
   icon: '\u{1f575}', // Detective
   displayName: 'Privacy',
+  perWalletQuestion: sentence<WalletMetadata>(
+    (walletMetadata: WalletMetadata): string =>
+      `How well does ${walletMetadata.displayName} protect your privacy?`
+  ),
   attributes: {
     addressCorrelation,
     multiAddressCorrelation,
@@ -65,6 +71,10 @@ export const transparencyAttributeGroup: AttributeGroup<TransparencyValues> = {
   id: 'transparency',
   icon: '\u{1f50d}', // Looking glass
   displayName: 'Transparency',
+  perWalletQuestion: sentence<WalletMetadata>(
+    (walletMetadata: WalletMetadata): string =>
+      `How transparent and sustainable is ${walletMetadata.displayName}'s development model?`
+  ),
   attributes: {
     openSource,
     sourceVisibility,

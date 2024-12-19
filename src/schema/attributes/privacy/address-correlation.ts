@@ -2,6 +2,8 @@ import type { ResolvedFeatures } from '@/schema/features';
 import { Rating, type Value, type Attribute, type Evaluation } from '@/schema/attributes';
 import { pickWorstRating, unrated } from '../common';
 import { inferLeaks, leaksByDefault } from '@/schema/features/privacy/data-collection';
+import { sentence } from '@/types/text';
+import type { WalletMetadata } from '@/schema/wallet';
 
 const brand = 'attributes.privacy.address_correlation';
 export type AddressCorrelationValue = Value & {
@@ -12,7 +14,11 @@ const uncorrelated: AddressCorrelationValue = {
   id: 'no_correlation',
   rating: Rating.YES,
   icon: '\u{26d3}', // Broken chain
-  displayName: 'Kept private',
+  displayName: 'Wallet address is kept private',
+  walletExplanation: sentence(
+    (walletMetadata: WalletMetadata) =>
+      `${walletMetadata.displayName} keeps your wallet address private.`
+  ),
   __brand: brand,
 };
 
@@ -20,7 +26,11 @@ function correlated(what: string, rating: Rating): AddressCorrelationValue {
   return {
     id: `address_and_${what.toLowerCase()}`,
     rating,
-    displayName: `Linked to ${what}`,
+    displayName: `Wallet address is linkable to ${what}`,
+    walletExplanation: sentence(
+      (walletMetadata: WalletMetadata) =>
+        `${walletMetadata.displayName} allows a third party to correlate your address and ${what}.`
+    ),
     __brand: brand,
   };
 }
@@ -28,7 +38,7 @@ function correlated(what: string, rating: Rating): AddressCorrelationValue {
 export const addressCorrelation: Attribute<AddressCorrelationValue> = {
   id: 'address_correlation',
   icon: '\u{1f517}', // Link
-  displayName: 'Wallet address',
+  displayName: 'Wallet address privacy',
   explanationValues: [
     uncorrelated,
     correlated('IP', Rating.PARTIAL),
@@ -36,7 +46,7 @@ export const addressCorrelation: Attribute<AddressCorrelationValue> = {
   ],
   evaluate: (features: ResolvedFeatures): Evaluation<AddressCorrelationValue> => {
     if (features.privacy.dataCollection === null) {
-      return { value: unrated(brand) };
+      return { value: unrated(addressCorrelation, brand) };
     }
     for (const collected of features.privacy.dataCollection.collected) {
       const leaks = inferLeaks(collected.leaks);

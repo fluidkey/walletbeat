@@ -8,17 +8,23 @@ import {
   type MultiAddressHandling,
   MultiAddressPolicy,
 } from '@/schema/features/privacy/data-collection';
+import { sentence } from '@/types/text';
+import type { WalletMetadata } from '@/schema/wallet';
 
 const brand = 'attributes.privacy.multi_address_correlation';
 export type MultiAddressCorrelationValue = Value & {
   __brand: 'attributes.privacy.multi_address_correlation';
 };
 
-const separateDestinations: MultiAddressCorrelationValue = {
-  id: 'separate_destinations',
+const uniqueDestinations: MultiAddressCorrelationValue = {
+  id: 'unique_destinations',
   rating: Rating.YES,
   icon: '\u{26d3}', // Broken chain
-  displayName: 'Separate endpoints per address',
+  displayName: 'Wallet uses unique endpoints per address',
+  walletExplanation: sentence(
+    (walletMetadata: WalletMetadata) =>
+      `When configured with multiple addresses, ${walletMetadata.displayName} uses unique endpoints for each of them which keeps them uncorrelated.`
+  ),
   __brand: brand,
 };
 
@@ -26,28 +32,44 @@ const activeAddressOnly: MultiAddressCorrelationValue = {
   id: 'active_address_only',
   rating: Rating.YES,
   icon: '\u{1f4ce}', // Single paperclip
-  displayName: 'Single-address requests only',
+  displayName: 'Wallet only handles one active address at a time',
+  walletExplanation: sentence(
+    (walletMetadata: WalletMetadata) =>
+      `${walletMetadata.displayName} only makes requests about one active address at a time, so it can't be correlated with other addresses.`
+  ),
   __brand: brand,
 };
 
 const correlated: MultiAddressCorrelationValue = {
   id: 'correlated',
   rating: Rating.NO,
-  displayName: 'Correlatable by third party',
+  displayName: 'Multiple addresses are correlatable by a third party',
+  walletExplanation: sentence(
+    (walletMetadata: WalletMetadata) =>
+      `${walletMetadata.displayName} makes requests about multiple addresses simultaneously to the same endpoint, which allows it to correlate your addresses.`
+  ),
   __brand: brand,
 };
 
 const staggeredRequests: MultiAddressCorrelationValue = {
   id: 'staggered_requests',
   rating: Rating.PARTIAL,
-  displayName: 'Staggered requests',
+  displayName: 'Requests for multiple addresses are staggered across time',
+  walletExplanation: sentence(
+    (walletMetadata: WalletMetadata) =>
+      `${walletMetadata.displayName} staggers requests about multiple addresses over time time, which makes it harder to correlate your addresses.`
+  ),
   __brand: brand,
 };
 
 const separateCircuits: MultiAddressCorrelationValue = {
   id: 'separate_circuits',
   rating: Rating.PARTIAL,
-  displayName: 'Separate proxies',
+  displayName: 'Requests for multiple addresses use separate proxies',
+  walletExplanation: sentence(
+    (walletMetadata: WalletMetadata) =>
+      `${walletMetadata.displayName} uses distinct proxies to make requests about multiple addresses, which makes it harder to correlate your addresses.`
+  ),
   __brand: brand,
 };
 
@@ -55,7 +77,11 @@ const staggeredAndSeparateCircuits: MultiAddressCorrelationValue = {
   id: 'staggered_and_separate_circuits',
   rating: Rating.YES,
   icon: '\u{26d3}', // Broken chain
-  displayName: 'Uncorrelated requests',
+  displayName: 'Requests for multiple addresses are uncorrelated',
+  walletExplanation: sentence(
+    (walletMetadata: WalletMetadata) =>
+      `${walletMetadata.displayName} uses distinct proxies and staggers requests about multiple addresses over time, which makes it harder to correlate your addresses.`
+  ),
   __brand: brand,
 };
 
@@ -64,6 +90,10 @@ const unsupported: MultiAddressCorrelationValue = {
   rating: Rating.UNRATED,
   icon: '\u{1f4ce}', // Single paperclip
   displayName: 'Multiple addresses unsupported',
+  walletExplanation: sentence(
+    (walletMetadata: WalletMetadata) =>
+      `${walletMetadata.displayName} does not support multiple addresses.`
+  ),
   __brand: brand,
 };
 
@@ -90,13 +120,13 @@ export const multiAddressCorrelation: Attribute<MultiAddressCorrelationValue> = 
   explanationValues: [activeAddressOnly, separateCircuits, staggeredRequests, correlated],
   evaluate: (features: ResolvedFeatures): Evaluation<MultiAddressCorrelationValue> => {
     if (features.multiAddress === null) {
-      return { value: unrated(brand) };
+      return { value: unrated(multiAddressCorrelation, brand) };
     }
     if (!features.multiAddress) {
       return { value: unsupported };
     }
     if (features.privacy.dataCollection === null) {
-      return { value: unrated(brand) };
+      return { value: unrated(multiAddressCorrelation, brand) };
     }
     let worstHandling: EntityData | null = null;
     let worstHandlingScore = -1;
@@ -115,10 +145,10 @@ export const multiAddressCorrelation: Attribute<MultiAddressCorrelationValue> = 
       }
     }
     if (worstHandling === null) {
-      return { value: unrated(brand) };
+      return { value: unrated(multiAddressCorrelation, brand) };
     }
     if (worstHandling.leaks.multiAddress === undefined) {
-      return { value: unrated(brand) };
+      return { value: unrated(multiAddressCorrelation, brand) };
     }
     const handling = worstHandling.leaks.multiAddress;
     switch (handling.type) {
@@ -135,7 +165,7 @@ export const multiAddressCorrelation: Attribute<MultiAddressCorrelationValue> = 
         if (handling.destination === 'ISOLATED') {
           // The wallet makes requests to different endpoints for each
           // address, so they are not correlatable.
-          return { value: separateDestinations };
+          return { value: uniqueDestinations };
         }
         if (handling.proxy === 'SEPARATE_CIRCUITS' && handling.timing === 'STAGGERED') {
           // The wallet mitigates correlation both at the network level and by
