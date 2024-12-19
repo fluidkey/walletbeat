@@ -4,7 +4,13 @@ import { type NonEmptyArray, nonEmptyGet, nonEmptyMap } from '@/types/utils/non-
 import { PieChart } from '@mui/x-charts/PieChart';
 import type React from 'react';
 import { styled, type Theme } from '@mui/material/styles';
-import type { PieItemIdentifier, PieValueType } from '@mui/x-charts';
+import type {
+  FadeOptions,
+  HighlightItemData,
+  PieItemIdentifier,
+  PieValueType,
+} from '@mui/x-charts';
+import { useState } from 'react';
 
 export interface PieSlice {
   id: string;
@@ -13,6 +19,7 @@ export interface PieSlice {
   arcLabel: string;
   tooltip: string;
   tooltipValue: string;
+  focusChange?: (focused: boolean) => void;
   click?: (event: React.MouseEvent<SVGPathElement>) => void;
 }
 
@@ -22,6 +29,7 @@ export enum Arc {
 }
 
 export interface PieRatings {
+  pieId: string;
   slices: NonEmptyArray<PieSlice>;
   width: number;
   height: number;
@@ -32,6 +40,7 @@ export interface PieRatings {
   outerRadiusFraction?: number;
   hoverEffect?: boolean;
   hoverRadiusFraction?: number;
+  highlightedSliceId?: string | null;
   centerLabel?: string;
   centerLabelHeightFraction?: number;
 }
@@ -107,6 +116,7 @@ function computeArcLabel(innerRadius: number, outerRadius: number): number {
 }
 
 export function RatingPie({
+  pieId,
   slices,
   width,
   height,
@@ -117,6 +127,7 @@ export function RatingPie({
   cornerRadiusFraction = 0.1,
   hoverEffect = true,
   hoverRadiusFraction = 1.0,
+  highlightedSliceId = undefined,
   centerLabel = '',
   centerLabelHeightFraction = 0.275,
 }: PieRatings): React.JSX.Element {
@@ -144,6 +155,44 @@ export function RatingPie({
   const outerRadius = maxRadius * outerRadiusFraction;
   const cornerRadius = maxRadius * cornerRadiusFraction;
   const hoverRadius = maxRadius * hoverRadiusFraction;
+  const hasFocusHandling = nonEmptyGet(slices).focusChange !== undefined;
+  let handleHighlightChange: ((data: HighlightItemData | null) => void) | undefined = undefined;
+  const [lastFocusedSliceIndex, setLastFocusedSliceIndex] = useState<number | null>(null);
+  if (hasFocusHandling) {
+    handleHighlightChange = (data: HighlightItemData | null) => {
+      const currentFocusedSliceIndex = data === null ? null : (data.dataIndex ?? null);
+      if (lastFocusedSliceIndex === currentFocusedSliceIndex) {
+        return; // No change.
+      }
+      if (
+        lastFocusedSliceIndex !== null &&
+        slices[lastFocusedSliceIndex].focusChange !== undefined
+      ) {
+        slices[lastFocusedSliceIndex].focusChange(false);
+      }
+      if (
+        currentFocusedSliceIndex !== null &&
+        slices[currentFocusedSliceIndex].focusChange !== undefined
+      ) {
+        slices[currentFocusedSliceIndex].focusChange(true);
+      }
+      setLastFocusedSliceIndex(currentFocusedSliceIndex);
+    };
+  }
+  let highlightedItem: HighlightItemData | null | undefined = undefined;
+  let fadeScope: FadeOptions = 'none';
+  if (highlightedSliceId !== undefined) {
+    if (highlightedSliceId === null) {
+      highlightedItem = { seriesId: pieId };
+    } else {
+      const highlightedSliceIndex = slices.findIndex(slice => slice.id === highlightedSliceId);
+      highlightedItem = {
+        seriesId: pieId,
+        dataIndex: highlightedSliceIndex === -1 ? undefined : highlightedSliceIndex,
+      };
+      fadeScope = 'global';
+    }
+  }
   const hasClickHandling = nonEmptyGet(slices).click !== undefined;
   const handleClick = hasClickHandling
     ? (event: React.MouseEvent<SVGPathElement>, itemIdentifier: PieItemIdentifier) => {
@@ -157,6 +206,7 @@ export function RatingPie({
     <PieChart
       series={[
         {
+          id: pieId,
           data: nonEmptyMap(slices, slice => sliceToData(slice)),
           type: 'pie',
           arcLabel: 'label',
@@ -166,7 +216,12 @@ export function RatingPie({
           cornerRadius,
           outerRadius,
           innerRadius,
-          highlightScope: hoverEffect ? { fade: 'global', highlight: 'item' } : undefined,
+          highlightScope: hoverEffect
+            ? {
+                fade: fadeScope,
+                highlight: 'item',
+              }
+            : undefined,
           faded: hoverEffect
             ? {
                 innerRadius,
@@ -193,6 +248,8 @@ export function RatingPie({
       ]}
       width={width}
       height={height}
+      highlightedItem={highlightedItem}
+      onHighlightChange={handleHighlightChange}
       onItemClick={handleClick}
       slotProps={{ legend: { hidden: true, padding: 0 } }}
     >

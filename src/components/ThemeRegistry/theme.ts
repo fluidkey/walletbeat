@@ -77,6 +77,7 @@ const themeOptions: ThemeOptions = {
       },
     },
     h6: {
+      fontWeight: 400,
       '@media (max-width:600px)': {
         fontSize: '1.1rem',
       },
