@@ -1,4 +1,4 @@
-import WalletTable from '@/components/ui/organisms/WalletTable';
+import WalletTable from '@/beta/components/ui/organisms/WalletTable';
 import { Box, Typography } from '@mui/material';
 import type React from 'react';
 import './global.css';

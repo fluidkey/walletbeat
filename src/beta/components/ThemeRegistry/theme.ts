@@ -77,6 +77,7 @@ const themeOptions: ThemeOptions = {
       },
     },
     h6: {
+      fontWeight: 400,
       '@media (max-width:600px)': {
         fontSize: '1.1rem',
       },
@@ -90,6 +91,11 @@ const themeOptions: ThemeOptions = {
       '@media (max-width:600px)': {
         fontSize: '0.8rem',
       },
+    },
+    caption: {
+      fontWeight: 300,
+      fontSize: '0.65rem',
+      lineHeight: 1,
     },
   },
   shape: {
