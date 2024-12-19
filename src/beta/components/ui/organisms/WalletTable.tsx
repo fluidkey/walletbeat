@@ -3,7 +3,7 @@
 import { ratedWallets } from '@/beta/data/wallets';
 import type { AttributeGroup, ValueSet, EvaluatedGroup } from '@/beta/schema/attributes';
 import type { RatedWallet } from '@/beta/schema/wallet';
-import { Box } from '@mui/material';
+import { Box, type SxProps } from '@mui/material';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import type React from 'react';
 import { WalletRatingCell, walletRatingColumnProps } from '../molecules/WalletRatingCell';
@@ -15,49 +15,100 @@ import {
 import { WalletNameCell } from '../molecules/WalletNameCell';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { expandedRowHeight, shortRowHeight } from '../../constants';
+import type {
+  WalletRowState,
+  WalletRowStateHandle,
+  WalletTableState,
+  WalletTableStateHandle,
+} from '../WalletTableState';
+import type { Variant } from '@/beta/schema/variants';
+
+class TableStateHandle implements WalletTableStateHandle {
+  readonly variantSelected: Variant | null;
+
+  private readonly setTableState: Dispatch<SetStateAction<WalletTableState>>;
+
+  constructor(
+    tableState: WalletTableState,
+    setTableState: Dispatch<SetStateAction<WalletTableState>>
+  ) {
+    this.variantSelected = tableState.variantSelected;
+    this.setTableState = setTableState;
+  }
+
+  variantClick(clicked: Variant): void {
+    this.setTableState(prevState => ({
+      variantSelected: clicked === prevState.variantSelected ? null : clicked,
+    }));
+  }
+}
 
 /** Class handling rendering and scoring a single wallet row. */
-class WalletRow {
+class WalletRow implements WalletRowStateHandle {
   readonly wallet: RatedWallet;
-  readonly expandedRows: Record<string, boolean>;
-  readonly setExpandedRows: Dispatch<SetStateAction<Record<string, boolean>>>;
+  readonly evalTree: EvaluationTree;
+  readonly table: WalletTableStateHandle;
+  readonly expanded: boolean;
+  readonly rowWideStyle: SxProps;
 
   /** Data table ID; required by DataGrid. */
   readonly id: string;
 
+  private readonly setRowsState: Dispatch<SetStateAction<Record<string, WalletRowState>>>;
+
   constructor(
     wallet: RatedWallet,
-    expandedRows: Record<string, boolean>,
-    setExpandedRows: Dispatch<SetStateAction<Record<string, boolean>>>
+    tableStateHandle: WalletTableStateHandle,
+    rowsState: Record<string, WalletRowState>,
+    setRowsState: Dispatch<SetStateAction<Record<string, WalletRowState>>>
   ) {
     this.wallet = wallet;
     this.id = wallet.metadata.id;
-    this.expandedRows = expandedRows;
-    this.setExpandedRows = setExpandedRows;
+    this.table = tableStateHandle;
+    const rowState = rowsState[this.id] ?? { expanded: false };
+    this.expanded = rowState.expanded;
+    this.setRowsState = setRowsState;
+    this.rowWideStyle = {};
+    this.evalTree = wallet.overall;
+    if (tableStateHandle.variantSelected !== null) {
+      const walletForVariant = wallet.variants[tableStateHandle.variantSelected];
+      if (walletForVariant === undefined) {
+        this.rowWideStyle = {
+          filter: 'contrast(65%)',
+          opacity: 0.5,
+        };
+      } else {
+        this.evalTree = walletForVariant.attributes;
+      }
+    }
   }
 
-  /** Toggle the expanded-ness of the row. */
   toggleExpanded(): void {
-    this.setExpandedRows(prevState => ({
+    this.setRowsState((prevState: Record<string, WalletRowState>) => ({
       ...prevState,
-      [this.wallet.metadata.id]: !prevState[this.wallet.metadata.id],
+      [this.id]: {
+        expanded: !this.expanded,
+      },
+    }));
+  }
+
+  setExpanded(expanded: boolean): void {
+    this.setRowsState((prevState: Record<string, WalletRowState>) => ({
+      ...prevState,
+      [this.id]: {
+        expanded,
+      },
     }));
   }
 
   /** Get the height of the row in pixels. */
   getRowHeight(): number {
-    return this.expandedRows[this.wallet.metadata.id] ? expandedRowHeight : shortRowHeight;
+    return this.expanded ? expandedRowHeight : shortRowHeight;
   }
 
   /** Render the "Name" cell. */
   renderName(): React.JSX.Element {
-    return (
-      <WalletNameCell
-        wallet={this.wallet}
-        expanded={this.expandedRows[this.wallet.metadata.id]}
-        toggleExpanded={this.toggleExpanded.bind(this)}
-      ></WalletNameCell>
-    );
+    return <WalletNameCell row={this} />;
   }
 
   /** Compute numerical score for an attribute group. */
@@ -65,7 +116,7 @@ class WalletRow {
     attrGroup: AttributeGroup<Vs>,
     evalGroupFn: (tree: EvaluationTree) => EvaluatedGroup<Vs>
   ): number {
-    return attrGroup.score(evalGroupFn(this.wallet.overall));
+    return attrGroup.score(evalGroupFn(this.wallet.overall)).score;
   }
 
   /** Render a cell for a rating column. */
@@ -73,14 +124,7 @@ class WalletRow {
     attrGroup: AttributeGroup<Vs>,
     evalGroupFn: (tree: EvaluationTree) => EvaluatedGroup<Vs>
   ): React.JSX.Element {
-    return (
-      <WalletRatingCell<Vs>
-        wallet={this.wallet}
-        attrGroup={attrGroup}
-        evalGroupFn={evalGroupFn}
-        expanded={this.expandedRows[this.wallet.metadata.id]}
-      />
-    );
+    return <WalletRatingCell<Vs> row={this} attrGroup={attrGroup} evalGroupFn={evalGroupFn} />;
   }
 }
 
@@ -102,9 +146,13 @@ function walletTableColumn<Vs extends ValueSet>(
 
 /** Main wallet comparison table. */
 export default function WalletTable(): React.JSX.Element {
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const [tableState, setTableState] = useState<WalletTableState>({
+    variantSelected: null,
+  });
+  const tableStateHandle = new TableStateHandle(tableState, setTableState);
+  const [rowsState, setRowsState] = useState<Record<string, WalletRowState>>({});
   const rows = Object.values(ratedWallets).map(
-    wallet => new WalletRow(wallet, expandedRows, setExpandedRows)
+    wallet => new WalletRow(wallet, tableStateHandle, rowsState, setRowsState)
   );
   const walletNameColumn: GridColDef<WalletRow, string> = {
     field: 'displayName',

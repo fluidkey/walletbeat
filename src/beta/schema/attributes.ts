@@ -2,7 +2,7 @@ import type { NonEmptyArray, NonEmptyRecord } from '@/beta/types/utils/non-empty
 import type { ResolvedFeatures } from './features';
 import type { AtLeastOneVariant } from './variants';
 import type { Url } from './url';
-import type { Score } from './score';
+import type { MaybeUnratedScore, Score } from './score';
 import type { Sentence } from '@/beta/types/text';
 import type { WalletMetadata } from './wallet';
 
@@ -226,7 +226,7 @@ export interface AttributeGroup<Vs extends ValueSet> {
    * @param evaluations The set of evaluated attributes.
    * @return A score between 0.0 (lowest) and 1.0 (highest).
    */
-  score: (evaluations: EvaluatedGroup<Vs>) => Score;
+  score: (evaluations: EvaluatedGroup<Vs>) => MaybeUnratedScore;
 }
 
 /**
@@ -248,4 +248,17 @@ export function evaluatedAttributes<Vs extends ValueSet>(
 ): NonEmptyArray<EvaluatedAttribute<Value>> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- We know that ValueSets cannot be empty, therefore neither can this array.
   return Object.values(evaluatedGroup) as NonEmptyArray<EvaluatedAttribute<Value>>;
+}
+
+/**
+ * Convenience method to iterate over all evaluated attributes in a group as
+ * entries.
+ * @param evaluatedGroup The group to iterate over.
+ * @returns An array of all the evaluated attribute entries in the group.
+ */
+export function evaluatedAttributesEntries<Vs extends ValueSet>(
+  evaluatedGroup: EvaluatedGroup<Vs>
+): NonEmptyArray<[keyof Vs, EvaluatedAttribute<Value>]> {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- We know that ValueSets cannot be empty, therefore neither can this array.
+  return Object.entries(evaluatedGroup) as NonEmptyArray<[keyof Vs, EvaluatedAttribute<Value>]>;
 }

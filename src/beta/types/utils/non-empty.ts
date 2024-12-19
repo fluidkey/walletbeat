@@ -54,7 +54,10 @@ export function nonEmptyEntries<
  * @param arr The array to map over.
  * @param fn A mapping function that is guaranteed to be called at least once.
  */
-export function nonEmptyMap<T, R>(arr: NonEmptyArray<T>, fn: (val: T) => R): NonEmptyArray<R> {
+export function nonEmptyMap<T, R>(
+  arr: NonEmptyArray<T>,
+  fn: (val: T, index: number) => R
+): NonEmptyArray<R> {
   return arr.map(fn) as NonEmptyArray<R>; // eslint-disable-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we know the input array was non-empty.
 }
 

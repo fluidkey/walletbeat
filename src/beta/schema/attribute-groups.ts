@@ -10,6 +10,7 @@ import {
   defaultRatingScore,
   type EvaluatedAttribute,
   type EvaluatedGroup,
+  Rating,
   type Value,
   type ValueSet,
 } from './attributes';
@@ -165,21 +166,48 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
 }
 
 /**
+ * Given an evaluation tree as template, call `fn` with a getter function
+ * that can return that attribute for any given tree.
+ * Useful to compare multiple trees of attributes, by calling `getter` on
+ * various trees.
+ */
+export function mapAttributesGetter(
+  templateTree: EvaluationTree,
+  fn: <V extends Value>(
+    getter: (evalTree: EvaluationTree) => EvaluatedAttribute<V> | undefined
+  ) => void
+): void {
+  for (const groupName of Object.keys(templateTree)) {
+    for (const attrName of Object.keys(templateTree[groupName])) {
+      fn(
+        <V extends Value>(evalTree: EvaluationTree): EvaluatedAttribute<V> | undefined =>
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- We know that `evalTree[groupName]` has `attrName` as property, due to how we iterated to get here.
+          (evalTree[groupName] as any)[attrName] as EvaluatedAttribute<V>
+      );
+    }
+  }
+}
+
+/**
  * Generic function for scoring a group of evaluations.
  * @param weights A map from attribute name to its relative weight.
  * @returns A function to score of the group of evaluations.
  */
 function scoreGroup<Vs extends ValueSet>(weights: { [k in keyof Vs]: number }): (
   evaluations: EvaluatedGroup<Vs>
-) => Score {
-  return (evaluations: EvaluatedGroup<Vs>): Score =>
-    weightedScore(
+) => { score: Score; hasUnrated: boolean } {
+  return (evaluations: EvaluatedGroup<Vs>): { score: Score; hasUnrated: boolean } => {
+    let hasUnrated = false;
+    const score = weightedScore(
       nonEmptyRemap(weights, (key: keyof Vs, weight: number): WeightedScore => {
         const value = evaluations[key].evaluation.value;
+        hasUnrated = hasUnrated || value.rating === Rating.UNRATED;
         return {
           score: value.score ?? defaultRatingScore(value.rating),
           weight,
         };
       })
     );
+    return { score, hasUnrated };
+  };
 }

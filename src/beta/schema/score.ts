@@ -9,6 +9,14 @@ export interface WeightedScore {
   weight: number;
 }
 
+/**
+ * A score and a boolean indicating whether any component of it was unrated.
+ */
+export interface MaybeUnratedScore {
+  score: Score;
+  hasUnrated: boolean;
+}
+
 /** Compute a weighted aggregate score. */
 export function weightedScore<K extends string | number | symbol>(
   scores: NonEmptyRecord<K, WeightedScore>
