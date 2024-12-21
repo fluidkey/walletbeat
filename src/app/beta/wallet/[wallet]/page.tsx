@@ -17,8 +17,12 @@ export function generateStaticParams(): WalletUrlParams[] {
   );
 }
 
-export default function Page({ params }: { params: WalletUrlParams }): React.JSX.Element {
-  const walletName = params.wallet;
+export default async function Page({
+  params,
+}: {
+  params: Promise<WalletUrlParams>;
+}): Promise<React.JSX.Element> {
+  const walletName = (await params).wallet;
   if (!IsValidWalletName(walletName)) {
     return <div>Invalid wallet name!</div>;
   }
