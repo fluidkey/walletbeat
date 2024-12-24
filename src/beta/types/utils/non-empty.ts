@@ -95,12 +95,10 @@ export function nonEmptySorted<T>(
   compare: (a: T, b: T) => number,
   reverse?: boolean
 ): NonEmptyArray<T> {
-  if (reverse === true) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we know the input array was non-empty.
-    return arr.toSorted((a, b) => compare(b, a)) as NonEmptyArray<T>;
-  }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we know the input array was non-empty.
-  return arr.toSorted(compare) as NonEmptyArray<T>;
+  const arrCopy = [...arr] as NonEmptyArray<T>;
+  arrCopy.sort(reverse === true ? (a, b) => compare(b, a) : compare);
+  return arrCopy;
 }
 
 /**
@@ -116,5 +114,5 @@ export function nonEmptyFirst<T>(
   compare: (a: T, b: T) => number,
   reverse?: boolean
 ): T {
-  return arr.toSorted(compare)[reverse === true ? arr.length - 1 : 0];
+  return nonEmptySorted(arr, compare)[reverse === true ? arr.length - 1 : 0];
 }
