@@ -9,6 +9,8 @@ import {
   Rating,
   type Value,
   evaluatedAttributesEntries,
+  ratingToIcon,
+  ratingToColor,
 } from '@/beta/schema/attributes';
 import { attributeEvaluationIsUniqueToVariant } from '@/beta/schema/wallet';
 import { type NonEmptyArray, nonEmptyMap } from '@/beta/types/utils/non-empty';
@@ -19,38 +21,6 @@ import type { GridColTypeDef } from '@mui/x-data-grid';
 import { expandedRowHeight, ratingCellWidth, shortRowHeight } from '../../constants';
 import { useState } from 'react';
 import type { WalletRowStateHandle } from '../WalletTableState';
-
-/**
- * Convert a rating to a color for the pie slice.
- */
-function ratingToColor(rating: Rating): string {
-  switch (rating) {
-    case Rating.NO:
-      return '#FF0000';
-    case Rating.PARTIAL:
-      return '#FFA500';
-    case Rating.YES:
-      return '#008000';
-    case Rating.UNRATED:
-      return '#808080';
-  }
-}
-
-/**
- * Convert a rating to the icon displayed on the slice tooltip.
- */
-function ratingToIcon(rating: Rating): string {
-  switch (rating) {
-    case Rating.NO:
-      return '\u{274c}'; // Red X
-    case Rating.PARTIAL:
-      return '\u{26a0}'; // Warning sign
-    case Rating.YES:
-      return '\u{2705}'; // Green checkmark
-    case Rating.UNRATED:
-      return '\u{2753}'; // Question mark
-  }
-}
 
 /**
  * Common properties of rating-type columns.
@@ -174,7 +144,7 @@ export function WalletRatingCell<Vs extends ValueSet>({
                 {highlightedEvalAttr.evaluation.value.icon ?? highlightedEvalAttr.attribute.icon}{' '}
                 {highlightedEvalAttr.attribute.displayName}{' '}
               </Typography>
-              {highlightedEvalAttr.evaluation.value.walletExplanation.render({
+              {highlightedEvalAttr.evaluation.value.shortExplanation.render({
                 ...row.wallet.metadata,
                 prefix: ratingToIcon(highlightedEvalAttr.evaluation.value.rating) + ' ',
                 suffix:

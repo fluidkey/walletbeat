@@ -15,15 +15,27 @@ import {
   Divider,
   ListItem,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { WalletIcon } from '../atoms/WalletIcon';
 import { AnchorHeader } from '../atoms/AnchorHeader';
+import { WalletAttribute } from '../organisms/WalletAttribute';
+import { blend } from '@mui/system';
+import HomeIcon from '@mui/icons-material/Home';
+import theme from '@/beta/components/ThemeRegistry/theme';
+import { ratingToColor } from '@/beta/schema/attributes';
+import {
+  listIconSize,
+  listItemRadius,
+  sectionIconWidth,
+  subsectionBorderRadius,
+  subsectionIconWidth,
+} from '../../constants';
 
 const drawerWidth = 280;
 const headerHeight = 80;
 const headerBottomMargin = 12;
 const scrollPastHeaderThreshold = 16;
-const listIconSize = 24;
+const scrollNavigationMargin = 8;
 
 const StyledHeader = styled(Paper)(({ theme }) => ({
   position: 'sticky',
@@ -36,16 +48,22 @@ const StyledHeader = styled(Paper)(({ theme }) => ({
   gap: theme.spacing(2),
   height: headerHeight,
   marginBottom: `${headerBottomMargin}px`,
-  borderRadius: `${listIconSize}px`,
+  borderRadius: '24px',
 }));
 
-const StyledSection = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.background.default,
+const StyledSection = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
   display: 'flex',
   flexDirection: 'column',
-  gap: theme.spacing(2),
-  borderRadius: '12px',
+}));
+
+const StyledSubsection = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  display: 'flex',
+  flexDirection: 'column',
+  borderRadius: `${subsectionBorderRadius}px`,
+  marginTop: '1rem',
+  marginBottom: '1rem',
 }));
 
 interface Section {
@@ -61,7 +79,9 @@ interface TargetSection {
 interface RichSection extends Section {
   icon: React.ReactNode;
   title: string;
+  caption: React.ReactNode | null;
   body: React.ReactNode | null;
+  sx?: React.ComponentProps<typeof Paper>['sx'];
   subsections?: RichSection[]; // Only one level of nesting is supported.
 }
 
@@ -70,16 +90,34 @@ function richSectionToSection(richSection: RichSection): Section {
 }
 
 function sectionHeaderId(section: Section): string | null {
-  if (section.header === null) {
-    return null;
+  if (section.subHeader !== null) {
+    return section.subHeader.replaceAll('_', '-');
   }
-  if (section.subHeader === null) {
-    return section.header;
+  if (section.header !== null) {
+    return section.header.replaceAll('_', '-');
   }
-  return `${section.header}.${section.subHeader}`;
+  return 'top';
 }
 
-function SingleListItem({
+function SingleListItemIcon({ children }: { children: React.ReactNode }): React.JSX.Element {
+  return (
+    <ListItemIcon
+      key="listItemIcon"
+      sx={{
+        minWidth: `${listIconSize}px`,
+        width: `${listIconSize}px`,
+        height: `${listIconSize}px`,
+        display: 'inline-block',
+        textAlign: 'center',
+        marginRight: '4px',
+      }}
+    >
+      {children}
+    </ListItemIcon>
+  );
+}
+
+function SectionListItem({
   section,
   activeSection,
   onClick,
@@ -92,7 +130,8 @@ function SingleListItem({
 }): React.JSX.Element {
   return (
     <ListItem
-      key={`listItem-${section.header ?? 'null'}-${section.subHeader ?? 'null'}`}
+      key={`listItem-${sectionHeaderId(section)}`}
+      id={`listItem-${sectionHeaderId(section)}`}
       disablePadding={true}
       sx={{ ...sx, width: 'auto' }}
     >
@@ -103,21 +142,9 @@ function SingleListItem({
           activeSection.header === section.header && activeSection.subHeader === section.subHeader
         }
         onClick={onClick}
-        sx={{ borderRadius: `${listIconSize}px` }}
+        sx={{ borderRadius: `${listItemRadius}px` }}
       >
-        <ListItemIcon
-          key="listItemIcon"
-          sx={{
-            minWidth: `${listIconSize}px`,
-            width: `${listIconSize}px`,
-            height: `${listIconSize}px`,
-            display: 'inline-block',
-            textAlign: 'center',
-            marginRight: '4px',
-          }}
-        >
-          {section.icon}
-        </ListItemIcon>
+        <SingleListItemIcon>{section.icon}</SingleListItemIcon>
         <ListItemText key="listItemText" primary={section.title} sx={{ whiteSpace: 'nowrap' }} />
       </ListItemButton>
     </ListItem>
@@ -139,6 +166,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
       header: 'details',
       subHeader: null,
       title: 'Details',
+      caption: null,
       icon: '\u{1f4c7}', // Card index
       body: wallet.metadata.blurb.render({}),
     },
@@ -149,23 +177,69 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
       subHeader: null,
       title: attrGroup.displayName,
       icon: attrGroup.icon,
-      body: attrGroup.perWalletQuestion.render(wallet.metadata),
+      caption: attrGroup.perWalletQuestion.render({
+        typography: {
+          variant: 'caption',
+          fontSize: '1rem',
+        },
+        ...wallet.metadata,
+      }),
+      body: null,
       subsections: mapGroupAttributes(evalGroup, evalAttr => ({
         header: attrGroup.id,
         subHeader: evalAttr.attribute.id,
         title: evalAttr.attribute.displayName,
         icon: evalAttr.evaluation.value.icon ?? evalAttr.attribute.icon,
-        body: `
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-          quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-          cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
-          non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        `,
+        sx: {
+          backgroundColor: blend(
+            theme.palette.background.paper,
+            ratingToColor(evalAttr.evaluation.value.rating),
+            0.2,
+            1
+          ),
+        },
+        caption: evalAttr.attribute.question.render({
+          typography: {
+            variant: 'caption',
+            fontSize: '1rem',
+          },
+          ...wallet.metadata,
+        }),
+        body: (
+          <WalletAttribute
+            wallet={wallet}
+            attrGroup={attrGroup}
+            evalGroup={evalGroup}
+            evalAttr={evalAttr}
+          />
+        ),
       })),
     });
   });
+  const scrollNavigationTo = (section: Section): void => {
+    const headerId = sectionHeaderId(section);
+    if (headerId === null) {
+      return;
+    }
+    const navigation = document.getElementById('navigationListBox');
+    const listItem = document.getElementById(`listItem-${headerId}`);
+    if (navigation === null || listItem === null) {
+      return;
+    }
+    const navigationRect = navigation.getBoundingClientRect();
+    const listItemRect = listItem.getBoundingClientRect();
+    if (listItemRect.top < navigationRect.top) {
+      navigation.scrollBy({
+        top: listItemRect.top - navigationRect.top - scrollNavigationMargin,
+        behavior: 'smooth',
+      });
+    } else if (listItemRect.bottom > navigationRect.bottom) {
+      navigation.scrollBy({
+        top: listItemRect.bottom - navigationRect.bottom + scrollNavigationMargin,
+        behavior: 'smooth',
+      });
+    }
+  };
   const scrollToSection = (section: Section): void => {
     const headerId = sectionHeaderId(section);
     if (headerId === null) {
@@ -177,13 +251,14 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
     }
     setLastTargetedSection({
       target: section,
-      untilTimestamp: Date.now() + 2000,
+      untilTimestamp: Date.now() + 1250,
     });
     setActiveSection(section);
     header.scrollIntoView({ behavior: 'smooth' });
+    scrollNavigationTo(section);
   };
-  useEffect((): (() => void) => {
-    const handleScroll = (): void => {
+  const handleScroll = useMemo(
+    (): (() => void) => () => {
       const atBottom =
         window.scrollY + window.innerHeight >=
         document.body.offsetHeight - scrollPastHeaderThreshold;
@@ -221,13 +296,17 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
         }
       }
       setActiveSection(bestSection);
-    };
-
+      scrollNavigationTo(bestSection);
+    },
+    [wallet, lastTargetedSection]
+  );
+  useEffect((): (() => void) => {
     window.addEventListener('scroll', handleScroll);
     return (): void => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [wallet, lastTargetedSection]);
+  }, [wallet, lastTargetedSection, handleScroll]);
+  useEffect(handleScroll, [wallet, lastTargetedSection, handleScroll]);
 
   const scrollMarginTop = `${headerHeight + headerBottomMargin + scrollPastHeaderThreshold}px`;
 
@@ -261,6 +340,8 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
           <Box
             key="navigationBox"
             display="flex"
+            flexDirection="column"
+            gap="0px"
             sx={{
               width: drawerWidth,
               position: 'sticky',
@@ -269,34 +350,71 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
               bottom: '0px',
             }}
           >
-            <List key="navigationList">
-              {nonEmptyMap(sections, section => (
-                <React.Fragment key={sectionHeaderId(section)}>
-                  <SingleListItem
-                    section={section}
-                    activeSection={activeSection}
-                    onClick={() => {
-                      scrollToSection(richSectionToSection(section));
-                    }}
-                  />
-                  {(section.subsections?.length ?? 0) > 0 ? (
-                    <List component="div" disablePadding>
-                      {section.subsections?.map(subsection => (
-                        <SingleListItem
-                          key={sectionHeaderId(subsection)}
-                          section={subsection}
-                          activeSection={activeSection}
-                          onClick={() => {
-                            scrollToSection(richSectionToSection(subsection));
-                          }}
-                          sx={{ marginLeft: `${listIconSize * 0.75}px` }}
-                        />
-                      ))}
-                    </List>
-                  ) : null}
-                </React.Fragment>
-              ))}
-            </List>
+            <Box
+              key="navigationListBox"
+              id="navigationListBox"
+              flex="1"
+              sx={{ overflowY: 'scroll' }}
+            >
+              <List key="navigationListTop">
+                {nonEmptyMap(sections, section => (
+                  <React.Fragment key={sectionHeaderId(section)}>
+                    <SectionListItem
+                      section={section}
+                      activeSection={activeSection}
+                      onClick={() => {
+                        history.replaceState(null, '', `#${sectionHeaderId(section)}`);
+                        scrollToSection(richSectionToSection(section));
+                      }}
+                    />
+                    {(section.subsections?.length ?? 0) > 0 ? (
+                      <List component="div" disablePadding>
+                        {section.subsections?.map(subsection => (
+                          <SectionListItem
+                            key={sectionHeaderId(subsection)}
+                            section={subsection}
+                            activeSection={activeSection}
+                            onClick={() => {
+                              history.replaceState(null, '', `#${sectionHeaderId(subsection)}`);
+                              scrollToSection(richSectionToSection(subsection));
+                            }}
+                            sx={{ marginLeft: `${listIconSize * 0.75}px` }}
+                          />
+                        ))}
+                      </List>
+                    ) : null}
+                  </React.Fragment>
+                ))}
+              </List>
+            </Box>
+            <Box key="navigationListFooter" flex="0">
+              <Divider
+                key="footerDivider"
+                orientation="horizontal"
+                variant="middle"
+                flexItem={true}
+              />
+              <List key="navigationListBottom">
+                <ListItem key="listItemHome" disablePadding={true}>
+                  <ListItemButton
+                    component="a"
+                    href="/beta"
+                    disableRipple={true}
+                    key="listItemButtonHome"
+                    sx={{ borderRadius: `${listItemRadius}px` }}
+                  >
+                    <SingleListItemIcon>
+                      <HomeIcon />
+                    </SingleListItemIcon>
+                    <ListItemText
+                      key="listItemTextHome"
+                      primary={'Home'}
+                      sx={{ whiteSpace: 'nowrap' }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Box>
           </Box>
           <Box key="walletPageContent" component="main" flex="1">
             <Box key="topSpacer" height={headerBottomMargin}></Box>
@@ -309,43 +427,87 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                     variant="middle"
                     flexItem={true}
                     sx={{
-                      marginTop: '2rem',
-                      marginBottom: '2rem',
+                      width: '80%',
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                      marginTop: '1.5rem',
+                      marginBottom: '1.5rem',
                     }}
                   />
                 ) : null}
-                <StyledSection key="sectionContainer">
+                <StyledSection key="sectionContainer" sx={section.sx}>
                   <AnchorHeader
                     key="sectionHeader"
                     id={sectionHeaderId(section) ?? undefined}
                     sx={{ scrollMarginTop }}
                     variant="h4"
                     component="h2"
-                    marginTop="1rem"
-                    marginBottom="0.75rem"
+                    marginBottom="0"
+                    paddingLeft={theme.spacing(2)}
+                    paddingRight={theme.spacing(2)}
+                    onClick={e => {
+                      if (e.button === 0) {
+                        scrollToSection(richSectionToSection(section));
+                        e.preventDefault();
+                      }
+                    }}
                   >
                     {section.icon} {section.title}
                   </AnchorHeader>
-                  <Box key="sectionBody" marginBottom="1.25rem">
-                    {section.body}
-                  </Box>
+                  {section.caption === null ? null : (
+                    <Box
+                      key="sectionCaption"
+                      marginLeft={sectionIconWidth}
+                      marginBottom="1rem"
+                      paddingLeft={theme.spacing(2)}
+                      paddingRight={theme.spacing(2)}
+                      sx={{ opacity: 0.8 }}
+                    >
+                      {section.caption}
+                    </Box>
+                  )}
+                  {section.body === null ? null : (
+                    <Box
+                      key="sectionBody"
+                      paddingTop={theme.spacing(2)}
+                      paddingLeft={theme.spacing(2)}
+                      paddingRight={theme.spacing(2)}
+                    >
+                      {section.body}
+                    </Box>
+                  )}
                   {section.subsections?.map(subsection => (
-                    <Box key={sectionHeaderId(subsection)}>
+                    <StyledSubsection key={sectionHeaderId(subsection)} sx={subsection.sx}>
                       <AnchorHeader
                         key="subsectionHeader"
                         id={sectionHeaderId(subsection) ?? undefined}
                         sx={{ scrollMarginTop }}
                         variant="h5"
                         component="h3"
-                        marginTop="1rem"
-                        marginBottom="0.75rem"
+                        marginBottom="0rem"
+                        onClick={e => {
+                          if (e.button === 0) {
+                            scrollToSection(richSectionToSection(subsection));
+                            e.preventDefault();
+                          }
+                        }}
                       >
                         {subsection.icon} {subsection.title}
                       </AnchorHeader>
-                      <Box key="subsectionBody" marginBottom="1.25rem">
-                        {subsection.body}
-                      </Box>
-                    </Box>
+                      {subsection.caption === null ? null : (
+                        <Box
+                          key="subsectionCaption"
+                          marginLeft={subsectionIconWidth}
+                          marginBottom="1rem"
+                          sx={{ opacity: 0.8 }}
+                        >
+                          {subsection.caption}
+                        </Box>
+                      )}
+                      {subsection.body === null ? null : (
+                        <Box key="subsectionBody">{subsection.body}</Box>
+                      )}
+                    </StyledSubsection>
                   ))}
                 </StyledSection>
               </React.Fragment>

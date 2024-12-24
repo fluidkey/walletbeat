@@ -1,6 +1,7 @@
 import type { WithRef } from '@/beta/schema/reference';
 import type { Url } from '@/beta/schema/url';
 import type { Dict } from '@/beta/types/utils/dict';
+import type { WalletMetadata } from '../../wallet';
 
 /**
  * An enum representing when data collection or leak occurs.
@@ -157,120 +158,297 @@ export function leaksByDefault(leak: Leak): boolean {
 export interface Entity {
   /** The name of the entity to which data may be sent. */
   name: string;
-  /** Legal name of the entity, if any. */
-  legalName: string | null;
+  /**
+   * Legal name of the entity, if any.
+   * `soundsDifferent` indicates whether the legal name sounds significantly
+   * different from `name`, such that most people may not be able to tell that
+   * these names refer to the same entity.
+   */
+  legalName: { name: string; soundsDifferent: boolean } | null;
   /** Website of the entity to which data may be sent. */
   url: Url | null;
   /** The jurisdiction in which the entity is located. */
   jurisdiction: string | null;
   /** The privacy policy URL of the entity. */
   privacyPolicy: Url | null;
+  /** The Crunchbase URL of the entity, if any. */
+  crunchbase: Url | null;
 }
 
-export type QualifiedLeaks = Dict<{
-  /** Whether the entity may learn the user's IP address. */
-  ipAddress: Leak;
+/** Personal information types. */
+export enum LeakedPersonalInfo {
+  /** The user's IP address. */
+  IP_ADDRESS = 'ipAddress',
+
+  /** The user's selected pseudonym. */
+  PSEUDONYM = 'pseudonym',
+
+  /** The user's legal name. */
+  LEGAL_NAME = 'legalName',
+
+  /** The user's email. */
+  EMAIL = 'email',
+
+  /** The user's phone number. */
+  PHONE = 'phone',
 
   /**
-   * Whether the entity may learn the user's activity within the wallet
-   * (e.g. mouse click events from analytics like Matomo or Plausible).
+   * The user's contacts (e.g. when searching for friends to invite).
    */
-  walletActions: Leak;
+  CONTACTS = 'contacts',
 
-  /** Whether the entity may learn the user's wallet address. */
-  walletAddress: Leak;
+  /** The user's physical address. */
+  PHYSICAL_ADDRESS = 'physicalAddress',
+
+  /** The user's face (e.g. KYC selfie). */
+  FACE = 'face',
+
+  /** The user's CEX account(s). */
+  CEX_ACCOUNT = 'cexAccount',
+
+  /** The user's government-issued ID. */
+  GOVERNMENT_ID = 'governmentId',
+
+  /** The user's X.com account. */
+  X_DOT_COM_ACCOUNT = 'xDotComAccount',
+
+  /** The user's Farcaster account. */
+  FARCASTER_ACCOUNT = 'farcasterAccount',
+}
+
+/** Wallet-related information types. */
+export enum LeakedWalletInfo {
+  /** The user's wallet activity. */
+  WALLET_ACTIONS = 'walletActions',
+
+  /** The user's wallet address. */
+  WALLET_ADDRESS = 'walletAddress',
 
   /**
-   * How multiple addresses are handled, if at all.
-   */
-  multiAddress?: MultiAddressHandling;
-
-  /**
-   * Whether the entity may learn the user's wallet balances.
+   * The user's wallet balance.
    * This can easily be turned back into an address, because most
    * addresses' balance amount is unique.
    */
-  walletBalances: Leak;
+  WALLET_BALANCE = 'walletBalance',
 
   /**
-   * Whether the entity may learn the set of assets that are in the wallet.
+   * The set of assets that are in the wallet.
    * On wallets with many NFTs, this can be used to uniquely identify the
    * wallet.
    */
-  walletAssets: Leak;
+  WALLET_ASSETS = 'walletAssets',
 
   /**
-   * Whether the entity may learn the user's wallet transactions before
-   * they are included onchain. For example, MEV protection services
-   * usually fall under this category.
+   * The user's wallet transactions before they are included onchain.
+   * For example, MEV protection services usually fall under this category.
    */
-  mempoolTransactions: Leak;
+  MEMPOOL_TRANSACTIONS = 'mempoolTransactions',
+}
 
-  /** Whether the entity may learn a user-selected pseudonym. */
-  pseudonym: Leak;
+export type LeakedInfo = LeakedPersonalInfo | LeakedWalletInfo;
 
-  /** Whether the entity may learn the user's legal name. */
-  legalName: Leak;
+/** List of all LeakedInfos. */
+export const leakedInfos = (Object.values(LeakedPersonalInfo) as LeakedInfo[]).concat(
+  Object.values(LeakedWalletInfo)
+);
 
-  /** Whether the entity may learn the user's email. */
-  email: Leak;
+/**
+ * Rough ordering score for comparing LeakedInfo.
+ * Higher score means the data is more sensitive.
+ */
+function leakedInfoScore(leakedInfo: LeakedInfo): number {
+  switch (leakedInfo) {
+    case LeakedPersonalInfo.IP_ADDRESS:
+      return 0;
+    case LeakedWalletInfo.WALLET_ACTIONS:
+      return 1;
+    case LeakedWalletInfo.WALLET_ASSETS:
+      return 2;
+    case LeakedWalletInfo.WALLET_BALANCE:
+      return 3;
+    case LeakedWalletInfo.WALLET_ADDRESS:
+      return 4;
+    case LeakedWalletInfo.MEMPOOL_TRANSACTIONS:
+      return 5;
+    case LeakedPersonalInfo.PSEUDONYM:
+      return 6;
 
-  /** Whether the entity may learn the user's phone number. */
-  phone: Leak;
+    // All the social-media-y entries are roughly the same as email.
+    case LeakedPersonalInfo.FARCASTER_ACCOUNT:
+      return 7;
+    case LeakedPersonalInfo.X_DOT_COM_ACCOUNT:
+      return 7;
+    case LeakedPersonalInfo.EMAIL:
+      return 7;
 
-  /**
-   * Whether the entity may learn of the user's contacts
-   * (e.g. when searching for friends to invite).
-   */
-  contacts: Leak;
+    case LeakedPersonalInfo.LEGAL_NAME:
+      return 8;
+    case LeakedPersonalInfo.PHONE:
+      return 9;
+    case LeakedPersonalInfo.CONTACTS:
+      return 10;
+    case LeakedPersonalInfo.PHYSICAL_ADDRESS:
+      return 11;
+    case LeakedPersonalInfo.CEX_ACCOUNT:
+      return 12;
+    case LeakedPersonalInfo.FACE:
+      return 13;
+    case LeakedPersonalInfo.GOVERNMENT_ID:
+      return 14;
+  }
+}
 
-  /** Whether the entity may learn the user's physical address. */
-  physicalAddress: Leak;
+/** The type of information that a LeakedInfo is about. */
+export enum LeakedInfoType {
+  /** Data related to the user's wallet. */
+  WALLET_RELATED = 'walletRelated',
 
-  /** Whether the entity may learn the user's face (e.g. KYC selfie). */
-  face: Leak;
+  /** Data related to the user themselves. */
+  PERSONAL_DATA = 'personalData',
+}
 
-  /** Whether the entity may learn the user's CEX account(s). */
-  cexAccount: Leak;
+/** Get the type of information that a LeakedInfo is about. */
+export function leakedInfoType(leakedInfo: LeakedInfo): LeakedInfoType {
+  switch (leakedInfo) {
+    case LeakedPersonalInfo.IP_ADDRESS:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedWalletInfo.WALLET_ACTIONS:
+      return LeakedInfoType.WALLET_RELATED;
+    case LeakedWalletInfo.WALLET_ASSETS:
+      return LeakedInfoType.WALLET_RELATED;
+    case LeakedWalletInfo.WALLET_BALANCE:
+      return LeakedInfoType.WALLET_RELATED;
+    case LeakedWalletInfo.WALLET_ADDRESS:
+      return LeakedInfoType.WALLET_RELATED;
+    case LeakedWalletInfo.MEMPOOL_TRANSACTIONS:
+      return LeakedInfoType.WALLET_RELATED;
+    case LeakedPersonalInfo.PSEUDONYM:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.FARCASTER_ACCOUNT:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.X_DOT_COM_ACCOUNT:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.EMAIL:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.LEGAL_NAME:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.PHONE:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.CONTACTS:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.PHYSICAL_ADDRESS:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.CEX_ACCOUNT:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.FACE:
+      return LeakedInfoType.PERSONAL_DATA;
+    case LeakedPersonalInfo.GOVERNMENT_ID:
+      return LeakedInfoType.PERSONAL_DATA;
+  }
+}
 
-  /** Whether the entity may learn the user's government-issued ID. */
-  govId: Leak;
-}>;
+/** Compare two LeakedInfo scores (higher score is more sensitive). */
+export function compareLeakedInfo(a: LeakedInfo, b: LeakedInfo): number {
+  return leakedInfoScore(a) - leakedInfoScore(b);
+}
 
-export type Leaks = WithRef<Partial<QualifiedLeaks>>;
+/** Human-friendly names to refer to the type of info being leaked. */
+export function leakedInfoName(
+  leakedInfo: LeakedInfo,
+  walletMetadata?: WalletMetadata
+): { short: string; long: string } {
+  switch (leakedInfo) {
+    case LeakedPersonalInfo.IP_ADDRESS:
+      return { short: 'IP', long: 'IP address' };
+    case LeakedWalletInfo.WALLET_ACTIONS:
+      return { short: 'wallet actions', long: 'wallet actions' };
+    case LeakedWalletInfo.WALLET_ASSETS:
+      return { short: 'wallet assets', long: 'wallet asset types' };
+    case LeakedWalletInfo.WALLET_BALANCE:
+      return { short: 'wallet balance', long: 'wallet assets and balances' };
+    case LeakedWalletInfo.WALLET_ADDRESS:
+      return { short: 'wallet address', long: 'wallet address' };
+    case LeakedWalletInfo.MEMPOOL_TRANSACTIONS:
+      return { short: 'outgoing transactions', long: 'outgoing wallet transactions' };
+    case LeakedPersonalInfo.PSEUDONYM:
+      if (walletMetadata?.pseudonymType !== undefined) {
+        return { short: walletMetadata.pseudonymType, long: walletMetadata.pseudonymType };
+      }
+      return { short: 'username', long: 'pseudonym' };
+    case LeakedPersonalInfo.FARCASTER_ACCOUNT:
+      return { short: 'Farcaster account', long: 'Farcaster account' };
+    case LeakedPersonalInfo.X_DOT_COM_ACCOUNT:
+      return { short: 'X.com account', long: 'X.com account' };
+    case LeakedPersonalInfo.EMAIL:
+      return { short: 'email', long: 'email address' };
+    case LeakedPersonalInfo.LEGAL_NAME:
+      return { short: 'name', long: 'legal name' };
+    case LeakedPersonalInfo.PHONE:
+      return { short: 'phone', long: 'phone number' };
+    case LeakedPersonalInfo.CONTACTS:
+      return { short: 'contacts', long: 'personal contact list' };
+    case LeakedPersonalInfo.PHYSICAL_ADDRESS:
+      return { short: 'physical address', long: 'geographical address' };
+    case LeakedPersonalInfo.CEX_ACCOUNT:
+      return { short: 'CEX account', long: 'centralized exchange account' };
+    case LeakedPersonalInfo.FACE:
+      return { short: 'face', long: 'facial recognition data' };
+    case LeakedPersonalInfo.GOVERNMENT_ID:
+      return { short: 'government ID', long: 'government-issued ID' };
+  }
+}
+
+/** What data is leaked from an entity; fully qualified. */
+export type QualifiedLeaks<T extends LeakedInfo> = Dict<
+  Record<T, Leak> & {
+    /**
+     * How multiple addresses are handled, if at all.
+     */
+    multiAddress?: MultiAddressHandling;
+  }
+>;
+
+/** A partially-known set of leaks, with reference information. */
+export type Leaks = WithRef<Partial<QualifiedLeaks<LeakedInfo>>>;
+
+/** A partially-known set of personal info leaks, with reference information. */
+export type PersonalInfoLeaks = WithRef<Partial<QualifiedLeaks<LeakedPersonalInfo>>>;
 
 /**
  * Infer what leaks from a given partial set of known leaks.
  * @param leaks Partial set of known leaks.
  * @returns A fully-qualified set of leaks.
  */
-export function inferLeaks(leaks: Partial<Leaks>): WithRef<QualifiedLeaks> {
+export function inferLeaks(leaks: Leaks): WithRef<QualifiedLeaks<LeakedInfo>> {
   const first = (...ls: Array<Leak | undefined>): Leak | undefined => ls.find(l => l !== undefined);
   return {
     ipAddress: leaks.ipAddress ?? Leak.NEVER,
     walletActions: leaks.walletActions ?? Leak.NEVER,
     walletAddress:
-      first(leaks.walletAddress, leaks.mempoolTransactions, leaks.walletBalances) ?? Leak.NEVER,
+      first(leaks.walletAddress, leaks.mempoolTransactions, leaks.walletBalance) ?? Leak.NEVER,
     multiAddress: leaks.multiAddress,
-    walletBalances:
-      first(leaks.walletBalances, leaks.walletAddress, leaks.mempoolTransactions) ?? Leak.NEVER,
+    walletBalance:
+      first(leaks.walletBalance, leaks.walletAddress, leaks.mempoolTransactions) ?? Leak.NEVER,
     walletAssets:
       first(
         leaks.walletAssets,
         leaks.walletAddress,
-        leaks.walletBalances,
+        leaks.walletBalance,
         leaks.mempoolTransactions
       ) ?? Leak.NEVER,
     mempoolTransactions: leaks.mempoolTransactions ?? Leak.NEVER,
     pseudonym: first(leaks.pseudonym, leaks.email) ?? Leak.NEVER, // Email addresses usually contains at least pseudonym-level information.
-    legalName: first(leaks.legalName, leaks.govId) ?? Leak.NEVER,
+    farcasterAccount: leaks.farcasterAccount ?? Leak.NEVER,
+    xDotComAccount: leaks.xDotComAccount ?? Leak.NEVER,
+    legalName: first(leaks.legalName, leaks.governmentId) ?? Leak.NEVER,
     email: first(leaks.email, leaks.cexAccount) ?? Leak.NEVER,
     phone: first(leaks.phone, leaks.cexAccount) ?? Leak.NEVER,
     contacts: leaks.contacts ?? Leak.NEVER,
-    physicalAddress: first(leaks.physicalAddress, leaks.cexAccount, leaks.govId) ?? Leak.NEVER,
-    face: first(leaks.face, leaks.govId) ?? Leak.NEVER,
+    physicalAddress:
+      first(leaks.physicalAddress, leaks.cexAccount, leaks.governmentId) ?? Leak.NEVER,
+    face: first(leaks.face, leaks.governmentId) ?? Leak.NEVER,
     cexAccount: leaks.cexAccount ?? Leak.NEVER,
-    govId: leaks.govId ?? Leak.NEVER,
+    governmentId: leaks.governmentId ?? Leak.NEVER,
     ref: leaks.ref,
   };
 }
@@ -289,6 +467,9 @@ export interface EntityData {
  * A collection of data that a wallet collects.
  */
 export interface DataCollection {
-  /** The data that a wallet collects. */
-  collected: EntityData[];
+  /** Personal data exported out onchain in public view. */
+  onchain: PersonalInfoLeaks;
+
+  /** The data collected by corporate entities. */
+  collectedByEntities: EntityData[];
 }

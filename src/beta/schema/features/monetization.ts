@@ -22,23 +22,23 @@ export enum MonetizationStrategy {
 export function monetizationStrategyName(monetization: MonetizationStrategy): string {
   switch (monetization) {
     case MonetizationStrategy.SELF_FUNDED:
-      return 'Self-funded';
+      return 'self-funding';
     case MonetizationStrategy.DONATIONS:
-      return 'Donations';
+      return 'donations';
     case MonetizationStrategy.ECOSYSTEM_GRANTS:
-      return 'Ecosystem grants';
+      return 'ecosystem grants';
     case MonetizationStrategy.PUBLIC_OFFERING:
-      return 'Public offering';
+      return 'public offering';
     case MonetizationStrategy.VENTURE_CAPITAL:
-      return 'Venture capital';
+      return 'venture capital';
     case MonetizationStrategy.HIDDEN_CONVENIENCE_FEES:
-      return 'Hidden fees';
+      return 'hidden fees';
     case MonetizationStrategy.TRANSPARENT_CONVENIENCE_FEES:
-      return 'Transparent fees';
+      return 'transparent fees';
     case MonetizationStrategy.GOVERNANCE_TOKEN_LOW_FLOAT:
-      return 'Low-float governance token';
+      return 'a low-float governance token';
     case MonetizationStrategy.GOVERNANCE_TOKEN_MOSTLY_DISTRIBUTED:
-      return 'Distributed governance token';
+      return 'a well-distributed governance token';
   }
 }
 

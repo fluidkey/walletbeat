@@ -42,11 +42,19 @@ export interface WalletMetadata {
    */
   blurb: Paragraph;
 
+  /**
+   * If the wallet has a built-in username scheme, this should refer to
+   * a human-friendly way to refer to this scheme.
+   * For example, for Coinbase Wallet which offers "cb.id" usernames,
+   * this should be "cb.id handle" or similar.
+   */
+  pseudonymType?: string;
+
   /** External link to the wallet's website. */
   url: Url;
 
   /** Link to the wallet's source code repository, if public. */
-  repoUrl?: Url;
+  repoUrl: Url | null;
 
   /** The last time the wallet information was updated. */
   lastUpdated: string;

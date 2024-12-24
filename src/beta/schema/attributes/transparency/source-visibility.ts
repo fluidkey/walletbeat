@@ -2,49 +2,72 @@ import type { ResolvedFeatures } from '@/beta/schema/features';
 import { licenseSourceIsVisible } from '@/beta/schema/features/license';
 import { Rating, type Value, type Attribute, type Evaluation } from '@/beta/schema/attributes';
 import { pickWorstRating, unrated } from '../common';
-import { sentence } from '@/beta/types/text';
+import { component, paragraph, sentence } from '@/beta/types/text';
 import type { WalletMetadata } from '@/beta/schema/wallet';
+import { SourceVisibilityDetails } from '@/beta/components/ui/molecules/attributes/transparency/SourceVisibilityDetails';
 
 const brand = 'attributes.transparency.source_visibility';
 export type SourceVisibilityValue = Value & {
   __brand: 'attributes.transparency.source_visibility';
 };
 
-const sourcePublic: SourceVisibilityValue = {
-  id: 'public',
-  rating: Rating.YES,
-  displayName: 'Source code publicly available',
-  walletExplanation: sentence(
-    (walletMetadata: WalletMetadata) =>
-      `The source code for ${walletMetadata.displayName} is available to be viewed by the public.`
-  ),
-  __brand: brand,
+const sourcePublic: Evaluation<SourceVisibilityValue> = {
+  value: {
+    id: 'public',
+    rating: Rating.YES,
+    displayName: 'Source code publicly available',
+    shortExplanation: sentence(
+      (walletMetadata: WalletMetadata) => `
+      The source code for ${walletMetadata.displayName} is public.
+    `
+    ),
+    __brand: brand,
+  },
+  details: component(SourceVisibilityDetails),
 };
 
-const sourcePrivate: SourceVisibilityValue = {
-  id: 'private',
-  rating: Rating.NO,
-  displayName: 'Source code not publicly available',
-  walletExplanation: sentence(
-    (walletMetadata: WalletMetadata) =>
-      `The source code for ${walletMetadata.displayName} is not available to the public.`
+const sourcePrivate: Evaluation<SourceVisibilityValue> = {
+  value: {
+    id: 'private',
+    rating: Rating.NO,
+    displayName: 'Source code not publicly available',
+    shortExplanation: sentence(
+      (walletMetadata: WalletMetadata) => `
+      The source code for ${walletMetadata.displayName} is not public.
+    `
+    ),
+    __brand: brand,
+  },
+  details: paragraph(
+    ({ wallet }) => `
+    The source code for ${wallet.metadata.displayName} is not available
+    to the public.
+  `
   ),
-  __brand: brand,
 };
 
 export const sourceVisibility: Attribute<SourceVisibilityValue> = {
   id: 'source_visibility',
   icon: '\u{1f35d}', // Spaghetti
   displayName: 'Source visibility',
-  explanationValues: [sourcePublic, sourcePrivate],
+  question: sentence('Is the source code for the wallet visible to the public?'),
+  why: paragraph(`
+    When using a wallet, users are entrusting it to preserve their funds
+    safely. This requires a high level of trust in the wallet's source code
+    and in the wallet's development team. By making the wallet's source code
+    visible to the public, its source code can be more easily inspected for
+    security vulnerabilities and for potential malicious code.
+    This improves the wallet's security and trustworthiness.
+  `),
+  explanationValues: [sourcePublic.value, sourcePrivate.value],
   evaluate: (features: ResolvedFeatures): Evaluation<SourceVisibilityValue> => {
     if (features.license === null) {
-      return { value: unrated(sourceVisibility, brand) };
+      return unrated(sourceVisibility, brand, null);
     }
     if (licenseSourceIsVisible(features.license)) {
-      return { value: sourcePublic };
+      return sourcePublic;
     }
-    return { value: sourcePrivate };
+    return sourcePrivate;
   },
   aggregate: pickWorstRating<SourceVisibilityValue>,
 };

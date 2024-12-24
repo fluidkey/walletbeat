@@ -1,22 +1,35 @@
 import { nonEmptyValues } from '@/beta/types/utils/non-empty';
 import { type Attribute, type Evaluation, Rating, type Value } from '../attributes';
 import type { AtLeastOneVariant, Variant } from '../variants';
-import { sentence } from '@/beta/types/text';
+import { component, sentence } from '@/beta/types/text';
+import { UnratedAttribute } from '@/beta/components/ui/molecules/attributes/UnratedAttribute';
 
 /**
  * Helper for constructing "Unrated" values.
  * @param brand Brand string to distinguish `Value` subtypes.
  */
-export function unrated<V extends Value, T>(
+export function unrated<V extends Value>(
   attribute: Attribute<V>,
-  brand: T
-): Value & { __brand: T } {
-  return {
+  brand: string,
+  extraProps: Omit<V, keyof (Value & { __brand: string })> extends Record<string, never>
+    ? null
+    : Omit<V, keyof (Value & { __brand: string })>
+): Evaluation<V> {
+  const value: Value = {
     id: 'unrated',
     rating: Rating.UNRATED,
     displayName: `${attribute.displayName}: Unrated`,
-    walletExplanation: sentence('Walletbeat lacks the information needed to determine this.'),
+    shortExplanation: sentence('Walletbeat lacks the information needed to determine this.'),
+  };
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Combining the fields of Value with the fields of V that are not in Value creates a correct V-typed object.
+  const v: V = {
     __brand: brand,
+    ...value,
+    ...(extraProps ?? {}),
+  } as unknown as V;
+  return {
+    value: v,
+    details: component(UnratedAttribute),
   };
 }
 

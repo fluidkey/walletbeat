@@ -3,8 +3,8 @@ import type { ResolvedFeatures } from './features';
 import type { AtLeastOneVariant } from './variants';
 import type { Url } from './url';
 import type { MaybeUnratedScore, Score } from './score';
-import type { Sentence } from '@/beta/types/text';
-import type { WalletMetadata } from './wallet';
+import type { Paragraph, Renderable, Sentence } from '@/beta/types/text';
+import type { RatedWallet, WalletMetadata } from './wallet';
 
 /**
  * Rating is an enum that should be visually meaningful.
@@ -33,6 +33,38 @@ export enum Rating {
    * Yes means the wallet fully fulfills this attribute.
    */
   YES = 'YES',
+}
+
+/**
+ * Convert a rating to the icon displayed on the slice tooltip.
+ */
+export function ratingToIcon(rating: Rating): string {
+  switch (rating) {
+    case Rating.NO:
+      return '\u{274c}'; // Red X
+    case Rating.PARTIAL:
+      return '\u{26a0}'; // Warning sign
+    case Rating.YES:
+      return '\u{2705}'; // Green checkmark
+    case Rating.UNRATED:
+      return '\u{2753}'; // Question mark
+  }
+}
+
+/**
+ * Convert a rating to a color.
+ */
+export function ratingToColor(rating: Rating): string {
+  switch (rating) {
+    case Rating.NO:
+      return '#FF0000';
+    case Rating.PARTIAL:
+      return '#FFA500';
+    case Rating.YES:
+      return '#008000';
+    case Rating.UNRATED:
+      return '#808080';
+  }
 }
 
 /**
@@ -77,7 +109,7 @@ export interface Value {
    * Should be similar to `displayName` but may be formatted with the name
    * of the wallet.
    */
-  walletExplanation: Sentence<WalletMetadata>;
+  shortExplanation: Sentence<WalletMetadata>;
 
   /**
    * The visual representation of this value.
@@ -111,6 +143,11 @@ export function defaultRatingScore(rating: Rating): Score {
   }
 }
 
+export interface EvaluationData<V extends Value> {
+  value: V;
+  wallet: RatedWallet;
+}
+
 /**
  * Evaluation is the result of evaluating how well a specific wallet fulfills
  * an attribute. Unlike Value, an Evaluation is wallet-specific.
@@ -120,6 +157,25 @@ export interface Evaluation<V extends Value> {
    * The value representing how well the wallet fulfills the attribute.
    */
   value: V;
+
+  /**
+   * A long, human-readable explanation of this evaluation.
+   * Displayed on the per-wallet page.
+   * This can be more verbose but should still avoid repeating information
+   * already stated in the attribute explanation.
+   */
+  details: Renderable<EvaluationData<V>>;
+
+  /**
+   * An optional paragraph explaining the consequence of this value on the
+   * user or to the wallet software.
+   * For example, when evaluating an attribute like open-source licensing,
+   * the "long explanation" should explain which license the wallet is using
+   * and why it does or does not meet FOSS criteria, whereas this paragraph
+   * should explain the upsides or downsides of FOSS licensing on the wallet
+   * software (e.g. "FOSS means more contributors").
+   */
+  impact?: Paragraph<EvaluationData<V>>;
 
   /** A link to a relevant URL about this wallet's implementation of the
    * attribute. For attributes that the wallet does not fulfill, this can
@@ -155,6 +211,12 @@ export interface Attribute<V extends Value> {
    * Should be no more than 3 or 4 words.
    */
   displayName: string;
+
+  /** A question explaining what question the attribute is answering. */
+  question: Sentence<WalletMetadata>;
+
+  /** A paragraph explaining why this attribute is important to users. */
+  why: Paragraph;
 
   /**
    * A list of possible values that this attribute may have, with the goal

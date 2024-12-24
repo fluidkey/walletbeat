@@ -171,7 +171,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
               url={row.wallet.metadata.url}
               defaultLabel={`${row.wallet.metadata.displayName} website`}
             />
-            {row.wallet.metadata.repoUrl === undefined ? null : (
+            {row.wallet.metadata.repoUrl === null ? null : (
               <ExternalLink url={row.wallet.metadata.repoUrl} defaultLabel="Code" />
             )}
           </Typography>

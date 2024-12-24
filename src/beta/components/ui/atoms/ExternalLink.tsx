@@ -4,6 +4,7 @@ import type React from 'react';
 import { labeledUrl, type Url } from '@/beta/schema/url';
 import { OpenInNewRounded } from '@mui/icons-material';
 import { Box, Link, type TypographyOwnProps } from '@mui/material';
+import { useState } from 'react';
 
 export function ExternalLink({
   url,
@@ -11,28 +12,42 @@ export function ExternalLink({
   color = undefined,
   style = undefined,
   rel = 'noopener noreferrer nofollow',
+  children = undefined,
 }: {
   url: Url;
   defaultLabel?: string;
   color?: TypographyOwnProps['color'];
   style?: React.CSSProperties;
   rel?: string;
+  children?: React.ReactNode;
 }): React.JSX.Element {
   const labeled = labeledUrl(url, defaultLabel);
+  const [hovered, setHovered] = useState(false);
   return (
-    <Link
-      href={labeled.url}
-      target="_blank"
-      rel={rel}
-      color={color}
-      style={style}
-      display="flex"
-      flexDirection="row"
-      alignItems="end"
-      gap="2px"
-    >
-      <Box>{labeled.label}</Box>
-      <OpenInNewRounded color="inherit" fontSize="inherit" />
-    </Link>
+    <Box component="span" display="inline-block">
+      <Link
+        href={labeled.url}
+        target="_blank"
+        rel={rel}
+        color={color}
+        style={style}
+        display="flex"
+        flexDirection="row"
+        gap="2px"
+        alignItems="baseline"
+        underline="none"
+        onMouseEnter={() => { setHovered(true); }}
+        onMouseLeave={() => { setHovered(false); }}
+      >
+        <Box
+          component="span"
+          display="inline-block"
+          sx={{ textDecoration: hovered ? 'underline' : 'inherit' }}
+        >
+          {children ?? labeled.label}
+        </Box>{' '}
+        <OpenInNewRounded color="inherit" fontSize="inherit" />
+      </Link>
+    </Box>
   );
 }
