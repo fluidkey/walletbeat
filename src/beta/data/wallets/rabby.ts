@@ -24,7 +24,8 @@ export const rabby: Wallet = {
     privacy: {
       dataCollection: {
         browser: {
-          collected: [
+          onchain: {},
+          collectedByEntities: [
             {
               // The code refers to this by `api.rabby.io`, but Rabby is wholly owned by DeBank.
               entity: deBank,
@@ -80,8 +81,14 @@ export const rabby: Wallet = {
         {
           explanation: 'Rabby is owned by DeBank, which is funded by venture capital.',
           url: [
-            'https://www.crunchbase.com/funding_round/debank-series-a--65945a04',
-            'https://www.crunchbase.com/funding_round/debank-series-b--44225a21',
+            {
+              label: 'Series A',
+              url: 'https://www.crunchbase.com/funding_round/debank-series-a--65945a04',
+            },
+            {
+              label: 'Series B',
+              url: 'https://www.crunchbase.com/funding_round/debank-series-b--44225a21',
+            },
           ],
         },
       ],

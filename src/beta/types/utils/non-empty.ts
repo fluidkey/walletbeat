@@ -10,7 +10,12 @@ export type NonEmptyRecord<K extends string | number | symbol, V> = {
 /**
  * An array that is guaranteed to have at least one element.
  */
-export type NonEmptyArray<T> = T[] & [T, ...T[]];
+export type NonEmptyArray<T> = T[] & ([T, ...T[]] | [...T[], T]);
+
+/** Type predicate for NonEmptyArray. */
+export function isNonEmptyArray<T>(arr: T[]): arr is NonEmptyArray<T> {
+  return arr.length > 0;
+}
 
 /**
  * Like Object.keys but guarantees at least one key.
@@ -82,4 +87,34 @@ export function nonEmptyRemap<K extends string | number | symbol, V1, V2>(
  */
 export function nonEmptyGet<T>(arr: NonEmptyArray<T>): T {
   return arr[0];
+}
+
+/** Return a sorted copy of the array. */
+export function nonEmptySorted<T>(
+  arr: NonEmptyArray<T>,
+  compare: (a: T, b: T) => number,
+  reverse?: boolean
+): NonEmptyArray<T> {
+  if (reverse === true) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we know the input array was non-empty.
+    return arr.toSorted((a, b) => compare(b, a)) as NonEmptyArray<T>;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we know the input array was non-empty.
+  return arr.toSorted(compare) as NonEmptyArray<T>;
+}
+
+/**
+ * Get the first element of the array as sorted by the given comparison
+ * function. Does not modify the original array.
+ * @param arr The array from which to get the element.
+ * @param compare The comparison function.
+ * @param reverse Whether to sort in descending order.
+ * @returns The first element of the array if it was sorted.
+ */
+export function nonEmptyFirst<T>(
+  arr: NonEmptyArray<T>,
+  compare: (a: T, b: T) => number,
+  reverse?: boolean
+): T {
+  return arr.toSorted(compare)[reverse === true ? arr.length - 1 : 0];
 }

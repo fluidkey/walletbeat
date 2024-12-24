@@ -1,7 +1,6 @@
 import type { ResolvedWallet } from '@/beta/schema/wallet';
 import { type SvgIconComponent, UnfoldLess, UnfoldMore } from '@mui/icons-material';
-import { Box, Tooltip, Typography } from '@mui/material';
-import Image from 'next/image';
+import { Box, Link, Tooltip, Typography } from '@mui/material';
 import type React from 'react';
 import { shortRowHeight, expandedRowHeight } from '../../constants';
 import { ExternalLink } from '../atoms/ExternalLink';
@@ -15,6 +14,7 @@ import MonitorIcon from '@mui/icons-material/Monitor';
 import type { WalletRowStateHandle } from '../WalletTableState';
 import { IconButton } from '../atoms/IconButton';
 import theme from '../../ThemeRegistry/theme';
+import { WalletIcon } from '../atoms/WalletIcon';
 
 const walletIconSize = shortRowHeight / 2;
 
@@ -100,23 +100,22 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
             {row.expanded ? <UnfoldLess /> : <UnfoldMore />}
           </IconButton>
         </Box>
-        <Box
-          sx={{ ...row.rowWideStyle }}
+        <Link
+          href={`/beta/wallet/${row.wallet.metadata.id}`}
+          color="text.primary"
+          underline="hover"
           display="flex"
-          flexDirection="column"
-          justifyContent="center"
+          flex="1"
+          gap="inherit"
+          sx={row.rowWideStyle}
         >
-          <Image
-            alt={row.wallet.metadata.displayName}
-            width={walletIconSize}
-            height={walletIconSize}
-            src={`/images/wallets/${row.wallet.metadata.id}.${row.wallet.metadata.iconExtension}`}
-            style={{ filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.1))' }}
-          />
-        </Box>
-        <Box flex="1" sx={row.rowWideStyle}>
-          <Typography variant="subtitle1">{row.wallet.metadata.displayName}</Typography>
-        </Box>
+          <Box display="flex" flexDirection="column" justifyContent="center">
+            <WalletIcon walletMetadata={row.wallet.metadata} iconSize={walletIconSize} />
+          </Box>
+          <Box flex="1" sx={row.rowWideStyle}>
+            <Typography variant="subtitle1">{row.wallet.metadata.displayName}</Typography>
+          </Box>
+        </Link>
 
         <Box display="flex" flexDirection="row" gap="0px">
           {row.table.variantSelected !== null &&
@@ -172,7 +171,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
               url={row.wallet.metadata.url}
               defaultLabel={`${row.wallet.metadata.displayName} website`}
             />
-            {row.wallet.metadata.repoUrl === undefined ? null : (
+            {row.wallet.metadata.repoUrl === null ? null : (
               <ExternalLink url={row.wallet.metadata.repoUrl} defaultLabel="Code" />
             )}
           </Typography>

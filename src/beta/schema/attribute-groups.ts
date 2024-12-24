@@ -166,6 +166,29 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
 }
 
 /**
+ * Iterate over all attribute groups in a tree, calling `fn` with each group.
+ */
+export function mapAttributeGroups<T>(
+  tree: EvaluationTree,
+  fn: <Vs extends ValueSet>(attrGroup: AttributeGroup<Vs>, evalGroup: EvaluatedGroup<Vs>) => T
+): T[] {
+  return Object.entries(attributeTree).map(([groupName, attrGroup]) =>
+    fn(attrGroup, tree[groupName])
+  );
+}
+
+/**
+ * Iterate over all attributes in an attribute group, calling `fn` with each
+ * attribute.
+ */
+export function mapGroupAttributes<T, Vs extends ValueSet>(
+  evalGroup: EvaluatedGroup<Vs>,
+  fn: <V extends Value>(evalAttr: EvaluatedAttribute<V>) => T
+): T[] {
+  return Object.values(evalGroup).map(fn);
+}
+
+/**
  * Given an evaluation tree as template, call `fn` with a getter function
  * that can return that attribute for any given tree.
  * Useful to compare multiple trees of attributes, by calling `getter` on

@@ -17,7 +17,15 @@
  */
 
 import { nonEmptyGet, type NonEmptyArray } from '@/beta/types/utils/non-empty';
-import { getUrlLabel, isLabeledUrl, isUrl, labeledUrl, type LabeledUrl, type Url } from './url';
+import {
+  getUrlLabel,
+  isLabeledUrl,
+  isUrl,
+  labeledUrl,
+  mergeLabeledUrls,
+  type LabeledUrl,
+  type Url,
+} from './url';
 
 /**
  * A loose reference which can be converted to a FullyQualifiedReference.
@@ -53,7 +61,9 @@ export interface FullyQualifiedReference {
 type Reference = Url | LooseReference | FullyQualifiedReference;
 
 /** Type predicate for FullyQualifiedReference. */
-function isFullyQualified(reference: Reference): reference is FullyQualifiedReference {
+export function isFullyQualifiedReference(
+  reference: Reference
+): reference is FullyQualifiedReference {
   return typeof reference === 'object' && Object.hasOwn(reference, 'urls');
 }
 
@@ -70,7 +80,7 @@ function toFullyQualified(reference: Reference): FullyQualifiedReference[] {
   if (isLabeledUrl(reference)) {
     return [{ urls: [reference] }];
   }
-  if (isFullyQualified(reference)) {
+  if (isFullyQualifiedReference(reference)) {
     return [reference];
   }
   if (isUrl(reference.url)) {
@@ -132,5 +142,32 @@ export function refs<T>(withRef: WithRef<T>): FullyQualifiedReference[] {
       qualifiedRefs.push(qualRef);
     }
   }
-  return qualifiedRefs;
+  return mergeRefs(...qualifiedRefs);
+}
+
+/** Deduplicate and merge references in `refs`. */
+export function mergeRefs(...refs: FullyQualifiedReference[]): FullyQualifiedReference[] {
+  const byExplanation = new Map<string, FullyQualifiedReference>();
+  for (const ref of refs) {
+    const explanation = ref.explanation ?? '';
+    const existing = byExplanation.get(explanation);
+    if (existing === undefined) {
+      byExplanation.set(explanation, ref);
+      continue;
+    }
+    let newUrls = existing.urls;
+    for (const url of ref.urls) {
+      newUrls = mergeLabeledUrls(newUrls, url);
+    }
+    byExplanation.set(explanation, {
+      urls: newUrls,
+      explanation: existing.explanation ?? ref.explanation,
+      lastRetrieved: existing.lastRetrieved ?? ref.lastRetrieved,
+    });
+  }
+  const mergedRefs: FullyQualifiedReference[] = [];
+  byExplanation.forEach(ref => {
+    mergedRefs.push(ref);
+  });
+  return mergedRefs;
 }

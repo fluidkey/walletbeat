@@ -6,6 +6,9 @@ import { binance } from '../entities/binance';
 import { openExchangeRates } from '../entities/open-exchange-rates';
 import { polymutex } from '../contributors/polymutex';
 import { paragraph } from '@/beta/types/text';
+import { merkleManufactory } from '../entities/merkle-manufactory';
+import { pimlico } from '../entities/pimlico';
+import { honeycomb } from '../entities/honeycomb';
 
 export const daimo: Wallet = {
   metadata: {
@@ -17,6 +20,7 @@ export const daimo: Wallet = {
       It focuses on cheap stablecoin payments and fast onramp and
       offramp of USD / USDC with minimal fees.
     `),
+    pseudonymType: 'Daimo username',
     url: 'https://daimo.com',
     repoUrl: 'https://github.com/daimo-eth/daimo',
     contributors: [polymutex],
@@ -26,7 +30,15 @@ export const daimo: Wallet = {
     multiAddress: true,
     privacy: {
       dataCollection: {
-        collected: [
+        onchain: {
+          pseudonym: Leak.ALWAYS,
+          ref: {
+            explanation:
+              "Creating a Daimo wallet creates a transaction publicly registering your name and address in Daimo's nameRegistry contract on Ethereum.",
+            url: 'https://github.com/daimo-eth/daimo/blob/e1ddce7c37959d5cec92b05608ce62f93f3316b7/packages/daimo-api/src/contract/nameRegistry.ts#L183-L197',
+          },
+        },
+        collectedByEntities: [
           {
             entity: daimoInc,
             leaks: {
@@ -37,11 +49,58 @@ export const daimo: Wallet = {
               },
               mempoolTransactions: Leak.ALWAYS,
               pseudonym: Leak.ALWAYS,
+              ref: {
+                explanation:
+                  'Wallet operations are routed through Daimo.com servers without proxying.',
+                url: 'https://github.com/daimo-eth/daimo/blob/e1ddce7c37959d5cec92b05608ce62f93f3316b7/packages/daimo-api/src/network/viemClient.ts#L35-L50',
+              },
+            },
+          },
+          {
+            entity: pimlico,
+            leaks: {
+              ipAddress: Leak.ALWAYS,
+              walletAddress: Leak.ALWAYS,
+              multiAddress: {
+                type: MultiAddressPolicy.ACTIVE_ADDRESS_ONLY,
+              },
+              mempoolTransactions: Leak.ALWAYS,
+              ref: {
+                explanation:
+                  'Sending bundled transactions uses the Pimlico API via api.pimlico.io as Paymaster.',
+                url: [
+                  'https://github.com/daimo-eth/daimo/blob/e1ddce7c37959d5cec92b05608ce62f93f3316b7/packages/daimo-api/src/network/bundlerClient.ts#L131-L133',
+                ],
+              },
+            },
+          },
+          {
+            entity: honeycomb,
+            leaks: {
+              ipAddress: Leak.ALWAYS,
+              walletAddress: Leak.ALWAYS,
+              multiAddress: {
+                type: MultiAddressPolicy.ACTIVE_ADDRESS_ONLY,
+              },
+              pseudonym: Leak.ALWAYS,
+              ref: {
+                explanation:
+                  'Daimo records telemetry events to Honeycomb. This data includes your Daimo username. Since this username is also linked to your wallet address onchain, Honeycomb can associate the username they receive with your wallet address.',
+                url: [
+                  'https://github.com/daimo-eth/daimo/blob/e1ddce7c37959d5cec92b05608ce62f93f3316b7/packages/daimo-api/src/server/telemetry.ts#L101-L111',
+                ],
+              },
+            },
+          },
+          {
+            entity: daimoInc,
+            leaks: {
+              farcasterAccount: Leak.OPT_IN,
               ref: [
                 {
                   explanation:
-                    'Balance refresh requests are made about one address at a time only, with no proxying nor staggering.',
-                  url: 'https://github.com/RabbyHub/Rabby/blob/356ed60957d61d508a89d71c63a33b7474d6b311/src/background/controller/wallet.ts#L1622',
+                    'Users may opt to link their Farcaster profile to their Daimo profile.',
+                  url: 'https://github.com/daimo-eth/daimo/blob/e1ddce7c37959d5cec92b05608ce62f93f3316b7/apps/daimo-mobile/src/view/sheet/FarcasterBottomSheet.tsx#L141-L148',
                 },
               ],
             },
@@ -72,7 +131,23 @@ export const daimo: Wallet = {
                 {
                   explanation:
                     'The wallet refreshes fiat currency exchange rates periodically. Such requests do not carry wallet identifying information.',
-                  url: 'https://github.com/daimo-eth/daimo/blob/072e57d700ba8d2e932165a12c2741c31938f1c2/packages/daimo-api/src/api/getExchangeRates.ts',
+                  url: [
+                    'https://github.com/daimo-eth/daimo/blob/072e57d700ba8d2e932165a12c2741c31938f1c2/packages/daimo-api/src/api/getExchangeRates.ts',
+                    'https://github.com/daimo-eth/daimo/blob/e1ddce7c37959d5cec92b05608ce62f93f3316b7/packages/daimo-api/.env.example#L6',
+                  ],
+                },
+              ],
+            },
+          },
+          {
+            entity: merkleManufactory,
+            leaks: {
+              ipAddress: Leak.OPT_IN,
+              ref: [
+                {
+                  explanation:
+                    'Users may opt to link their Farcaster profile to their Daimo profile.',
+                  url: 'https://github.com/daimo-eth/daimo/blob/e1ddce7c37959d5cec92b05608ce62f93f3316b7/apps/daimo-mobile/src/view/sheet/FarcasterBottomSheet.tsx#L141-L148',
                 },
               ],
             },
