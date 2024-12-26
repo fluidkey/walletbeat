@@ -224,7 +224,7 @@ function scoreGroup<Vs extends ValueSet>(weights: { [k in keyof Vs]: number }): 
     const score = weightedScore(
       nonEmptyRemap(weights, (key: keyof Vs, weight: number): WeightedScore => {
         const value = evaluations[key].evaluation.value;
-        hasUnrated = hasUnrated || value.rating === Rating.UNRATED;
+        hasUnrated ||= value.rating === Rating.UNRATED;
         return {
           score: value.score ?? defaultRatingScore(value.rating),
           weight,
