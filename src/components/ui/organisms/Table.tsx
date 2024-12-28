@@ -289,6 +289,9 @@ export default function ComparisonTable(): React.JSX.Element {
       const checkValues: Partial<{ [k in keyof T]: checkValue }> = {};
       if (inputs.length > 0) {
         for (const key in inputs[0]) {
+          if (!Object.hasOwn(inputs[0], key)) {
+            continue;
+          }
           const values = inputs.map(input => input[key]);
           let result: checkResult = 'true';
           if (!values.every(value => value !== false)) {
@@ -360,6 +363,9 @@ export default function ComparisonTable(): React.JSX.Element {
                 {(() => {
                   const expandedList = [];
                   for (const key in checkValues) {
+                    if (!Object.hasOwn(checkValues, key)) {
+                      continue;
+                    }
                     const checkValue = checkValues[key];
                     if (typeof checkValue === 'undefined') {
                       continue;

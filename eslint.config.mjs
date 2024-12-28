@@ -23,6 +23,7 @@ export default [
     },
     rules: {
       complexity: 'off',
+      'max-lines': 'off',
       '@typescript-eslint/no-magic-numbers': 'off',
       '@typescript-eslint/prefer-destructuring': 'off',
       '@typescript-eslint/no-inferrable-types': 'off',
