@@ -7,9 +7,10 @@ import {
   type EvaluationTree,
 } from './attribute-groups';
 import { type NonEmptyArray, nonEmptyRemap } from '@/beta/types/utils/non-empty';
-import type { Paragraph } from '@/beta/types/text';
+import type { Paragraph, Renderable } from '@/beta/types/text';
 import type { Url } from './url';
 import { Rating, type Attribute, type EvaluatedAttribute, type Value } from './attributes';
+import type { Dict } from '../types/utils/dict';
 
 /** A contributor to walletbeat. */
 export interface Contributor {
@@ -48,7 +49,10 @@ export interface WalletMetadata {
    * For example, for Coinbase Wallet which offers "cb.id" usernames,
    * this should be "cb.id handle" or similar.
    */
-  pseudonymType?: string;
+  pseudonymType?: {
+    singular: string;
+    plural: string;
+  };
 
   /** External link to the wallet's website. */
   url: Url;
@@ -63,6 +67,30 @@ export interface WalletMetadata {
   contributors: NonEmptyArray<Contributor>;
 }
 
+/** Per-wallet, per-attribute override. */
+export interface AttributeOverride {
+  /**
+   * Contextual notes about why the wallet has this rating, or clarifications
+   * about its rating.
+   */
+  note?: Renderable<{ wallet: RatedWallet }>;
+
+  /**
+   * What the wallet should do to improve its rating on this attribute.
+   * Overrides the eponymous field in `Evaluation`.
+   */
+  howToImprove?: Renderable<{ wallet: RatedWallet }>;
+}
+
+/** Per-wallet overrides for attributes. */
+export interface WalletOverrides {
+  attributes: Dict<{
+    [attrGroup in keyof EvaluationTree]?: {
+      [_ in keyof EvaluationTree[attrGroup]]?: AttributeOverride;
+    };
+  }>;
+}
+
 /**
  * The interface used to describe wallets.
  */
@@ -75,6 +103,9 @@ export interface Wallet {
 
   /** All wallet features. */
   features: WalletFeatures;
+
+  /** Overrides for specific attributes. */
+  overrides?: WalletOverrides;
 }
 
 export interface ResolvedWallet {
@@ -104,6 +135,9 @@ export interface RatedWallet {
 
   /** Aggregate evaluation across all variants. */
   overall: EvaluationTree;
+
+  /** Overrides for specific attributes. */
+  overrides: WalletOverrides;
 }
 
 function resolveVariant(wallet: Wallet, variant: Variant): ResolvedWallet | null {
@@ -181,6 +215,7 @@ export function rateWallet(wallet: Wallet): RatedWallet {
     variants: perVariantWallets,
     variantSpecificEvaluations,
     overall: aggregateAttributes(perVariantTree),
+    overrides: wallet.overrides ?? { attributes: {} },
   };
 }
 
@@ -207,4 +242,32 @@ export function attributeEvaluationIsUniqueToVariant<V extends Value>(
     return false;
   }
   return uniqueAttributeIds.has(attribute.id);
+}
+
+/**
+ * Get the override for an attribute in a given wallet.
+ */
+export function getAttributeOverride(
+  ratedWallet: RatedWallet,
+  attrGroup: string,
+  attrId: string
+): AttributeOverride | null {
+  if (!Object.hasOwn(ratedWallet.overall, attrGroup)) {
+    throw new Error(`Invalid attribute group name: ${attrGroup}`);
+  }
+  if (!Object.hasOwn(ratedWallet.overall[attrGroup], attrId)) {
+    throw new Error(`Invalid attribute name ${attrId} in attribute group ${attrGroup}`);
+  }
+  if (!Object.hasOwn(ratedWallet.overrides.attributes, attrGroup)) {
+    return null;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/no-unsafe-member-access -- Safe because we just checked the property exists.
+  const attributeGroup = (ratedWallet.overrides.attributes as any)[attrGroup] as
+    | Record<string, AttributeOverride | undefined> // Safe because all attribute group overrides are structured this way.
+    | undefined;
+  if (attributeGroup === undefined || !Object.hasOwn(attributeGroup, attrId)) {
+    return null;
+  }
+  const override = attributeGroup[attrId];
+  return override ?? null;
 }

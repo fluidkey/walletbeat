@@ -20,7 +20,10 @@ export const daimo: Wallet = {
       It focuses on cheap stablecoin payments and fast onramp and
       offramp of USD / USDC with minimal fees.
     `),
-    pseudonymType: 'Daimo username',
+    pseudonymType: {
+      singular: 'Daimo username',
+      plural: 'Daimo usernames',
+    },
     url: 'https://daimo.com',
     repoUrl: 'https://github.com/daimo-eth/daimo',
     contributors: [polymutex],
@@ -185,6 +188,22 @@ export const daimo: Wallet = {
           url: 'https://vote.optimism.io/retropgf/3/application/0x118a000851cf4c736497bab89993418517ac7cd9c8ede074aff408a8e0f84060',
         },
       ],
+    },
+  },
+  overrides: {
+    attributes: {
+      privacy: {
+        addressCorrelation: {
+          note: paragraph(`
+            Daimo usernames are user-selected during signup, and can be set
+            to any pseudonym. Daimo provides functionality to randomize its
+            value. To preserve privacy, it is recommended to pick a random
+            value that is not related to any of your existing usernames.
+            Doing so effectively preserves the pseudonymous nature of wallet
+            addresses.
+          `),
+        },
+      },
     },
   },
   variants: {

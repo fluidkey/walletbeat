@@ -214,7 +214,7 @@ export function mapAttributesGetter(
 /**
  * Generic function for scoring a group of evaluations.
  * @param weights A map from attribute name to its relative weight.
- * @returns A function to score of the group of evaluations.
+ * @returns A function to score the group of evaluations.
  */
 function scoreGroup<Vs extends ValueSet>(weights: { [k in keyof Vs]: number }): (
   evaluations: EvaluatedGroup<Vs>

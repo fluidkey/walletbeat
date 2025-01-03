@@ -21,9 +21,9 @@ function open(license: License): Evaluation<OpenSourceValue> {
       displayName: `Open source (${licenseName(license)})`,
       shortExplanation: sentence(
         (walletMetadata: WalletMetadata) => `
-        ${walletMetadata.displayName}'s source code is under an open-source
-        license (${licenseName(license)}).
-      `
+          ${walletMetadata.displayName}'s source code is under an open-source
+          license (${licenseName(license)}).
+        `
       ),
       license,
       __brand: brand,
@@ -41,9 +41,9 @@ function openInTheFuture(license: License): Evaluation<OpenSourceValue> {
       displayName: `Open source in the future (${licenseName(license)})`,
       shortExplanation: sentence(
         (walletMetadata: WalletMetadata) => `
-        ${walletMetadata.displayName} (${licenseName(license)})'s code
-        license commits to transition to open-source in the future.
-      `
+          ${walletMetadata.displayName} (${licenseName(license)})'s code
+          license commits to transition to open-source in the future.
+        `
       ),
       license,
       __brand: brand,
@@ -60,8 +60,8 @@ const proprietary: Evaluation<OpenSourceValue> = {
     displayName: 'Proprietary code license',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      ${walletMetadata.displayName} uses a proprietary source code license.
-    `
+        ${walletMetadata.displayName} uses a proprietary source code license.
+      `
     ),
     license: License.PROPRIETARY,
     __brand: brand,
@@ -70,6 +70,12 @@ const proprietary: Evaluation<OpenSourceValue> = {
     ({ wallet }) => `
       ${wallet.metadata.displayName} uses a proprietary or non-FOSS source code
       license. Therefore, it is not Free and Open Source Software.
+    `
+  ),
+  howToImprove: paragraph(
+    ({ wallet }) => `
+      ${wallet.metadata.displayName} should consider re-licensing under a
+      Free and Open Source Software license.
     `
   ),
 };
@@ -82,9 +88,9 @@ const unlicensed: Evaluation<OpenSourceValue> = {
     displayName: 'Unlicensed or missing license file',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      ${walletMetadata.displayName} does not have a valid license for its
-      source code.
-    `
+        ${walletMetadata.displayName} does not have a valid license for its
+        source code.
+      `
     ),
     license: License.UNLICENSED_VISIBLE,
     __brand: brand,
@@ -101,10 +107,16 @@ const unlicensed: Evaluation<OpenSourceValue> = {
       license file.
     `
   ),
+  howToImprove: paragraph(
+    ({ wallet }) => `
+      ${wallet.metadata.displayName} should add a license file to its source
+      code.
+    `
+  ),
 };
 
 export const openSource: Attribute<OpenSourceValue> = {
-  id: 'open_source',
+  id: 'openSource',
   icon: '\u{2764}', // Heart
   displayName: 'Source code license',
   question: sentence(`

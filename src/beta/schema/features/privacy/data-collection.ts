@@ -372,7 +372,10 @@ export function leakedInfoName(
       return { short: 'outgoing transactions', long: 'outgoing wallet transactions' };
     case LeakedPersonalInfo.PSEUDONYM:
       if (walletMetadata?.pseudonymType !== undefined) {
-        return { short: walletMetadata.pseudonymType, long: walletMetadata.pseudonymType };
+        return {
+          short: walletMetadata.pseudonymType.singular,
+          long: walletMetadata.pseudonymType.singular,
+        };
       }
       return { short: 'username', long: 'pseudonym' };
     case LeakedPersonalInfo.FARCASTER_ACCOUNT:

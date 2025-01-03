@@ -91,10 +91,14 @@ function richSectionToSection(richSection: RichSection): Section {
 
 function sectionHeaderId(section: Section): string | null {
   if (section.subHeader !== null) {
-    return section.subHeader.replaceAll('_', '-');
+    return section.subHeader
+      .replaceAll('_', '-')
+      .replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
   }
   if (section.header !== null) {
-    return section.header.replaceAll('_', '-');
+    return section.header
+      .replaceAll('_', '-')
+      .replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
   }
   return 'top';
 }
@@ -253,7 +257,6 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
       target: section,
       untilTimestamp: Date.now() + 1250,
     });
-    setActiveSection(section);
     header.scrollIntoView({ behavior: 'smooth' });
     scrollNavigationTo(section);
   };
