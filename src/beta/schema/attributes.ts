@@ -1,7 +1,6 @@
 import type { NonEmptyArray, NonEmptyRecord } from '@/beta/types/utils/non-empty';
 import type { ResolvedFeatures } from './features';
 import type { AtLeastOneVariant } from './variants';
-import type { Url } from './url';
 import type { MaybeUnratedScore, Score } from './score';
 import type { Paragraph, Renderable, Sentence } from '@/beta/types/text';
 import type { RatedWallet, WalletMetadata } from './wallet';
@@ -177,11 +176,12 @@ export interface Evaluation<V extends Value> {
    */
   impact?: Paragraph<EvaluationData<V>>;
 
-  /** A link to a relevant URL about this wallet's implementation of the
-   * attribute. For attributes that the wallet does not fulfill, this can
-   * be a link to a bug tracker that tracks implementation of the attribute.
+  /**
+   * An optional paragraph or list of suggestions on what the wallet can do
+   * to improve this rating. Should only be populated for ratings that are
+   * not perfect.
    */
-  url?: Url;
+  howToImprove?: Renderable<EvaluationData<V>>;
 }
 
 /**
@@ -198,7 +198,7 @@ export type Evaluate<V extends Value> = (features: ResolvedFeatures) => Evaluati
  */
 export interface Attribute<V extends Value> {
   /**
-   * Unique ID representing the attribute.
+   * Unique ID representing the attribute in camelCase.
    * For example: "sourceVisibility".
    */
   id: string;

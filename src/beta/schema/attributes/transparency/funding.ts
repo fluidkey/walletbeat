@@ -30,8 +30,8 @@ function transparent(
       displayName: `Transparent funding (${sourceName})`,
       shortExplanation: sentence(
         (walletMetadata: WalletMetadata) => `
-        ${walletMetadata.displayName} is transparently funded.
-      `
+          ${walletMetadata.displayName} is transparently funded.
+        `
       ),
       __brand: brand,
     },
@@ -53,13 +53,20 @@ function extractive(
       displayName: `User-extractive funding${sourceName !== '' ? ` (${sourceName})` : ''}`,
       shortExplanation: sentence(
         (walletMetadata: WalletMetadata) => `
-        ${walletMetadata.displayName} is funded through user-extractive
-        means${sourceName !== '' ? ` (${sourceName})` : ''}.
-      `
+          ${walletMetadata.displayName} is funded through user-extractive
+          means${sourceName !== '' ? ` (${sourceName})` : ''}.
+        `
       ),
       __brand: brand,
     },
     details: component(FundingDetails, { monetization }),
+    howToImprove: paragraph(
+      ({ wallet }) => `
+        ${wallet.metadata.displayName} should change its funding sources
+        to non-user-extractive means such as transparent convenience fees,
+        donations, or ecosystem grants.
+      `
+    ),
   };
 }
 
@@ -71,14 +78,20 @@ const unclear: Evaluation<FundingValue> = {
     displayName: 'Unclear funding source',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      How ${walletMetadata.displayName} is funded is unclear.
-    `
+        How ${walletMetadata.displayName} is funded is unclear.
+      `
     ),
     __brand: brand,
   },
   details: paragraph(
     ({ wallet }) => `
       How ${wallet.metadata.displayName} is funded is unclear.
+    `
+  ),
+  howToImprove: paragraph(
+    ({ wallet }) => `
+      ${wallet.metadata.displayName} should publish how it is funded, or how it
+      plans to fund itself.
     `
   ),
 };

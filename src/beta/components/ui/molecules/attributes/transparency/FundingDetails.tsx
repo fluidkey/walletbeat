@@ -1,7 +1,6 @@
 import type { RatedWallet } from '@/beta/schema/wallet';
 import { Box } from '@mui/material';
 import type React from 'react';
-import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
 import { subsectionWeight } from '@/beta/components/constants';
 import { ReferenceList } from '../../../atoms/ReferenceList';
 import {
@@ -12,6 +11,7 @@ import {
 import { JoinedList } from '../../../atoms/JoinedList';
 import { refs } from '@/beta/schema/reference';
 import type { FundingValue } from '@/beta/schema/attributes/transparency/funding';
+import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
 
 export function FundingDetails({
   wallet,

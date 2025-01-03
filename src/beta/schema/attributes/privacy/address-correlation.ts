@@ -64,11 +64,66 @@ function linkable(
       compareLeakedInfo(linkableA.info, linkableB.info),
     true
   );
-  const rating =
-    worstLeak.info === LeakedPersonalInfo.IP_ADDRESS ||
-    worstLeak.info === LeakedPersonalInfo.PSEUDONYM
-      ? Rating.PARTIAL
-      : Rating.NO;
+  const { rating, howToImprove } = ((): {
+    rating: Rating;
+    howToImprove: Evaluation<AddressCorrelationValue>['howToImprove'];
+  } => {
+    const leakName = leakedInfoName(worstLeak.info).long;
+    const by = worstLeak.by;
+    switch (worstLeak.info) {
+      case LeakedPersonalInfo.PSEUDONYM:
+        if (by === 'onchain') {
+          return {
+            rating: Rating.PARTIAL,
+            howToImprove: paragraph(
+              ({ wallet }) => `
+                The onchain registry for
+                ${wallet.metadata.pseudonymType?.plural ?? `${wallet.metadata.displayName} ${leakName}s`}
+                should either not exist onchain, or should be structured such
+                that a user's main wallet address may not be derived from it.
+                The latter may be implemented using a stealth address
+                registry.
+              `
+            ),
+          };
+        }
+        return {
+          rating: Rating.PARTIAL,
+          howToImprove: paragraph(
+            ({ wallet }) => `
+              ${wallet.metadata.displayName} should require user consent
+              before allowing your
+              ${wallet.metadata.pseudonymType?.singular ?? leakName}
+              to be linkable to your wallet address, and make it clear that
+              this association will be known to ${by.name}.
+            `
+          ),
+        };
+      case LeakedPersonalInfo.IP_ADDRESS:
+        return {
+          rating: Rating.PARTIAL,
+          howToImprove: paragraph(
+            ({ wallet }) => `
+              ${wallet.metadata.displayName} should not perform requests
+              containing your wallet address without using some form of
+              proxying such as Oblivious HTTP, Tor, or other similar
+              techniques to decouple request content from request origin.
+            `
+          ),
+        };
+      default:
+        return {
+          rating: Rating.NO,
+          howToImprove: paragraph(
+            ({ wallet }) => `
+               ${wallet.metadata.displayName} should require user consent
+               before allowing personal information such as your ${leakName}
+               to be linkable to your wallet address.
+            `
+          ),
+        };
+    }
+  })();
   return {
     value: {
       id: `address_and_${worstLeak.info}`,
@@ -77,20 +132,21 @@ function linkable(
       shortExplanation: sentence((walletMetadata: WalletMetadata) => {
         if (worstLeak.by === 'onchain') {
           return `
-          ${walletMetadata.displayName} publishes your
-          ${leakedInfoName(worstLeak.info, walletMetadata).short}
-          onchain.
-        `;
+            ${walletMetadata.displayName} publishes your
+            ${leakedInfoName(worstLeak.info, walletMetadata).short}
+            onchain.
+          `;
         }
         return `
-        ${walletMetadata.displayName} allows ${worstLeak.by.name}
-        to link your wallet address with your
-        ${leakedInfoName(worstLeak.info, walletMetadata).short}.
-      `;
+          ${walletMetadata.displayName} allows ${worstLeak.by.name}
+          to link your wallet address with your
+          ${leakedInfoName(worstLeak.info, walletMetadata).short}.
+        `;
       }),
       __brand: brand,
     },
     details: component(AddressCorrelationDetails, { linkables }),
+    howToImprove,
   };
 }
 
@@ -114,7 +170,7 @@ export function linkableToWalletAddress(leaks: Leaks): WalletAddressLinkableTo[]
 }
 
 export const addressCorrelation: Attribute<AddressCorrelationValue> = {
-  id: 'address_correlation',
+  id: 'addressCorrelation',
   icon: '\u{1f517}', // Link
   displayName: 'Wallet address privacy',
   question: sentence(`

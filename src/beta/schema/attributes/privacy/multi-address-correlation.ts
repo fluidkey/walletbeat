@@ -45,8 +45,10 @@ const activeAddressOnly: Evaluation<MultiAddressCorrelationValue> = {
     icon: '\u{1f4ce}', // Single paperclip
     displayName: 'Wallet only handles one active address at a time',
     shortExplanation: sentence(
-      (walletMetadata: WalletMetadata) =>
-        `${walletMetadata.displayName} only makes requests about one active address at a time, so it can't be correlated with other addresses.`
+      (walletMetadata: WalletMetadata) => `
+        ${walletMetadata.displayName} only makes requests about one active
+        address at a time, so it can't be correlated with other addresses.
+      `
     ),
     __brand: brand,
   },
@@ -76,10 +78,10 @@ const correlated: Evaluation<MultiAddressCorrelationValue> = {
     displayName: 'Multiple addresses are correlatable by a third party',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      ${walletMetadata.displayName} makes requests about multiple addresses
-      simultaneously to the same endpoint, which allows it to correlate your
-      addresses.
-    `
+        ${walletMetadata.displayName} makes requests about multiple addresses
+        simultaneously to the same endpoint, which allows it to correlate your
+        addresses.
+      `
     ),
     __brand: brand,
   },
@@ -91,11 +93,21 @@ const correlated: Evaluation<MultiAddressCorrelationValue> = {
   ),
   impact: paragraph(
     ({ wallet }) => `
-    Using multiple addresses in ${wallet.metadata.displayName} will allow
-    them to be correlated by a third-party.
-    You should avoid configuring multiple addresses with
-    ${wallet.metadata.displayName}.
-  `
+      Using multiple addresses in ${wallet.metadata.displayName} will allow
+      them to be correlated by a third-party.
+      You should avoid configuring multiple addresses with
+      ${wallet.metadata.displayName}.
+    `
+  ),
+  howToImprove: paragraph(
+    ({ wallet }) => `
+      ${wallet.metadata.displayName} should first ensure that it never makes
+      requests containing multiple addresses simultaneously.
+      Next, it should ensure that these requests are staggered and are proxied
+      through different proxies and RPC endpoints to prevent correlation.
+      This can be done through the use of privacy solutions such as
+      Oblivious HTTP, Tor, and others.
+    `
   ),
 };
 
@@ -106,9 +118,9 @@ const staggeredRequests: Evaluation<MultiAddressCorrelationValue> = {
     displayName: 'Requests for multiple addresses are staggered across time',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      ${walletMetadata.displayName} staggers requests about multiple addresses
-      over time time, which makes it harder to correlate your addresses.
-    `
+        ${walletMetadata.displayName} staggers requests about multiple addresses
+        over time time, which makes it harder to correlate your addresses.
+      `
     ),
     __brand: brand,
   },
@@ -126,6 +138,14 @@ const staggeredRequests: Evaluation<MultiAddressCorrelationValue> = {
       able to correlate the requests due to their identical origin IP address.
     `
   ),
+  howToImprove: paragraph(
+    ({ wallet }) => `
+      ${wallet.metadata.displayName} should ensure requests are proxied
+      through distinct proxies in order to prevent the RPC endpoint from
+      learning the correlation between addresses. This can be done through
+      the use of privacy solutions such as Oblivious HTTP, Tor, and others.
+    `
+  ),
 };
 
 const separateCircuits: Evaluation<MultiAddressCorrelationValue> = {
@@ -135,10 +155,10 @@ const separateCircuits: Evaluation<MultiAddressCorrelationValue> = {
     displayName: 'Requests for multiple addresses use separate proxies',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      ${walletMetadata.displayName} uses distinct proxies to make requests
-      about multiple addresses, which makes it harder to correlate your
-      addresses.
-    `
+        ${walletMetadata.displayName} uses distinct proxies to make requests
+        about multiple addresses, which makes it harder to correlate your
+        addresses.
+      `
     ),
     __brand: brand,
   },
@@ -156,6 +176,13 @@ const separateCircuits: Evaluation<MultiAddressCorrelationValue> = {
       time.
     `
   ),
+  howToImprove: paragraph(
+    ({ wallet }) => `
+      ${wallet.metadata.displayName} should add randomized delays between
+      refreshes of separate addresses in order to reduce time-based
+      correlatability of addresses by the RPC endpoint.
+    `
+  ),
 };
 
 const staggeredAndSeparateCircuits: Evaluation<MultiAddressCorrelationValue> = {
@@ -166,10 +193,10 @@ const staggeredAndSeparateCircuits: Evaluation<MultiAddressCorrelationValue> = {
     displayName: 'Requests for multiple addresses are uncorrelated',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      ${walletMetadata.displayName} uses distinct proxies and staggers
-      requests about multiple addresses over time, which makes it harder
-      to correlate your addresses.
-    `
+        ${walletMetadata.displayName} uses distinct proxies and staggers
+        requests about multiple addresses over time, which makes it harder
+        to correlate your addresses.
+      `
     ),
     __brand: brand,
   },
@@ -196,16 +223,16 @@ const unsupported: Evaluation<MultiAddressCorrelationValue> = {
     displayName: 'Multiple addresses unsupported',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      You can only use one address in ${walletMetadata.displayName}.
-    `
+        You can only use one address in ${walletMetadata.displayName}.
+      `
     ),
     __brand: brand,
   },
   details: paragraph(
     ({ wallet }) => `
-    You can only use one address in ${wallet.metadata.displayName}, so
-    multi-address privacy is irrelevant.
-  `
+      You can only use one address in ${wallet.metadata.displayName}, so
+      multi-address privacy is irrelevant.
+    `
   ),
 };
 
@@ -226,7 +253,7 @@ function rateHandling(handling: MultiAddressHandling): number {
 }
 
 export const multiAddressCorrelation: Attribute<MultiAddressCorrelationValue> = {
-  id: 'multi_address',
+  id: 'multiAddressCorrelation',
   icon: '\u{1f587}', // Linked paperclips
   displayName: 'Multi-address privacy',
   question: sentence(`

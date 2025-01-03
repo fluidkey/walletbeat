@@ -2,9 +2,9 @@ import type { RatedWallet } from '@/beta/schema/wallet';
 import { Typography } from '@mui/material';
 import type React from 'react';
 import { ExternalLink } from '../../../atoms/ExternalLink';
-import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
 import { subsectionWeight } from '@/beta/components/constants';
 import type { SourceVisibilityValue } from '@/beta/schema/attributes/transparency/source-visibility';
+import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
 
 export function SourceVisibilityDetails({
   wallet,
