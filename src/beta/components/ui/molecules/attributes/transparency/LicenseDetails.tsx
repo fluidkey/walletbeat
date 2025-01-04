@@ -3,9 +3,9 @@ import { Typography } from '@mui/material';
 import { FOSS, licenseIsFOSS, licenseName, licenseUrl } from '@/beta/schema/features/license';
 import type React from 'react';
 import { ExternalLink } from '../../../atoms/ExternalLink';
-import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
 import { subsectionWeight } from '@/beta/components/constants';
 import type { OpenSourceValue } from '@/beta/schema/attributes/transparency/open-source';
+import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
 
 export function LicenseDetails({
   wallet,

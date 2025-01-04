@@ -11,8 +11,8 @@ import type React from 'react';
 import { JoinedList } from '../../../atoms/JoinedList';
 import { ExternalLink } from '../../../atoms/ExternalLink';
 import { ReferenceLinks } from '../../../atoms/ReferenceLinks';
-import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
 import { subsectionWeight } from '@/beta/components/constants';
+import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
 
 export function AddressCorrelationDetails({
   wallet,

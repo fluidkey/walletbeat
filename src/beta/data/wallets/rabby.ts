@@ -39,16 +39,16 @@ export const rabby: Wallet = {
                 cexAccount: Leak.NEVER, // There appears to be code to link to a Coinbase account but no way to reach it from the UI?
                 ref: [
                   {
-                    explanation: 'Rabby uses self-hosted Matomo Analytics to track user actions.',
-                    url: 'https://github.com/search?q=repo%3ARabbyHub%2FRabby%20matomoRequestEvent&type=code',
-                  },
-                  {
                     explanation: 'All wallet traffic goes through api.rabby.io without proxying.',
                     url: 'https://github.com/RabbyHub/Rabby/blob/356ed60957d61d508a89d71c63a33b7474d6b311/src/constant/index.ts#L468',
                   },
                   {
                     explanation:
-                      'Balance refresh requests are made about one address at a time, with no proxying nor staggering between requests.',
+                      'Rabby uses self-hosted Matomo Analytics to track user actions. While this tracking data does not contain wallet addresses, it goes to DeBank-owned servers much like Ethereum RPC requests do. This puts DeBank in a position to link user actions with wallet addresses through IP address correlation.',
+                    url: 'https://github.com/search?q=repo%3ARabbyHub%2FRabby%20matomoRequestEvent&type=code',
+                  },
+                  {
+                    explanation: 'Balance refresh requests are made about the active address only.',
                     url: 'https://github.com/RabbyHub/Rabby/blob/356ed60957d61d508a89d71c63a33b7474d6b311/src/background/controller/wallet.ts#L1622',
                   },
                 ],

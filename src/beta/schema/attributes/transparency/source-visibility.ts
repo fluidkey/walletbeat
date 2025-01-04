@@ -33,21 +33,27 @@ const sourcePrivate: Evaluation<SourceVisibilityValue> = {
     displayName: 'Source code not publicly available',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      The source code for ${walletMetadata.displayName} is not public.
-    `
+        The source code for ${walletMetadata.displayName} is not public.
+      `
     ),
     __brand: brand,
   },
   details: paragraph(
     ({ wallet }) => `
-    The source code for ${wallet.metadata.displayName} is not available
-    to the public.
-  `
+      The source code for ${wallet.metadata.displayName} is not available
+      to the public.
+    `
+  ),
+  howToImprove: paragraph(
+    ({ wallet }) => `
+      ${wallet.metadata.displayName} should make its source code publicly
+      viewable.
+    `
   ),
 };
 
 export const sourceVisibility: Attribute<SourceVisibilityValue> = {
-  id: 'source_visibility',
+  id: 'sourceVisibility',
   icon: '\u{1f35d}', // Spaghetti
   displayName: 'Source visibility',
   question: sentence('Is the source code for the wallet visible to the public?'),

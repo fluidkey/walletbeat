@@ -1,17 +1,20 @@
-import type {
-  AttributeGroup,
-  EvaluatedAttribute,
-  EvaluatedGroup,
-  Value,
-  ValueSet,
+import {
+  Rating,
+  type AttributeGroup,
+  type EvaluatedAttribute,
+  type EvaluatedGroup,
+  type Value,
+  type ValueSet,
 } from '@/beta/schema/attributes';
-import type { RatedWallet } from '@/beta/schema/wallet';
+import { getAttributeOverride, type RatedWallet } from '@/beta/schema/wallet';
 import { isRenderableTypography } from '@/beta/types/text';
-import { Accordion, AccordionDetails, AccordionSummary, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import type React from 'react';
+import { WrapIcon } from '../atoms/WrapIcon';
+import { subsectionBorderRadius, subsectionIconWidth, subsectionWeight } from '../../constants';
+import { type AccordionData, Accordions } from '../atoms/Accordions';
+import type { NonEmptyArray } from '@/beta/types/utils/non-empty';
 import { WrapRatingIcon } from '../atoms/WrapRatingIcon';
-import { subsectionBorderRadius, subsectionWeight } from '../../constants';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export function WalletAttribute<Vs extends ValueSet, V extends Value>({
   wallet,
@@ -24,11 +27,12 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
   evalGroup: EvaluatedGroup<Vs>;
   evalAttr: EvaluatedAttribute<V>;
 }): React.JSX.Element {
-  const isTypography = isRenderableTypography(evalAttr.evaluation.details);
+  const override = getAttributeOverride(wallet, attrGroup.id, evalAttr.attribute.id);
+  const detailsIsTypography = isRenderableTypography(evalAttr.evaluation.details);
   const renderDetailsProps = {
     wallet,
     value: evalAttr.evaluation.value,
-    typography: isTypography
+    typography: detailsIsTypography
       ? {
           fontWeight: subsectionWeight,
         }
@@ -51,32 +55,59 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
       )}
     </>
   );
-  if (isTypography) {
+  if (detailsIsTypography) {
     rendered = (
       <WrapRatingIcon rating={evalAttr.evaluation.value.rating}>{rendered}</WrapRatingIcon>
     );
   }
+  const accordions: NonEmptyArray<AccordionData> = [
+    {
+      id: `why-${evalAttr.attribute.id}`,
+      summary:
+        evalAttr.evaluation.value.rating === Rating.YES ||
+        evalAttr.evaluation.value.rating === Rating.UNRATED
+          ? 'Why does this matter?'
+          : 'Why should I care?',
+      contents: evalAttr.attribute.why.render({
+        typography: {
+          fontWeight: 400,
+        },
+      }),
+    },
+  ];
+  const howToImprove =
+    override?.howToImprove !== undefined ? override.howToImprove : evalAttr.evaluation.howToImprove;
+  if (howToImprove !== undefined) {
+    const isTypography = isRenderableTypography(howToImprove);
+    const renderProps = {
+      wallet,
+      value: evalAttr.evaluation.value,
+      typography: isTypography ? { fontWeight: 400 } : undefined,
+    };
+    accordions.push({
+      id: `how-${evalAttr.attribute.id}`,
+      summary: `What can ${wallet.metadata.displayName} do about this?`,
+      contents: howToImprove.render(renderProps),
+    });
+  }
   return (
     <>
       {rendered}
-      <Accordion
-        disableGutters={true}
-        square={true}
-        sx={{
-          marginTop: '1rem',
-          borderRadius: `${subsectionBorderRadius}px`,
-          ':before': { display: 'none' },
-        }}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls={`why-should-i-care-${evalAttr.attribute.id}`}
-          id={`why-should-i-care-${evalAttr.attribute.id}`}
+      {override?.note !== undefined ? (
+        <WrapIcon
+          icon={'\u{1f449}'}
+          iconFontSize="1rem"
+          iconWidth={subsectionIconWidth}
+          sx={{ marginTop: '1rem' }}
         >
-          Why should I care?
-        </AccordionSummary>
-        <AccordionDetails>{evalAttr.attribute.why.render({})}</AccordionDetails>
-      </Accordion>
+          {override.note.render({ wallet })}
+        </WrapIcon>
+      ) : null}
+      <Accordions
+        accordions={accordions}
+        borderRadius={`${subsectionBorderRadius}px`}
+        interAccordionMargin="1rem"
+      />
     </>
   );
 }
