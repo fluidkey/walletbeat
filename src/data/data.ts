@@ -25,6 +25,7 @@ import { rabby } from './wallets/rabby';
 import { rainbow } from './wallets/rainbow';
 import { safe } from './wallets/safe';
 import { safepal } from './wallets/safepal';
+import { talisman } from './wallets/talisman';
 import { timeless } from './wallets/timeless';
 import { tokenary } from './wallets/tokenary';
 import { tokenpocket } from './wallets/tokenpocket';
@@ -69,4 +70,5 @@ export const wallets: Record<string, Info> = {
   Enkrypt: enkrypt,
   'Timeless X': timeless,
   Rabby: rabby,
+  Talisman: talisman
 };
