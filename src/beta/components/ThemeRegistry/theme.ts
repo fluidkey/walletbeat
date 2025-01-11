@@ -1,4 +1,5 @@
-import { createTheme, type ThemeOptions, lighten } from '@mui/material/styles';
+import { deepmerge } from '@mui/utils';
+import { createTheme, type ThemeOptions } from '@mui/material/styles';
 import type {} from '@mui/x-data-grid/themeAugmentation';
 
 /* eslint @typescript-eslint/no-magic-numbers: 0 -- A theme file will have numbers and hex codes in it, this is normal. */
@@ -152,10 +153,37 @@ const theme = createTheme(themeOptions);
 
 export default theme;
 
-export const moreColors = {
-  lightPaperBackground: lighten(theme.palette.background.paper, 0.05),
-  lighterPaperBackground: lighten(theme.palette.background.paper, 0.5),
-  lighterPrimary: lighten(theme.palette.primary.light, 0.5),
-  lightSuccess: '#B3FFC7',
-  lighterSuccess: lighten(theme.palette.success.light, 0.5),
+const subsectionThemeOptions: ThemeOptions = {
+  typography: {
+    // Top-level headers don't exist in subsections.
+    // They are for page-wide titles.
+    h1: undefined,
+    // Second-level headers also don't exist in subsection.
+    // They only make sense as top-level section headers.
+    h2: undefined,
+    // h3 is where subsection headers start to make sense.
+    h3: {
+      fontWeight: 500,
+      fontSize: '1.5rem',
+    },
+    // h4 is used inside accordion headers.
+    h4: {
+      fontWeight: 400,
+      fontSize: '0.9rem',
+    },
+    caption: {
+      fontWeight: 500,
+      fontSize: '0.75rem',
+    },
+    body1: {
+      fontWeight: 400,
+      fontSize: '0.85rem',
+    },
+    body2: {
+      fontWeight: 300,
+      fontSize: '0.8rem',
+    },
+  },
 };
+
+export const subsectionTheme = createTheme(deepmerge(themeOptions, subsectionThemeOptions));

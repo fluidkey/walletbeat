@@ -15,6 +15,7 @@ import { subsectionBorderRadius, subsectionIconWidth, subsectionWeight } from '.
 import { type AccordionData, Accordions } from '../atoms/Accordions';
 import type { NonEmptyArray } from '@/beta/types/utils/non-empty';
 import { WrapRatingIcon } from '../atoms/WrapRatingIcon';
+import { AttributeMethodology } from '../molecules/attributes/AttributeMethodology';
 
 export function WalletAttribute<Vs extends ValueSet, V extends Value>({
   wallet,
@@ -70,24 +71,29 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
           : 'Why should I care?',
       contents: evalAttr.attribute.why.render({
         typography: {
-          fontWeight: 400,
+          variant: 'body2',
         },
       }),
+    },
+    {
+      id: `methodology-${evalAttr.attribute.id}`,
+      summary: `How is ${evalAttr.attribute.midSentenceName} evaluated?`,
+      contents: (
+        <AttributeMethodology attribute={evalAttr.attribute} evaluation={evalAttr.evaluation} />
+      ),
     },
   ];
   const howToImprove =
     override?.howToImprove !== undefined ? override.howToImprove : evalAttr.evaluation.howToImprove;
   if (howToImprove !== undefined) {
-    const isTypography = isRenderableTypography(howToImprove);
-    const renderProps = {
-      wallet,
-      value: evalAttr.evaluation.value,
-      typography: isTypography ? { fontWeight: 400 } : undefined,
-    };
     accordions.push({
       id: `how-${evalAttr.attribute.id}`,
-      summary: `What can ${wallet.metadata.displayName} do about this?`,
-      contents: howToImprove.render(renderProps),
+      summary: `What can ${wallet.metadata.displayName} do about its ${evalAttr.attribute.midSentenceName}?`,
+      contents: howToImprove.render({
+        wallet,
+        value: evalAttr.evaluation.value,
+        typography: { variant: 'body2' },
+      }),
     });
   }
   return (
@@ -106,6 +112,7 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
       <Accordions
         accordions={accordions}
         borderRadius={`${subsectionBorderRadius}px`}
+        summaryTypographyVariant="h4"
         interAccordionMargin="1rem"
       />
     </>
