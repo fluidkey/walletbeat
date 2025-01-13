@@ -18,8 +18,8 @@ const sourcePublic: Evaluation<SourceVisibilityValue> = {
     displayName: 'Source code publicly available',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
-      The source code for ${walletMetadata.displayName} is public.
-    `
+        The source code for ${walletMetadata.displayName} is public.
+      `
     ),
     __brand: brand,
   },
@@ -56,6 +56,7 @@ export const sourceVisibility: Attribute<SourceVisibilityValue> = {
   id: 'sourceVisibility',
   icon: '\u{1f35d}', // Spaghetti
   displayName: 'Source visibility',
+  midSentenceName: 'source visibility',
   question: sentence('Is the source code for the wallet visible to the public?'),
   why: paragraph(`
     When using a wallet, users are entrusting it to preserve their funds
@@ -65,7 +66,16 @@ export const sourceVisibility: Attribute<SourceVisibilityValue> = {
     security vulnerabilities and for potential malicious code.
     This improves the wallet's security and trustworthiness.
   `),
-  explanationValues: [sourcePublic.value, sourcePrivate.value],
+  methodology: sentence(`
+    Wallets are assessed based on whether or not their source code is
+    publicly visible, irrespective of the license of the source code.
+  `),
+  ratingScale: {
+    display: 'simple',
+    content: paragraph(`
+      If a wallet's source code is visible, it passes. If not, it fails.
+    `),
+  },
   evaluate: (features: ResolvedFeatures): Evaluation<SourceVisibilityValue> => {
     if (features.license === null) {
       return unrated(sourceVisibility, brand, null);

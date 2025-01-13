@@ -113,7 +113,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
             <WalletIcon walletMetadata={row.wallet.metadata} iconSize={walletIconSize} />
           </Box>
           <Box flex="1" sx={row.rowWideStyle}>
-            <Typography variant="subtitle1">{row.wallet.metadata.displayName}</Typography>
+            <Typography variant="h2">{row.wallet.metadata.displayName}</Typography>
           </Box>
         </Link>
 
@@ -139,28 +139,21 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
           <Box flex="1">
             {row.table.variantSelected !== null &&
             row.wallet.variants[row.table.variantSelected] === undefined ? (
-              <Typography
-                variant="body2"
-                fontWeight="normal"
-                lineHeight={1.25}
-                marginBottom="0.5rem"
-              >
+              <Typography variant="body1" marginBottom="0.5rem">
                 {row.wallet.metadata.displayName} does not have a {row.table.variantSelected}{' '}
                 version.
               </Typography>
             ) : (
               row.wallet.metadata.blurb.render({
                 typography: {
-                  variant: 'body2',
-                  fontWeight: 'normal',
-                  lineHeight: 1.25,
+                  variant: 'body1',
                   marginBottom: '0.5rem',
                 },
               })
             )}
           </Box>
           <Typography
-            variant="caption"
+            variant="body2"
             display="flex"
             flexDirection="row"
             alignItems="baseline"
