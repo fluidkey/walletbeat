@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import type React from 'react';
+import type theme from '../../ThemeRegistry/theme';
 
 export function WrapIcon({
   icon,
@@ -11,7 +12,7 @@ export function WrapIcon({
 }: {
   icon: React.ReactNode;
   iconWidth: string;
-  iconFontSize: string;
+  iconFontSize: typeof theme.typography.body1.fontSize;
   flexBeforeAndAfter?: [number, number];
   sx?: React.ComponentProps<typeof Box>['sx'];
   children?: React.ReactNode;

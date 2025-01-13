@@ -46,57 +46,42 @@ const themeOptions: ThemeOptions = {
     fontWeightLight: 300,
     h1: {
       fontWeight: 700,
-      '@media (max-width:600px)': {
-        fontSize: '3rem',
-      },
+      fontSize: '4rem',
     },
     h2: {
       fontWeight: 700,
-      '@media (max-width:600px)': {
-        fontSize: '2.4rem',
-      },
+      fontSize: '3rem',
     },
     h3: {
       fontWeight: 600,
-      '@media (max-width:600px)': {
-        fontSize: '2rem',
-      },
+      fontSize: '2.75rem',
     },
     h4: {
       fontWeight: 600,
-      '@media (max-width:600px)': {
-        fontSize: '1.7rem',
-      },
-    },
-    button: {
-      fontWeight: 600,
+      fontSize: '2.125rem',
     },
     h5: {
       fontWeight: 400,
-      '@media (max-width:600px)': {
-        fontSize: '1.4rem',
-      },
+      fontSize: '1.4rem',
     },
     h6: {
       fontWeight: 400,
-      '@media (max-width:600px)': {
-        fontSize: '1.1rem',
-      },
+      fontSize: '1.1rem',
     },
     body1: {
-      '@media (max-width:600px)': {
-        fontSize: '0.9rem',
-      },
+      fontWeight: 400,
+      fontSize: '1rem',
     },
     body2: {
-      '@media (max-width:600px)': {
-        fontSize: '0.8rem',
-      },
+      fontWeight: 300,
+      fontSize: '0.975rem',
     },
     caption: {
       fontWeight: 300,
-      fontSize: '0.65rem',
-      lineHeight: 1,
+      fontSize: '1rem',
+    },
+    button: {
+      fontWeight: 600,
     },
   },
   shape: {
@@ -169,21 +154,70 @@ const subsectionThemeOptions: ThemeOptions = {
     // h4 is used inside accordion headers.
     h4: {
       fontWeight: 400,
-      fontSize: '0.9rem',
+      fontSize: '1.1rem',
     },
-    caption: {
-      fontWeight: 500,
-      fontSize: '0.75rem',
+    // h5 is used inside accordion box sections.
+    h5: {
+      fontWeight: 400,
+      fontSize: '1.05rem',
+    },
+    // h6 is used inside accordion box subsections.
+    h6: {
+      fontWeight: 400,
+      fontSize: '1.025rem',
     },
     body1: {
       fontWeight: 400,
-      fontSize: '0.85rem',
+      fontSize: '1rem',
     },
     body2: {
       fontWeight: 300,
-      fontSize: '0.8rem',
+      fontSize: '0.975rem',
+    },
+    caption: {
+      fontWeight: 300,
+      fontSize: '1rem',
     },
   },
 };
 
 export const subsectionTheme = createTheme(deepmerge(themeOptions, subsectionThemeOptions));
+
+const walletTableThemeOptions: ThemeOptions = {
+  typography: {
+    // Top-level headers don't exist in the wallet table.
+    // They are for page-wide titles.
+    h1: undefined,
+    // Second-level headers are used for wallet names.
+    h2: {
+      fontWeight: 500,
+      fontSize: '1.4rem',
+    },
+    // Third-level headers are used for attribute group titles.
+    h3: {
+      fontWeight: 500,
+      fontSize: '0.85rem',
+    },
+    // Fourth-level headers are used for single attribute titles.
+    h4: {
+      fontWeight: 500,
+      fontSize: '0.85rem',
+    },
+    body1: {
+      fontWeight: 400,
+      fontSize: '0.85rem',
+      lineHeight: 1.25,
+    },
+    body2: {
+      fontWeight: 300,
+      fontSize: '0.85rem',
+      lineHeight: 1.25,
+    },
+    caption: {
+      fontWeight: 300,
+      fontSize: '0.75rem',
+    },
+  },
+};
+
+export const walletTableTheme = createTheme(deepmerge(themeOptions, walletTableThemeOptions));

@@ -24,6 +24,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import theme, { subsectionTheme } from '@/beta/components/ThemeRegistry/theme';
 import { ratingToColor } from '@/beta/schema/attributes';
 import {
+  listFontSizePrimary,
+  listFontSizeSecondary,
   listIconSize,
   listItemRadius,
   sectionIconWidth,
@@ -124,11 +126,13 @@ function SingleListItemIcon({ children }: { children: React.ReactNode }): React.
 function SectionListItem({
   section,
   activeSection,
+  depth,
   onClick,
   sx,
 }: {
   section: RichSection;
   activeSection: Section;
+  depth: 'primary' | 'secondary';
   onClick?: React.ComponentProps<typeof ListItemButton>['onClick'];
   sx?: React.ComponentProps<typeof ListItem>['sx'];
 }): React.JSX.Element {
@@ -149,7 +153,19 @@ function SectionListItem({
         sx={{ borderRadius: `${listItemRadius}px` }}
       >
         <SingleListItemIcon>{section.icon}</SingleListItemIcon>
-        <ListItemText key="listItemText" primary={section.title} sx={{ whiteSpace: 'nowrap' }} />
+        <ListItemText
+          key="listItemText"
+          primary={
+            <Typography
+              sx={{
+                fontSize: depth === 'primary' ? listFontSizePrimary : listFontSizeSecondary,
+              }}
+            >
+              {section.title}
+            </Typography>
+          }
+          sx={{ whiteSpace: 'nowrap' }}
+        />
       </ListItemButton>
     </ListItem>
   );
@@ -184,7 +200,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
       caption: attrGroup.perWalletQuestion.render({
         typography: {
           variant: 'caption',
-          fontSize: '1rem',
+          fontStyle: 'italic',
         },
         ...wallet.metadata,
       }),
@@ -205,6 +221,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
         caption: evalAttr.attribute.question.render({
           typography: {
             variant: 'caption',
+            fontStyle: 'italic',
           },
           ...wallet.metadata,
         }),
@@ -364,6 +381,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                     <SectionListItem
                       section={section}
                       activeSection={activeSection}
+                      depth="primary"
                       onClick={() => {
                         history.replaceState(null, '', `#${sectionHeaderId(section)}`);
                         scrollToSection(richSectionToSection(section));
@@ -375,6 +393,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                           <SectionListItem
                             key={sectionHeaderId(subsection)}
                             section={subsection}
+                            depth="secondary"
                             activeSection={activeSection}
                             onClick={() => {
                               history.replaceState(null, '', `#${sectionHeaderId(subsection)}`);
@@ -410,7 +429,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                     </SingleListItemIcon>
                     <ListItemText
                       key="listItemTextHome"
-                      primary={'Home'}
+                      primary={<Typography sx={{ fontSize: listFontSizePrimary }}>Home</Typography>}
                       sx={{ whiteSpace: 'nowrap' }}
                     />
                   </ListItemButton>

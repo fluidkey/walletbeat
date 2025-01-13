@@ -37,6 +37,7 @@ export type WithTypography<I extends Input = Input> = I & {
     color?: React.ComponentProps<typeof Typography>['color'];
     fontSize?: React.ComponentProps<typeof Typography>['fontSize'];
     fontWeight?: React.ComponentProps<typeof Typography>['fontWeight'];
+    fontStyle?: React.ComponentProps<typeof Typography>['fontStyle'];
     lineHeight?: React.ComponentProps<typeof Typography>['lineHeight'];
     marginBottom?: React.ComponentProps<typeof Typography>['marginBottom'];
     marginTop?: React.ComponentProps<typeof Typography>['marginTop'];

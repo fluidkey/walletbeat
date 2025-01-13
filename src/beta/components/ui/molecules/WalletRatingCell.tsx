@@ -128,19 +128,19 @@ export function WalletRatingCell<Vs extends ValueSet>({
         >
           {highlightedEvalAttr === null ? (
             <>
-              <Typography variant="h5" fontSize="0.8rem" whiteSpace="nowrap">
+              <Typography variant="h3" whiteSpace="nowrap">
                 {attrGroup.icon} {attrGroup.displayName}
               </Typography>
               {attrGroup.perWalletQuestion.render({
                 ...row.wallet.metadata,
                 typography: {
-                  variant: 'caption',
+                  variant: 'body2',
                 },
               })}
             </>
           ) : (
             <>
-              <Typography variant="h6" fontSize="0.7rem" whiteSpace="nowrap">
+              <Typography variant="h4" whiteSpace="nowrap">
                 {highlightedEvalAttr.evaluation.value.icon ?? highlightedEvalAttr.attribute.icon}{' '}
                 {highlightedEvalAttr.attribute.displayName}{' '}
               </Typography>
@@ -159,8 +159,7 @@ export function WalletRatingCell<Vs extends ValueSet>({
                   return `${ratingToIcon(highlightedEvalAttr.evaluation.value.rating)} ${input.trim()}${suffix}`;
                 },
                 typography: {
-                  variant: 'caption',
-                  lineHeight: 1.15,
+                  variant: 'body2',
                 },
               })}
             </>

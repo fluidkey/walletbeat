@@ -81,7 +81,7 @@ function ExampleRatings<V extends Value>({
     <StyledListItem
       key={`example-${index}`}
       bulletText={ratingToIcon(rating)}
-      bulletFontSize="0.6rem"
+      bulletFontSize="75%"
       isFirstItem={index === 0}
       spaceBetweenItems="0.125rem"
     >

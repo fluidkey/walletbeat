@@ -16,6 +16,7 @@ import { type AccordionData, Accordions } from '../atoms/Accordions';
 import type { NonEmptyArray } from '@/beta/types/utils/non-empty';
 import { WrapRatingIcon } from '../atoms/WrapRatingIcon';
 import { AttributeMethodology } from '../molecules/attributes/AttributeMethodology';
+import { subsectionTheme } from '../../ThemeRegistry/theme';
 
 export function WalletAttribute<Vs extends ValueSet, V extends Value>({
   wallet,
@@ -102,7 +103,7 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
       {override?.note !== undefined ? (
         <WrapIcon
           icon={'\u{1f449}'}
-          iconFontSize="1rem"
+          iconFontSize={subsectionTheme.typography.body1.fontSize}
           iconWidth={subsectionIconWidth}
           sx={{ marginTop: '1rem' }}
         >
