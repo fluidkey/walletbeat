@@ -146,16 +146,18 @@ export function WalletRatingCell<Vs extends ValueSet>({
               </Typography>
               {highlightedEvalAttr.evaluation.value.shortExplanation.render({
                 ...row.wallet.metadata,
-                prefix: ratingToIcon(highlightedEvalAttr.evaluation.value.rating) + ' ',
-                suffix:
-                  row.table.variantSelected !== null &&
-                  attributeEvaluationIsUniqueToVariant(
-                    row.wallet,
-                    row.table.variantSelected,
-                    highlightedEvalAttr.attribute
-                  )
-                    ? ` This is only the case on the ${row.table.variantSelected} version.`
-                    : '',
+                textTransform: (input: string) => {
+                  const suffix =
+                    row.table.variantSelected !== null &&
+                    attributeEvaluationIsUniqueToVariant(
+                      row.wallet,
+                      row.table.variantSelected,
+                      highlightedEvalAttr.attribute
+                    )
+                      ? ` This is only the case on the ${row.table.variantSelected} version.`
+                      : '';
+                  return `${ratingToIcon(highlightedEvalAttr.evaluation.value.rating)} ${input.trim()}${suffix}`;
+                },
                 typography: {
                   variant: 'caption',
                   lineHeight: 1.15,

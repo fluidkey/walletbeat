@@ -1,8 +1,14 @@
 import type { ResolvedFeatures } from '@/beta/schema/features';
 import { License, FOSS, licenseIsFOSS, licenseName } from '@/beta/schema/features/license';
-import { Rating, type Value, type Attribute, type Evaluation } from '@/beta/schema/attributes';
+import {
+  Rating,
+  type Value,
+  type Attribute,
+  type Evaluation,
+  exampleRating,
+} from '@/beta/schema/attributes';
 import { pickWorstRating, unrated } from '../common';
-import { component, paragraph, sentence } from '@/beta/types/text';
+import { component, markdown, mdParagraph, paragraph, sentence } from '@/beta/types/text';
 import type { WalletMetadata } from '@/beta/schema/wallet';
 import { LicenseDetails } from '@/beta/components/ui/molecules/attributes/transparency/LicenseDetails';
 
@@ -119,22 +125,65 @@ export const openSource: Attribute<OpenSourceValue> = {
   id: 'openSource',
   icon: '\u{2764}', // Heart
   displayName: 'Source code license',
+  midSentenceName: 'source code license',
   question: sentence(`
     Is the wallet's source code licensed under a Free and Open Source Software (FOSS) license?
   `),
-  why: paragraph(`
-    Free and Open Source Software (FOSS) licensing allows a software project's
-    source code to be freely used, modified and distributed. This allows
-    better collaboration, more transparency into the software development
-    practices that go into the project, and allows security researchers to
-    more easily identify and report security vulnerabilities.
-    In short, it turns software project into public goods.
+  why: mdParagraph(`
+    [Free and Open Source Software (FOSS) licensing](https://en.wikipedia.org/wiki/Open-source_license)
+    allows a software project's source code to be freely used, modified and
+    distributed. This allows better collaboration, more transparency into the
+    software development practices that go into the project, and allows
+    security researchers to more easily identify and report security
+    vulnerabilities. In short, it turns software projects into public goods.
   `),
-  explanationValues: [
-    open(License.APACHE_2_0).value,
-    openInTheFuture(License.BUSL_1_1).value,
-    proprietary.value,
-  ],
+  methodology: markdown(`
+    Wallets are assessed based whether the license of their source code meets
+    the [Open Source Initiative's definition of open source](https://en.wikipedia.org/wiki/The_Open_Source_Definition).
+  `),
+  ratingScale: {
+    display: 'pass-fail',
+    exhaustive: true,
+    pass: exampleRating(
+      mdParagraph(`
+        The wallet is licensed under a Free and Open Source Software (FOSS)
+        license. Examples of such licenses include
+        [MIT](https://opensource.org/license/MIT),
+        [Apache](https://opensource.org/license/apache-2-0),
+        [BSD](https://opensource.org/license/bsd-1-clause),
+        and [GPL](https://opensource.org/license/gpl-2-0).
+      `),
+      Rating.YES
+    ),
+    partial: exampleRating(
+      mdParagraph(`
+        The wallet is licensed under a license that represents a commitment to
+        switch to a Free and Open Source Software (FOSS) license by a specific
+        date. Examples of such licenses include
+        [BUSL](https://spdx.org/licenses/BUSL-1.1.html).
+      `),
+      Rating.PARTIAL
+    ),
+    fail: [
+      exampleRating(
+        paragraph(`
+          The wallet is licensed under any non-FOSS (proprietary) license.
+        `),
+        proprietary.value
+      ),
+      exampleRating(
+        paragraph(`
+          The wallet's source code repository is missing a license file.
+          The lack of a license file may be an accidental omission on the
+          wallet developers' part, but also may indicate that the wallet may
+          set its license to a proprietary license. Therefore, Walletbeat makes
+          the conservative assumption that the wallet is not be Free and Open
+          Open Source Software until it does have a valid license file.
+        `),
+        unlicensed.value
+      ),
+    ],
+  },
   evaluate: (features: ResolvedFeatures): Evaluation<OpenSourceValue> => {
     if (features.license === null) {
       return unrated(openSource, brand, { license: License.UNLICENSED_VISIBLE });

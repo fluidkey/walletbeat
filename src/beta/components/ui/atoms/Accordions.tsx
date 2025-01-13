@@ -2,7 +2,7 @@ import type { NonEmptyArray } from '@/beta/types/utils/non-empty';
 import type React from 'react';
 import { useState } from 'react';
 import theme from '../../ThemeRegistry/theme';
-import { Accordion, AccordionDetails, AccordionSummary, darken } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, darken, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export interface AccordionData {
@@ -15,10 +15,12 @@ export interface AccordionData {
 export function Accordions({
   accordions,
   borderRadius,
+  summaryTypographyVariant = 'h1',
   interAccordionMargin = '1rem',
 }: {
   accordions: NonEmptyArray<AccordionData>;
   borderRadius: string;
+  summaryTypographyVariant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
   interAccordionMargin?: string;
 }): React.JSX.Element {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -55,11 +57,15 @@ export function Accordions({
               id={accordion.id}
               expandIcon={<ExpandMoreIcon />}
             >
-              {accordion.summary}
+              <Typography variant={summaryTypographyVariant}>{accordion.summary}</Typography>
             </AccordionSummary>
             <AccordionDetails
               key={`${accordion.id}-details`}
               sx={{
+                paddingTop: '16px',
+                paddingBottom: '16px',
+                paddingLeft: '16px',
+                paddingRight: '16px',
                 backgroundColor: darken(theme.palette.background.paper, 0.1),
                 borderBottomLeftRadius: blankBottom ? borderRadius : '0px',
                 borderBottomRightRadius: blankBottom ? borderRadius : '0px',
