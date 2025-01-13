@@ -19,9 +19,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { WalletIcon } from '../atoms/WalletIcon';
 import { AnchorHeader } from '../atoms/AnchorHeader';
 import { WalletAttribute } from '../organisms/WalletAttribute';
-import { blend } from '@mui/system';
+import { blend, ThemeProvider } from '@mui/system';
 import HomeIcon from '@mui/icons-material/Home';
-import theme from '@/beta/components/ThemeRegistry/theme';
+import theme, { subsectionTheme } from '@/beta/components/ThemeRegistry/theme';
 import { ratingToColor } from '@/beta/schema/attributes';
 import {
   listIconSize,
@@ -205,7 +205,6 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
         caption: evalAttr.attribute.question.render({
           typography: {
             variant: 'caption',
-            fontSize: '1rem',
           },
           ...wallet.metadata,
         }),
@@ -481,35 +480,36 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                   )}
                   {section.subsections?.map(subsection => (
                     <StyledSubsection key={sectionHeaderId(subsection)} sx={subsection.sx}>
-                      <AnchorHeader
-                        key="subsectionHeader"
-                        id={sectionHeaderId(subsection) ?? undefined}
-                        sx={{ scrollMarginTop }}
-                        variant="h5"
-                        component="h3"
-                        marginBottom="0rem"
-                        onClick={e => {
-                          if (e.button === 0) {
-                            scrollToSection(richSectionToSection(subsection));
-                            e.preventDefault();
-                          }
-                        }}
-                      >
-                        {subsection.icon} {subsection.title}
-                      </AnchorHeader>
-                      {subsection.caption === null ? null : (
-                        <Box
-                          key="subsectionCaption"
-                          marginLeft={subsectionIconWidth}
-                          marginBottom="1rem"
-                          sx={{ opacity: 0.8 }}
+                      <ThemeProvider theme={subsectionTheme}>
+                        <AnchorHeader
+                          key="subsectionHeader"
+                          id={sectionHeaderId(subsection) ?? undefined}
+                          sx={{ scrollMarginTop }}
+                          variant="h3"
+                          marginBottom="0rem"
+                          onClick={e => {
+                            if (e.button === 0) {
+                              scrollToSection(richSectionToSection(subsection));
+                              e.preventDefault();
+                            }
+                          }}
                         >
-                          {subsection.caption}
-                        </Box>
-                      )}
-                      {subsection.body === null ? null : (
-                        <Box key="subsectionBody">{subsection.body}</Box>
-                      )}
+                          {subsection.icon} {subsection.title}
+                        </AnchorHeader>
+                        {subsection.caption === null ? null : (
+                          <Box
+                            key="subsectionCaption"
+                            marginLeft={subsectionIconWidth}
+                            marginBottom="1rem"
+                            sx={{ opacity: 0.8 }}
+                          >
+                            {subsection.caption}
+                          </Box>
+                        )}
+                        {subsection.body === null ? null : (
+                          <Box key="subsectionBody">{subsection.body}</Box>
+                        )}
+                      </ThemeProvider>
                     </StyledSubsection>
                   ))}
                 </StyledSection>
