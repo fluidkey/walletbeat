@@ -50,15 +50,15 @@ const themeOptions: ThemeOptions = {
     },
     h2: {
       fontWeight: 700,
-      fontSize: '3rem',
+      fontSize: '2.5rem',
     },
     h3: {
       fontWeight: 600,
-      fontSize: '2.75rem',
+      fontSize: '2rem',
     },
     h4: {
       fontWeight: 600,
-      fontSize: '2.125rem',
+      fontSize: '1.65rem',
     },
     h5: {
       fontWeight: 400,
@@ -66,15 +66,15 @@ const themeOptions: ThemeOptions = {
     },
     h6: {
       fontWeight: 400,
-      fontSize: '1.1rem',
+      fontSize: '1.25rem',
     },
     body1: {
       fontWeight: 400,
-      fontSize: '1rem',
+      fontSize: '1.2rem',
     },
     body2: {
       fontWeight: 300,
-      fontSize: '0.975rem',
+      fontSize: '1.1rem',
     },
     caption: {
       fontWeight: 300,

@@ -21,6 +21,7 @@ import { AnchorHeader } from '../atoms/AnchorHeader';
 import { WalletAttribute } from '../organisms/WalletAttribute';
 import { blend, ThemeProvider } from '@mui/system';
 import HomeIcon from '@mui/icons-material/Home';
+import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import theme, { subsectionTheme } from '@/beta/components/ThemeRegistry/theme';
 import { ratingToColor } from '@/beta/schema/attributes';
 import {
@@ -430,6 +431,24 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                     <ListItemText
                       key="listItemTextHome"
                       primary={<Typography sx={{ fontSize: listFontSizePrimary }}>Home</Typography>}
+                      sx={{ whiteSpace: 'nowrap' }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem key="listItemFAQ" disablePadding={true}>
+                  <ListItemButton
+                    component="a"
+                    href="/beta/faq"
+                    disableRipple={true}
+                    key="listItemButtonFAQ"
+                    sx={{ borderRadius: `${listItemRadius}px` }}
+                  >
+                    <SingleListItemIcon>
+                      <HelpCenterIcon />
+                    </SingleListItemIcon>
+                    <ListItemText
+                      key="listItemTextFAQ"
+                      primary={<Typography sx={{ fontSize: listFontSizePrimary }}>FAQ</Typography>}
                       sx={{ whiteSpace: 'nowrap' }}
                     />
                   </ListItemButton>

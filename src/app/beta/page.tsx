@@ -1,7 +1,8 @@
 import WalletTable from '@/beta/components/ui/organisms/WalletTable';
-import { Box, Typography } from '@mui/material';
+import { Box, Link, Typography } from '@mui/material';
 import type React from 'react';
 import './global.css';
+import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 
 export default function Page(): React.JSX.Element {
   return (
@@ -19,6 +20,12 @@ export default function Page(): React.JSX.Element {
           ~ walletbeta
         </Typography>
         <WalletTable />
+        <Typography variant="caption" mt={4} maxWidth="90vw">
+          <Link href="/beta/faq">
+            <HelpCenterIcon fontSize="small" />
+            Frequently asked questions
+          </Link>
+        </Typography>
       </Box>
     </Box>
   );

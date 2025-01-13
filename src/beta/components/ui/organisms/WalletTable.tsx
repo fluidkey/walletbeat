@@ -170,7 +170,7 @@ export default function WalletTable(): React.JSX.Element {
     walletTableColumn(transparencyAttributeGroup, tree => tree.transparency),
   ];
   return (
-    <Box maxWidth="100%" height="90vh" width="fit-content" overflow="auto">
+    <Box maxWidth="100%" height="80vh" width="fit-content" overflow="auto">
       <ThemeProvider theme={walletTableTheme}>
         <DataGrid<WalletRow>
           rows={rows}
