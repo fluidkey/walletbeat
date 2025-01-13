@@ -19,11 +19,14 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { WalletIcon } from '../atoms/WalletIcon';
 import { AnchorHeader } from '../atoms/AnchorHeader';
 import { WalletAttribute } from '../organisms/WalletAttribute';
-import { blend } from '@mui/system';
+import { blend, ThemeProvider } from '@mui/system';
 import HomeIcon from '@mui/icons-material/Home';
-import theme from '@/beta/components/ThemeRegistry/theme';
+import HelpCenterIcon from '@mui/icons-material/HelpCenter';
+import theme, { subsectionTheme } from '@/beta/components/ThemeRegistry/theme';
 import { ratingToColor } from '@/beta/schema/attributes';
 import {
+  listFontSizePrimary,
+  listFontSizeSecondary,
   listIconSize,
   listItemRadius,
   sectionIconWidth,
@@ -124,11 +127,13 @@ function SingleListItemIcon({ children }: { children: React.ReactNode }): React.
 function SectionListItem({
   section,
   activeSection,
+  depth,
   onClick,
   sx,
 }: {
   section: RichSection;
   activeSection: Section;
+  depth: 'primary' | 'secondary';
   onClick?: React.ComponentProps<typeof ListItemButton>['onClick'];
   sx?: React.ComponentProps<typeof ListItem>['sx'];
 }): React.JSX.Element {
@@ -149,7 +154,19 @@ function SectionListItem({
         sx={{ borderRadius: `${listItemRadius}px` }}
       >
         <SingleListItemIcon>{section.icon}</SingleListItemIcon>
-        <ListItemText key="listItemText" primary={section.title} sx={{ whiteSpace: 'nowrap' }} />
+        <ListItemText
+          key="listItemText"
+          primary={
+            <Typography
+              sx={{
+                fontSize: depth === 'primary' ? listFontSizePrimary : listFontSizeSecondary,
+              }}
+            >
+              {section.title}
+            </Typography>
+          }
+          sx={{ whiteSpace: 'nowrap' }}
+        />
       </ListItemButton>
     </ListItem>
   );
@@ -184,7 +201,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
       caption: attrGroup.perWalletQuestion.render({
         typography: {
           variant: 'caption',
-          fontSize: '1rem',
+          fontStyle: 'italic',
         },
         ...wallet.metadata,
       }),
@@ -205,7 +222,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
         caption: evalAttr.attribute.question.render({
           typography: {
             variant: 'caption',
-            fontSize: '1rem',
+            fontStyle: 'italic',
           },
           ...wallet.metadata,
         }),
@@ -365,6 +382,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                     <SectionListItem
                       section={section}
                       activeSection={activeSection}
+                      depth="primary"
                       onClick={() => {
                         history.replaceState(null, '', `#${sectionHeaderId(section)}`);
                         scrollToSection(richSectionToSection(section));
@@ -376,6 +394,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                           <SectionListItem
                             key={sectionHeaderId(subsection)}
                             section={subsection}
+                            depth="secondary"
                             activeSection={activeSection}
                             onClick={() => {
                               history.replaceState(null, '', `#${sectionHeaderId(subsection)}`);
@@ -411,7 +430,25 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                     </SingleListItemIcon>
                     <ListItemText
                       key="listItemTextHome"
-                      primary={'Home'}
+                      primary={<Typography sx={{ fontSize: listFontSizePrimary }}>Home</Typography>}
+                      sx={{ whiteSpace: 'nowrap' }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem key="listItemFAQ" disablePadding={true}>
+                  <ListItemButton
+                    component="a"
+                    href="/beta/faq"
+                    disableRipple={true}
+                    key="listItemButtonFAQ"
+                    sx={{ borderRadius: `${listItemRadius}px` }}
+                  >
+                    <SingleListItemIcon>
+                      <HelpCenterIcon />
+                    </SingleListItemIcon>
+                    <ListItemText
+                      key="listItemTextFAQ"
+                      primary={<Typography sx={{ fontSize: listFontSizePrimary }}>FAQ</Typography>}
                       sx={{ whiteSpace: 'nowrap' }}
                     />
                   </ListItemButton>
@@ -481,35 +518,36 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                   )}
                   {section.subsections?.map(subsection => (
                     <StyledSubsection key={sectionHeaderId(subsection)} sx={subsection.sx}>
-                      <AnchorHeader
-                        key="subsectionHeader"
-                        id={sectionHeaderId(subsection) ?? undefined}
-                        sx={{ scrollMarginTop }}
-                        variant="h5"
-                        component="h3"
-                        marginBottom="0rem"
-                        onClick={e => {
-                          if (e.button === 0) {
-                            scrollToSection(richSectionToSection(subsection));
-                            e.preventDefault();
-                          }
-                        }}
-                      >
-                        {subsection.icon} {subsection.title}
-                      </AnchorHeader>
-                      {subsection.caption === null ? null : (
-                        <Box
-                          key="subsectionCaption"
-                          marginLeft={subsectionIconWidth}
-                          marginBottom="1rem"
-                          sx={{ opacity: 0.8 }}
+                      <ThemeProvider theme={subsectionTheme}>
+                        <AnchorHeader
+                          key="subsectionHeader"
+                          id={sectionHeaderId(subsection) ?? undefined}
+                          sx={{ scrollMarginTop }}
+                          variant="h3"
+                          marginBottom="0rem"
+                          onClick={e => {
+                            if (e.button === 0) {
+                              scrollToSection(richSectionToSection(subsection));
+                              e.preventDefault();
+                            }
+                          }}
                         >
-                          {subsection.caption}
-                        </Box>
-                      )}
-                      {subsection.body === null ? null : (
-                        <Box key="subsectionBody">{subsection.body}</Box>
-                      )}
+                          {subsection.icon} {subsection.title}
+                        </AnchorHeader>
+                        {subsection.caption === null ? null : (
+                          <Box
+                            key="subsectionCaption"
+                            marginLeft={subsectionIconWidth}
+                            marginBottom="1rem"
+                            sx={{ opacity: 0.8 }}
+                          >
+                            {subsection.caption}
+                          </Box>
+                        )}
+                        {subsection.body === null ? null : (
+                          <Box key="subsectionBody">{subsection.body}</Box>
+                        )}
+                      </ThemeProvider>
                     </StyledSubsection>
                   ))}
                 </StyledSection>

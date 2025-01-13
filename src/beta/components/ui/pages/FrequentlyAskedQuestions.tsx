@@ -1,0 +1,218 @@
+import { Divider } from '@mui/material';
+import FrequentlyAskedQuestion from '../molecules/FrequentlyAskedQuestion';
+import React from 'react';
+
+interface FAQEntry {
+  anchor: string;
+  question: string;
+  answerMarkdown: string;
+}
+
+const frequentlyAskedQuestions: FAQEntry[] = [
+  {
+    anchor: 'what-is-walletbeat',
+    question: 'What is Walletbeat?',
+    answerMarkdown: `
+      **Walletbeat is an Ethereum wallet rating site.**
+
+      It aims to provide a trustworthy, up-to-date source of information
+      about the state of the Ethereum wallet ecosystem.
+    `,
+  },
+  {
+    anchor: 'why-does-walletbeat-exist',
+    question: 'Why does Walletbeat exist?',
+    answerMarkdown: `
+      The Ethereum wallet ecosystem today is fragmented and it is difficult
+      for users to find a wallet that meets all of their requirements.
+
+      Wallets are not fully interchangeable, so apps need to write
+      wallet-specific code to paper over those differences, or encourage
+      their users towards wallet types that have better UX but do not
+      necessarily reflect Ethereum values nor provide a good way for the
+      user to easily change to a fully self-custodial external wallet.
+
+      Wallets themselves are in competition for users and market share,
+      causing competitive pressures that emphasize flashy features over
+      important-yet-often-neglected values like security, privacy, and
+      user self-sovereignty.
+
+      **Walletbeat aims to provide an objective and fair assessment** of
+      Ethereum wallets as they stand. Its purpose is similar to that of
+      [L2Beat](https://l2beat.com), but for wallets.
+
+      **Where L2Beat assesses Layer 2s, Walletbeat assesses wallets**.
+      Much like L2Beat has played a major role in pushing the Layer 2
+      ecosystem towards better security and decentralization over time,
+      Walletbeat aims to push the Ethereum wallet ecosystem towards similar
+      Ethereum-aligned values.
+    `,
+  },
+  {
+    anchor: 'why-should-i-care',
+    question: 'Why should I care?',
+    answerMarkdown: `
+      **As an Ethereum user**, Walletbeat helps you make an informed decision
+      about which wallet to use, and which wallet you may want to fund.
+
+      **As an Ethereum wallet developer**, Walletbeat helps you compare your
+      own wallet against competitors, and a source of inspiration for roadmap
+      items to work on.
+    `,
+  },
+  {
+    anchor: 'how-are-wallets-evaluated',
+    question: 'How are wallets evaluated?',
+    answerMarkdown: `
+      Wallets are evaluated on a set of pass-fail rules that evaluate
+      specific **attributes**.
+
+      **Attributes** are selected based on the following guidelines:
+
+      * **Ethereum alignment**. This is a notoriously fuzzy concept.
+        Walletbeat's interpretation of it centers around
+        [cypherpunk values](https://nakamoto.com/the-cypherpunks/), which
+        [Vitalik Buterin's own ideas around desirable wallet
+        attributes](https://vitalik.eth.limo/general/2024/12/03/wallets.html)
+        are also based on. These values include **security**, **privacy**,
+        **user self-sovereignty**, and **permissionless interoperability**
+        (via shared standards). These principles are mostly timeless and the
+        attributes in this category should be mostly static.
+      * **Shared Ethereum ecosystem goals**. This is a moving target that
+        aims to reflect and accelerate the realization of the goals of the
+        rest of the Ethereum ecosystem. For example, Ethereum's rollup-based
+        scaling roadmap is well-complemented on the wallet side by focus on
+        transparent asset bridging, trustless L2 asset withdrawals, and so on.
+      * **Not already market-forces-driven**. Ethereum's wallet ecosystem is
+        already driven by market forces to support certain features like
+        convenient multi-chain management including the most popular L2s,
+        support for popular hardware wallets, and so on.
+        Walletbeat aims to complement existing market forces by focusing on
+        features where market competition alone may not be enough to
+        encourage the ubiquity of a feature across the wallet ecosystem.
+        For example, market forces do not always accurately predict the
+        likelihood of long-tail events like software supply chain security
+        and user data privacy breaches.
+
+      Once desirable attributes are identified, the next step is to rate
+      wallets on those attributes based on a set of rules. These rules are
+      selected using the following guidelines:
+
+      * **Objectively measurable**. It should be possible to determine
+        whether a rule is met or not without involving human judgement.
+        For example, a rule that looks at the user data exported to
+        third-party servers can be objectively measured by looking at the
+        wallet's source code or by analyzing the contents of wallet network
+        traffic.
+      * **Technology-neutral**. Rules should not prescribe the technology
+        used in an implementation of a specific attribute. For example,
+        an attribute evaluating whether a wallet's source code license is
+        open-source should not prescribe a specific license to use. As
+        another example, an attribute evaluating whether a wallet supports
+        sending assets privately should not prescribe a specific method to
+        send assets privately, and should equally recognize possible
+        solutions such as stealth addresses and Privacy Pools.
+        Notable exceptions to this guideline include ubiquitous EIPs.
+        For example, there may be multiple token standards, but the
+        ubiquity of ERC-20 means that other fungible token standards are
+        not worth supporting as alternatives to ERC-20 in Walletbeat.
+      * **Immediately feasible**. It should be possible for a wallet to
+        satisfy an attribute using currently-available technology without
+        requiring a future Ethereum protocol upgrade or new browser features
+        to exist.
+      * **Pragmatic**. It should be possible for a wallet to satisfy an
+        attribute without introducing over-burdensome complexity or ruining
+        another aspect of the wallet experience in the process.
+        For example, one way to satisfy an attribute such as "users should
+        be able to submit L1 transactions in a censorship-resistant manner"
+        might be for the wallet to require running a full node, but this
+        would be impractical for many users to run due to the storage and
+        bandwidth requirements involved.
+        For such attributes, while rules should recognize and accept
+        "users may run a full node and connect their wallet to it" as a valid
+        implementation, there should also be other more pragmatic solutions,
+        such as "the wallet rotates between with several public transaction
+        broadcast endpoints in diverse jurisdictions".
+    `,
+  },
+  {
+    anchor: 'who-is-behind-walletbeat',
+    question: 'Who is behind Walletbeat?',
+    answerMarkdown: `
+      Walletbeat was originally created by
+      [moritz](https://warpcast.com/moritz/) as an open-source effort to
+      document the state of the wallet ecosystem.
+      [Multiple contributors](https://github.com/fluidkey/walletbeat/graphs/contributors)
+      have helped along the way by adding data on a variety of wallets.
+
+      Walletbeat was later revamped in 2025 by
+      [polymutex](https://warpcast.com/polymutex.eth) with a more in-depth
+      focus on Ethereum alignment and richer data about individual wallets.
+      This is still a work in progress.
+
+      Walletbeat is currently hosted by [Fluidkey](https://fluidkey.com/),
+      an incorporated company in Switzerland. In order to maximize credible
+      neutrality, Walletbeat's long-term ownership goal is to become an
+      independent DAO or foundation (similar to L2Beat) once Walletbeat
+      reaches a higher level of maturity and a broader set of regular
+      contributors.
+    `,
+  },
+  {
+    anchor: 'how-can-i-help',
+    question: 'How can I help?',
+    answerMarkdown: `
+      Walletbeat is a work in progress and we would love your help!
+
+      **The best way to help is to help with wallet research**. There are
+      lots of Ethereum wallets put there, and it takes a lot of work to dig
+      through their source code and provide accurate assessments.
+
+      **If you are a wallet developer**, your help here would be invaluable
+      to ensure that Walletbeat's data about your wallet is accurate and
+      up-to-date. Your expertise with your wallet's codebase speeds up this
+      process a lot.
+
+      If you would like to help with this, please
+      [contribute to our repository!](https://github.com/fluidkey/walletbeat).
+    `,
+  },
+];
+
+export function FrequentlyAskedQuestions(): React.JSX.Element {
+  return (
+    <>
+      {frequentlyAskedQuestions.map((entry, index) => (
+        <React.Fragment key={entry.anchor}>
+          {index === 0 ? null : (
+            <Divider
+              orientation="horizontal"
+              variant="middle"
+              flexItem={true}
+              sx={{
+                marginTop: '1rem',
+                marginBottom: '1rem',
+                marginLeft: '10%',
+                marginRight: '10%',
+              }}
+            />
+          )}
+          <FrequentlyAskedQuestion
+            anchor={entry.anchor}
+            question={entry.question}
+            questionTypographyProps={{
+              variant: 'h3',
+              marginTop: '1rem',
+              marginBottom: '1rem',
+            }}
+            answerTypographyProps={{
+              variant: 'body1',
+            }}
+          >
+            {entry.answerMarkdown}
+          </FrequentlyAskedQuestion>
+        </React.Fragment>
+      ))}
+    </>
+  );
+}
