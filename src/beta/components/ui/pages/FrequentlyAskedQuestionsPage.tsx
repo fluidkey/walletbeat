@@ -1,17 +1,24 @@
-import { Divider } from '@mui/material';
+import { Typography, Divider } from '@mui/material';
+import { Box } from '@mui/system';
 import FrequentlyAskedQuestion from '../molecules/FrequentlyAskedQuestion';
 import React from 'react';
+import { NavigationPageLayout } from './NavigationPageLayout';
+import { navigationFaq, navigationHome } from '../../navigation';
+import { type NonEmptyArray, nonEmptyConcat, nonEmptyMap } from '@/beta/types/utils/non-empty';
+import type { NavigationContentItem } from '../organisms/Navigation';
 
 interface FAQEntry {
   anchor: string;
   question: string;
+  navTitle: string;
   answerMarkdown: string;
 }
 
-const frequentlyAskedQuestions: FAQEntry[] = [
+const frequentlyAskedQuestions: NonEmptyArray<FAQEntry> = [
   {
     anchor: 'what-is-walletbeat',
     question: 'What is Walletbeat?',
+    navTitle: 'What is Walletbeat?',
     answerMarkdown: `
       **Walletbeat is an Ethereum wallet rating site.**
 
@@ -22,6 +29,7 @@ const frequentlyAskedQuestions: FAQEntry[] = [
   {
     anchor: 'why-does-walletbeat-exist',
     question: 'Why does Walletbeat exist?',
+    navTitle: 'What is Walletbeat for?',
     answerMarkdown: `
       The Ethereum wallet ecosystem today is fragmented and it is difficult
       for users to find a wallet that meets all of their requirements.
@@ -51,6 +59,7 @@ const frequentlyAskedQuestions: FAQEntry[] = [
   {
     anchor: 'why-should-i-care',
     question: 'Why should I care?',
+    navTitle: 'Why should I care?',
     answerMarkdown: `
       **As an Ethereum user**, Walletbeat helps you make an informed decision
       about which wallet to use, and which wallet you may want to fund.
@@ -63,6 +72,7 @@ const frequentlyAskedQuestions: FAQEntry[] = [
   {
     anchor: 'how-are-wallets-evaluated',
     question: 'How are wallets evaluated?',
+    navTitle: 'Wallet evaluation',
     answerMarkdown: `
       Wallets are evaluated on a set of pass-fail rules that evaluate
       specific **attributes**.
@@ -138,6 +148,7 @@ const frequentlyAskedQuestions: FAQEntry[] = [
   {
     anchor: 'who-is-behind-walletbeat',
     question: 'Who is behind Walletbeat?',
+    navTitle: 'Who runs Walletbeat?',
     answerMarkdown: `
       Walletbeat was originally created by
       [moritz](https://warpcast.com/moritz/) as an open-source effort to
@@ -161,6 +172,7 @@ const frequentlyAskedQuestions: FAQEntry[] = [
   {
     anchor: 'how-can-i-help',
     question: 'How can I help?',
+    navTitle: 'How can I help?',
     answerMarkdown: `
       Walletbeat is a work in progress and we would love your help!
 
@@ -179,7 +191,7 @@ const frequentlyAskedQuestions: FAQEntry[] = [
   },
 ];
 
-export function FrequentlyAskedQuestions(): React.JSX.Element {
+function FrequentlyAskedQuestions(): React.JSX.Element {
   return (
     <>
       {frequentlyAskedQuestions.map((entry, index) => (
@@ -214,5 +226,46 @@ export function FrequentlyAskedQuestions(): React.JSX.Element {
         </React.Fragment>
       ))}
     </>
+  );
+}
+
+export function FrequentlyAskedQuestionsPage(): React.JSX.Element {
+  return (
+    <NavigationPageLayout
+      groups={[
+        {
+          id: 'nav',
+          items: [navigationHome],
+          overflow: false,
+        },
+        {
+          id: 'faq-group',
+          items: nonEmptyConcat<NavigationContentItem>([
+            [
+              {
+                id: 'faq',
+                title: navigationFaq.title,
+                icon: navigationFaq.icon,
+                contentId: 'faqHeader',
+              },
+            ],
+            nonEmptyMap(frequentlyAskedQuestions, faq => ({
+              id: faq.anchor,
+              title: faq.navTitle,
+              icon: '?',
+              contentId: faq.anchor,
+            })),
+          ]),
+          overflow: true,
+        },
+      ]}
+    >
+      <Typography id="faqHeader" variant="h1">
+        Walletbeat FAQ
+      </Typography>
+      <Box maxWidth="75vw" display="flex" flexDirection="column" alignItems="stretch">
+        <FrequentlyAskedQuestions />
+      </Box>
+    </NavigationPageLayout>
   );
 }

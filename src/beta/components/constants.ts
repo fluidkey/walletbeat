@@ -17,18 +17,18 @@ export const subsectionIconWidth = '2.5rem';
 export const subsectionWeight = 400;
 
 /** Icon size in navigation bar. */
-export const listIconSize = 24;
+export const navigationListIconSize = 24;
 
 /**
  * Font size in navigation bar.
  * In pixels rather than rem because it should roughly match
  * the list icon size.
  */
-export const listFontSizePrimary = '20px';
-export const listFontSizeSecondary = '16px';
+export const navigationListFontSizePrimary = '20px';
+export const navigationListFontSizeSecondary = '16px';
 
 /** Icon size in navigation bar. */
-export const listItemRadius = 6;
+export const navigationListItemRadius = 6;
 
 /** Radius of subsection paper boxes. */
 export const subsectionBorderRadius = 6;
