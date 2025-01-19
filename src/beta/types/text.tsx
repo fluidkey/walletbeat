@@ -155,3 +155,12 @@ export function markdown<I extends Input = Input>(
     ),
   };
 }
+
+/**
+ * Slugify a camelCaseString into a-slug-like-this.
+ */
+export function slugifyCamelCase(camelCaseString: string): string {
+  return camelCaseString
+    .replaceAll('_', '-')
+    .replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+}

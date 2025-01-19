@@ -26,6 +26,7 @@ import {
   scrollPastHeaderPixels,
 } from '../../navigation';
 import { NavigationPageLayout } from './NavigationPageLayout';
+import { slugifyCamelCase } from '@/beta/types/text';
 
 const headerHeight = 80;
 const headerBottomMargin = 24;
@@ -75,13 +76,9 @@ interface RichSection extends Section {
 
 function sectionHeaderId(section: Section): string {
   if (section.subHeader !== null) {
-    return section.subHeader
-      .replaceAll('_', '-')
-      .replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+    return slugifyCamelCase(section.subHeader);
   }
-  return section.header
-    .replaceAll('_', '-')
-    .replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+  return slugifyCamelCase(section.header);
 }
 
 export function WalletPage({ walletName }: { walletName: WalletName }): React.JSX.Element {

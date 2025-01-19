@@ -21,6 +21,9 @@ import type { GridColTypeDef } from '@mui/x-data-grid';
 import { expandedRowHeight, ratingCellWidth, shortRowHeight } from '../../constants';
 import { useState } from 'react';
 import type { WalletRowStateHandle } from '../WalletTableState';
+import { IconLink } from '../atoms/IconLink';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { slugifyCamelCase } from '@/beta/types/text';
 
 /**
  * Common properties of rating-type columns.
@@ -86,26 +89,58 @@ export function WalletRatingCell<Vs extends ValueSet>({
         tooltip: `${icon} ${evalAttr.evaluation.value.displayName}${tooltipSuffix}`,
         tooltipValue: ratingToIcon(evalAttr.evaluation.value.rating),
         focusChange: (focused: boolean) => {
-          if (focused) {
+          if (!focused) {
+            return; // Do nothing on de-focus.
+          }
+          if (highlightedSlice === null) {
+            // First to be focused.
             setHighlightedSlice({
               evalAttrId,
-              sticky: highlightedSlice === null ? false : highlightedSlice.sticky,
+              sticky: false,
             });
-          } else if (highlightedSlice !== null) {
-            setHighlightedSlice(highlightedSlice.sticky ? { evalAttrId, sticky: true } : null);
+          } else {
+            // Not the first to be focused. Maintain sticky bit.
+            setHighlightedSlice({
+              evalAttrId,
+              sticky: highlightedSlice.sticky,
+            });
           }
         },
         click: () => {
-          setHighlightedSlice(
-            highlightedSlice === null ? null : { evalAttrId, sticky: !highlightedSlice.sticky }
-          );
+          if (highlightedSlice === null || highlightedSlice.evalAttrId !== evalAttrId) {
+            // Clicking on a slice for the first time, or clicking a different
+            // slice than the current highlighted slice. Highlight and set
+            // sticky bit.
+            setHighlightedSlice({
+              evalAttrId,
+              sticky: true,
+            });
+          } else {
+            // Clicking on currently-highlighted slice. Flip sticky bit.
+            setHighlightedSlice({
+              evalAttrId,
+              sticky: !highlightedSlice.sticky,
+            });
+          }
+          // In either case, expand the row.
           row.setExpanded(true);
         },
       };
     }
   );
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" gap="4px" sx={row.rowWideStyle}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      gap="4px"
+      sx={row.rowWideStyle}
+      onMouseLeave={() => {
+        if (highlightedSlice !== null && !highlightedSlice.sticky) {
+          setHighlightedSlice(null);
+        }
+      }}
+    >
       <RatingPie
         pieId={attrGroup.id}
         slices={slices}
@@ -162,6 +197,14 @@ export function WalletRatingCell<Vs extends ValueSet>({
                   variant: 'body2',
                 },
               })}
+              <Box display="flex" flexDirection="row" justifyContent="center">
+                <IconLink
+                  href={`/beta/wallet/${row.wallet.metadata.id}#${slugifyCamelCase(highlightedEvalAttr.attribute.id)}`}
+                  IconComponent={InfoOutlinedIcon}
+                >
+                  Learn more
+                </IconLink>
+              </Box>
             </>
           )}
         </Box>

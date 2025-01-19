@@ -2,7 +2,7 @@
 export const shortRowHeight = 56;
 
 /** Expanded row height. */
-export const expandedRowHeight = shortRowHeight * 3;
+export const expandedRowHeight = shortRowHeight * 3.5;
 
 /** Width of rating cells. */
 export const ratingCellWidth = shortRowHeight * 2 + 64;

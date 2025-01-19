@@ -112,6 +112,7 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
       target: item,
       untilTimestamp: Date.now() + 1250,
     });
+    history.replaceState(null, '', `#${item.contentId}`);
     content.scrollIntoView({ behavior: 'smooth' });
     scrollNavigationTo(item);
   };
@@ -202,10 +203,7 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
         flex="0"
         groups={groups}
         activeItemId={activeItem === null ? null : activeItem.id}
-        onContentItemClick={(item: NavigationContentItem) => {
-          history.replaceState(null, '', `#${item.contentId}`);
-          scrollToContent(item);
-        }}
+        onContentItemClick={scrollToContent}
       />
       <Box key="contentSpacerLeft" flex="1" />
       <Box

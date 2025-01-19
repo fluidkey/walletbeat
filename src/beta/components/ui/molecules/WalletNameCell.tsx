@@ -15,6 +15,8 @@ import type { WalletRowStateHandle } from '../WalletTableState';
 import { IconButton } from '../atoms/IconButton';
 import theme from '../../ThemeRegistry/theme';
 import { WalletIcon } from '../atoms/WalletIcon';
+import { IconLink } from '../atoms/IconLink';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const walletIconSize = shortRowHeight / 2;
 
@@ -160,10 +162,18 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
             gap="6px"
             paddingBottom="10px"
           >
+            <IconLink
+              href={`/beta/wallet/${row.wallet.metadata.id}`}
+              IconComponent={InfoOutlinedIcon}
+            >
+              Learn more
+            </IconLink>
+            |
             <ExternalLink
               url={row.wallet.metadata.url}
               defaultLabel={`${row.wallet.metadata.displayName} website`}
             />
+            |
             {row.wallet.metadata.repoUrl === null ? null : (
               <ExternalLink url={row.wallet.metadata.repoUrl} defaultLabel="Code" />
             )}
