@@ -3,7 +3,12 @@ import { Box } from '@mui/system';
 import FrequentlyAskedQuestion from '../molecules/FrequentlyAskedQuestion';
 import React from 'react';
 import { NavigationPageLayout } from './NavigationPageLayout';
-import { navigationFaq, navigationHome } from '../../navigation';
+import {
+  navigationFaq,
+  navigationFarcasterChannel,
+  navigationHome,
+  navigationRepository,
+} from '../../navigation';
 import { type NonEmptyArray, nonEmptyConcat, nonEmptyMap } from '@/beta/types/utils/non-empty';
 import type { NavigationContentItem } from '../organisms/Navigation';
 
@@ -257,6 +262,11 @@ export function FrequentlyAskedQuestionsPage(): React.JSX.Element {
             })),
           ]),
           overflow: true,
+        },
+        {
+          id: 'rest-of-nav',
+          items: [navigationRepository, navigationFarcasterChannel],
+          overflow: false,
         },
       ]}
     >

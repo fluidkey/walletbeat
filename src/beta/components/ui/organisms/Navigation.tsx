@@ -174,6 +174,7 @@ const NavigationItem = memo(
           <ListItemButton
             component="a"
             href={item.href}
+            target={item.href.startsWith('https://') ? '_blank' : undefined}
             disableRipple={true}
             selected={active}
             sx={{ borderRadius: `${navigationListItemRadius}px` }}

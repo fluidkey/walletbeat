@@ -18,7 +18,13 @@ import {
   subsectionIconWidth,
 } from '../../constants';
 import type { NavigationItem } from '../organisms/Navigation';
-import { navigationFaq, navigationHome, scrollPastHeaderPixels } from '../../navigation';
+import {
+  navigationFaq,
+  navigationFarcasterChannel,
+  navigationHome,
+  navigationRepository,
+  scrollPastHeaderPixels,
+} from '../../navigation';
 import { NavigationPageLayout } from './NavigationPageLayout';
 
 const headerHeight = 80;
@@ -190,7 +196,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
         },
         {
           id: 'rest-of-nav',
-          items: [navigationFaq],
+          items: [navigationFaq, navigationRepository, navigationFarcasterChannel],
           overflow: false,
         },
       ]}

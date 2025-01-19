@@ -1,8 +1,11 @@
 import WalletTable from '@/beta/components/ui/organisms/WalletTable';
-import { Box, Link, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import type React from 'react';
 import './global.css';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
+import ForumIcon from '@mui/icons-material/Forum';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import { IconLink } from '@/beta/components/ui/atoms/IconLink';
 
 export default function Page(): React.JSX.Element {
   return (
@@ -16,16 +19,55 @@ export default function Page(): React.JSX.Element {
         justifyContent="center"
         px={2}
       >
-        <Typography variant="h1" fontWeight={600} mt={4} maxWidth="90vw">
-          ~ walletbeta
+        <Typography variant="h1" fontWeight={600} mt={1} maxWidth="90vw">
+          Walletbeat
         </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            fontStyle: 'italic',
+            opacity: 0.75,
+          }}
+          maxWidth="90vw"
+        >
+          Who watches the wallets?
+        </Typography>
+        <Typography variant="caption" mt={1} maxWidth="90vw">
+          Beta version; work in progress. Get in touch on Farcaster or GitHub if you wish to
+          contribute.
+        </Typography>
+        <Box display="flex" flexDirection="row" alignItems="center" mt={1} mb={1}>
+          <Typography component="div" variant="caption">
+            <IconLink href="/beta/faq" IconComponent={HelpCenterIcon}>
+              Frequently asked questions
+            </IconLink>
+          </Typography>
+          <Typography component="div" minWidth="1.5rem" textAlign="center" variant="caption">
+            |
+          </Typography>
+          <Typography component="div" variant="caption">
+            <IconLink
+              href="https://github.com/fluidkey/walletbeat"
+              target="_blank"
+              IconComponent={GitHubIcon}
+            >
+              Contribute on GitHub
+            </IconLink>
+          </Typography>
+          <Typography component="div" minWidth="1.5rem" textAlign="center" variant="caption">
+            |
+          </Typography>
+          <Typography component="div" variant="caption">
+            <IconLink
+              href="https://warpcast.com/~/channel/walletbeat"
+              target="_blank"
+              IconComponent={ForumIcon}
+            >
+              Discuss on Farcaster
+            </IconLink>
+          </Typography>
+        </Box>
         <WalletTable />
-        <Typography variant="caption" mt={4} maxWidth="90vw">
-          <Link href="/beta/faq">
-            <HelpCenterIcon fontSize="small" />
-            Frequently asked questions
-          </Link>
-        </Typography>
       </Box>
     </Box>
   );
