@@ -6,7 +6,7 @@ import { shortRowHeight, expandedRowHeight } from '../../constants';
 import { ExternalLink } from '../atoms/ExternalLink';
 import { type PickableVariant, VariantPicker } from '../atoms/VariantPicker';
 import { nonEmptyKeys, nonEmptyMap } from '@/beta/types/utils/non-empty';
-import { Variant } from '@/beta/schema/variants';
+import { type AtLeastOneVariant, Variant } from '@/beta/schema/variants';
 import BlockIcon from '@mui/icons-material/Block';
 import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -31,14 +31,15 @@ function variantToIcon(variant: Variant): SvgIconComponent {
   }
 }
 
-function variantToTooltip(variant: Variant): string {
+function variantToTooltip(variants: AtLeastOneVariant<unknown>, variant: Variant): string {
+  const singleVersion = Object.entries(variants).filter(([_, v]) => v !== undefined).length === 1;
   switch (variant) {
     case Variant.BROWSER:
-      return 'View browser version';
+      return singleVersion ? 'Browser-only wallet' : 'View browser version';
     case Variant.DESKTOP:
-      return 'View desktop version';
+      return singleVersion ? 'Desktop-only wallet' : 'View desktop version';
     case Variant.MOBILE:
-      return 'View mobile version';
+      return singleVersion ? 'Mobile-only wallet' : 'View mobile version';
   }
 }
 
@@ -74,7 +75,9 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
       id: variant,
       icon: variantToIcon(variant),
       tooltip:
-        row.table.variantSelected === variant ? 'Remove version filter' : variantToTooltip(variant),
+        row.table.variantSelected === variant
+          ? 'Remove version filter'
+          : variantToTooltip(row.wallet.variants, variant),
       click: () => {
         row.table.variantClick(variant);
       },
