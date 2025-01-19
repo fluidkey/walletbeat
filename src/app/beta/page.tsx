@@ -5,7 +5,16 @@ import './global.css';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import ForumIcon from '@mui/icons-material/Forum';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import type { Metadata } from 'next';
+import { generateBasicMetadata } from '@/beta/components/metadata';
 import { IconLink } from '@/beta/components/ui/atoms/IconLink';
+
+export function generateMetadata(): Metadata {
+  return generateBasicMetadata({
+    title: 'Walletbeat',
+    route: '/beta',
+  });
+}
 
 export default function Page(): React.JSX.Element {
   return (
