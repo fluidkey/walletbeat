@@ -6,7 +6,7 @@ import { shortRowHeight, expandedRowHeight } from '../../constants';
 import { ExternalLink } from '../atoms/ExternalLink';
 import { type PickableVariant, VariantPicker } from '../atoms/VariantPicker';
 import { nonEmptyKeys, nonEmptyMap } from '@/beta/types/utils/non-empty';
-import { Variant } from '@/beta/schema/variants';
+import { type AtLeastOneVariant, Variant } from '@/beta/schema/variants';
 import BlockIcon from '@mui/icons-material/Block';
 import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -15,6 +15,8 @@ import type { WalletRowStateHandle } from '../WalletTableState';
 import { IconButton } from '../atoms/IconButton';
 import theme from '../../ThemeRegistry/theme';
 import { WalletIcon } from '../atoms/WalletIcon';
+import { IconLink } from '../atoms/IconLink';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const walletIconSize = shortRowHeight / 2;
 
@@ -29,14 +31,15 @@ function variantToIcon(variant: Variant): SvgIconComponent {
   }
 }
 
-function variantToTooltip(variant: Variant): string {
+function variantToTooltip(variants: AtLeastOneVariant<unknown>, variant: Variant): string {
+  const singleVersion = Object.entries(variants).filter(([_, v]) => v !== undefined).length === 1;
   switch (variant) {
     case Variant.BROWSER:
-      return 'View browser version';
+      return singleVersion ? 'Browser-only wallet' : 'View browser version';
     case Variant.DESKTOP:
-      return 'View desktop version';
+      return singleVersion ? 'Desktop-only wallet' : 'View desktop version';
     case Variant.MOBILE:
-      return 'View mobile version';
+      return singleVersion ? 'Mobile-only wallet' : 'View mobile version';
   }
 }
 
@@ -72,7 +75,9 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
       id: variant,
       icon: variantToIcon(variant),
       tooltip:
-        row.table.variantSelected === variant ? 'Remove version filter' : variantToTooltip(variant),
+        row.table.variantSelected === variant
+          ? 'Remove version filter'
+          : variantToTooltip(row.wallet.variants, variant),
       click: () => {
         row.table.variantClick(variant);
       },
@@ -113,7 +118,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
             <WalletIcon walletMetadata={row.wallet.metadata} iconSize={walletIconSize} />
           </Box>
           <Box flex="1" sx={row.rowWideStyle}>
-            <Typography variant="subtitle1">{row.wallet.metadata.displayName}</Typography>
+            <Typography variant="h2">{row.wallet.metadata.displayName}</Typography>
           </Box>
         </Link>
 
@@ -139,38 +144,39 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
           <Box flex="1">
             {row.table.variantSelected !== null &&
             row.wallet.variants[row.table.variantSelected] === undefined ? (
-              <Typography
-                variant="body2"
-                fontWeight="normal"
-                lineHeight={1.25}
-                marginBottom="0.5rem"
-              >
+              <Typography variant="body1" marginBottom="0.5rem">
                 {row.wallet.metadata.displayName} does not have a {row.table.variantSelected}{' '}
                 version.
               </Typography>
             ) : (
               row.wallet.metadata.blurb.render({
                 typography: {
-                  variant: 'body2',
-                  fontWeight: 'normal',
-                  lineHeight: 1.25,
+                  variant: 'body1',
                   marginBottom: '0.5rem',
                 },
               })
             )}
           </Box>
           <Typography
-            variant="caption"
+            variant="body2"
             display="flex"
             flexDirection="row"
             alignItems="baseline"
             gap="6px"
             paddingBottom="10px"
           >
+            <IconLink
+              href={`/beta/wallet/${row.wallet.metadata.id}`}
+              IconComponent={InfoOutlinedIcon}
+            >
+              Learn more
+            </IconLink>
+            |
             <ExternalLink
               url={row.wallet.metadata.url}
               defaultLabel={`${row.wallet.metadata.displayName} website`}
             />
+            |
             {row.wallet.metadata.repoUrl === null ? null : (
               <ExternalLink url={row.wallet.metadata.repoUrl} defaultLabel="Code" />
             )}
