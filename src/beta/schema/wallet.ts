@@ -7,7 +7,7 @@ import {
   type EvaluationTree,
 } from './attribute-groups';
 import { type NonEmptyArray, nonEmptyRemap } from '@/beta/types/utils/non-empty';
-import type { Paragraph, Renderable } from '@/beta/types/text';
+import type { Paragraph, Renderable, WithTypography } from '@/beta/types/text';
 import type { Url } from './url';
 import { Rating, type Attribute, type EvaluatedAttribute, type Value } from './attributes';
 import type { Dict } from '../types/utils/dict';
@@ -79,7 +79,7 @@ export interface AttributeOverride {
    * What the wallet should do to improve its rating on this attribute.
    * Overrides the eponymous field in `Evaluation`.
    */
-  howToImprove?: Renderable<{ wallet: RatedWallet }>;
+  howToImprove?: Renderable<WithTypography<{ wallet: RatedWallet }>>;
 }
 
 /** Per-wallet overrides for attributes. */
