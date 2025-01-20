@@ -254,6 +254,34 @@ export function mapAttributesGetter(
 }
 
 /**
+ * Given an attribute evaluation from any template EvaluationTree,
+ * get the same evaluated attribute from a different EvaluationTree.
+ * Useful when needing to look up the same evaluation from a different tree
+ * such as from a different Variant.
+ */
+export function getEvaluationFromOtherTree<V extends Value>(
+  evalAttr: EvaluatedAttribute<V>,
+  otherTree: EvaluationTree
+): EvaluatedAttribute<V> {
+  const otherEvalAttr = mapAttributeGroups(
+    otherTree,
+    (_, evalGroup): EvaluatedAttribute<V> | undefined => {
+      if (Object.hasOwn(evalGroup, evalAttr.attribute.id)) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Evaluated attributes with the same ID have the same Value type.
+        return evalGroup[evalAttr.attribute.id] as unknown as EvaluatedAttribute<V>;
+      }
+      return undefined;
+    }
+  ).find(v => v !== undefined);
+  if (otherEvalAttr === undefined) {
+    throw new Error(
+      `Incomplete evaluation tree; did not found evaluation for attribute ${evalAttr.attribute.id}`
+    );
+  }
+  return otherEvalAttr;
+}
+
+/**
  * Generic function for scoring a group of evaluations.
  * @param weights A map from attribute name to its relative weight.
  * @returns A function to score the group of evaluations.

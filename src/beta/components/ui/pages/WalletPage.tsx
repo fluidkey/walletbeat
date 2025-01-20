@@ -1,16 +1,34 @@
 'use client';
 
 import { ratedWallets, type WalletName } from '@/beta/data/wallets';
-import { mapAttributeGroups, mapGroupAttributes } from '@/beta/schema/attribute-groups';
-import { isNonEmptyArray, type NonEmptyArray, nonEmptyMap } from '@/beta/types/utils/non-empty';
+import {
+  type EvaluationTree,
+  getEvaluationFromOtherTree,
+  mapAttributeGroups,
+  mapGroupAttributes,
+} from '@/beta/schema/attribute-groups';
+import {
+  isNonEmptyArray,
+  type NonEmptyArray,
+  nonEmptyEntries,
+  nonEmptyKeys,
+  nonEmptyMap,
+} from '@/beta/types/utils/non-empty';
 import { Box, Typography, Paper, styled, Divider } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { WalletIcon } from '../atoms/WalletIcon';
 import { AnchorHeader } from '../atoms/AnchorHeader';
 import { WalletAttribute } from '../organisms/WalletAttribute';
 import { blend, ThemeProvider } from '@mui/system';
 import theme, { subsectionTheme } from '@/beta/components/ThemeRegistry/theme';
-import { ratingToColor } from '@/beta/schema/attributes';
+import {
+  type AttributeGroup,
+  type EvaluatedAttribute,
+  type EvaluatedGroup,
+  ratingToColor,
+  type Value,
+  type ValueSet,
+} from '@/beta/schema/attributes';
 import {
   navigationListIconSize,
   sectionIconWidth,
@@ -26,7 +44,18 @@ import {
   scrollPastHeaderPixels,
 } from '../../navigation';
 import { NavigationPageLayout } from './NavigationPageLayout';
-import { slugifyCamelCase } from '@/beta/types/text';
+import { commaListPrefix, slugifyCamelCase } from '@/beta/types/text';
+import { type PickableVariant, VariantPicker } from '../atoms/VariantPicker';
+import { getSingleVariant, type Variant } from '@/beta/schema/variants';
+import {
+  variantFromUrlQuery,
+  variantToIcon,
+  variantToName,
+  variantToRunsOn,
+  variantToTooltip,
+  variantUrlQuery,
+} from '../../variants';
+import type { ResolvedWallet } from '@/beta/schema/wallet';
 
 const headerHeight = 80;
 const headerBottomMargin = 24;
@@ -38,6 +67,7 @@ const StyledHeader = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   padding: theme.spacing(2),
   display: 'flex',
+  flexDirection: 'row',
   alignItems: 'center',
   gap: theme.spacing(2),
   height: headerHeight,
@@ -68,6 +98,7 @@ interface Section {
 interface RichSection extends Section {
   icon: React.ReactNode;
   title: string;
+  cornerControl: React.ReactNode | null;
   caption: React.ReactNode | null;
   body: React.ReactNode | null;
   sx?: React.ComponentProps<typeof Paper>['sx'];
@@ -81,63 +112,214 @@ function sectionHeaderId(section: Section): string {
   return slugifyCamelCase(section.header);
 }
 
+function maybeAddCornerControl(
+  section: RichSection,
+  anchorHeader: React.JSX.Element
+): React.JSX.Element {
+  if (section.cornerControl === null) {
+    return anchorHeader;
+  }
+  return (
+    <Box key="sectionCornerControl" display="flex" flexDirection="row">
+      <Box flex="1" display="flex" flexDirection="column" justifyContent="center">
+        {anchorHeader}
+      </Box>
+      <Box flex="0" flexDirection="column" justifyContent="center">
+        {section.cornerControl}
+      </Box>
+    </Box>
+  );
+}
+
 export function WalletPage({ walletName }: { walletName: WalletName }): React.JSX.Element {
   const wallet = ratedWallets[walletName];
+  const { singleVariant } = getSingleVariant(wallet.variants);
+  const [pickedVariant, setPickedVariant] = useState<Variant | null>(singleVariant);
+  useEffect(() => {
+    if (singleVariant !== null) {
+      return;
+    }
+    setPickedVariant(variantFromUrlQuery(wallet.variants));
+  }, [singleVariant]);
+  const updatePickedVariant = (variant: Variant | null): void => {
+    if (singleVariant !== null) {
+      return; // If there is a single variant, do not pollute the URL with it.
+    }
+    window.history.replaceState(
+      null,
+      '',
+      `${window.location.pathname}${variantUrlQuery(wallet.variants, variant)}${window.location.hash}`
+    );
+    setPickedVariant(variant);
+  };
+  const evalTree: EvaluationTree =
+    pickedVariant === null || wallet.variants[pickedVariant] === undefined
+      ? wallet.overall
+      : wallet.variants[pickedVariant].attributes;
+  let variantSpecificEvals: Set<string> = new Set<string>();
+  for (const specificEvals of Object.values(wallet.variantSpecificEvaluations)) {
+    variantSpecificEvals = variantSpecificEvals.union(specificEvals);
+  }
+  const needsVariantFiltering = singleVariant === null && variantSpecificEvals.size > 0;
+  const headerVariants = nonEmptyMap(
+    nonEmptyKeys(wallet.variants),
+    (variant): PickableVariant<Variant> => ({
+      id: variant,
+      icon: variantToIcon(variant),
+      tooltip: needsVariantFiltering
+        ? pickedVariant === variant
+          ? 'Remove version filter'
+          : variantToTooltip(wallet.variants, variant)
+        : `Runs on ${variantToName(variant, false)}`,
+      click: needsVariantFiltering
+        ? () => {
+            updatePickedVariant(pickedVariant === variant ? null : variant);
+          }
+        : undefined,
+    })
+  );
   const sections: NonEmptyArray<RichSection> = [
     {
       header: 'details',
       subHeader: null,
       title: 'Details',
+      cornerControl: null,
       caption: null,
       icon: '\u{1f4c7}', // Card index
-      body: wallet.metadata.blurb.render({}),
+      body: (
+        <>
+          {wallet.metadata.blurb.render({ typography: { variant: 'body1' } })}
+          <Typography variant="body1">
+            <React.Fragment key="begin">{wallet.metadata.displayName} runs </React.Fragment>
+            {nonEmptyMap(nonEmptyKeys(wallet.variants), (variant, variantIndex) => (
+              <React.Fragment key={variant}>
+                {commaListPrefix(variantIndex, Object.keys(wallet.variants).length)}
+                <strong>{variantToRunsOn(variant)}</strong>
+              </React.Fragment>
+            ))}
+            <React.Fragment key="afterVariants">.</React.Fragment>
+            {needsVariantFiltering && (
+              <React.Fragment key="variantSpecifier">
+                <React.Fragment key="variantDisclaimer">
+                  {' '}
+                  The ratings below vary depending on the version.{' '}
+                </React.Fragment>
+                {pickedVariant === null ? (
+                  <React.Fragment key="variantReminder">
+                    You can select a specific version on individual attributes.
+                  </React.Fragment>
+                ) : (
+                  <React.Fragment key="variantReminder">
+                    You are currently viewing the ratings for the{' '}
+                    <strong>{variantToName(pickedVariant, false)}</strong> version.
+                  </React.Fragment>
+                )}
+              </React.Fragment>
+            )}
+          </Typography>
+        </>
+      ),
     },
   ];
-  mapAttributeGroups(wallet.overall, (attrGroup, evalGroup) => {
-    sections.push({
-      header: attrGroup.id,
-      subHeader: null,
-      title: attrGroup.displayName,
-      icon: attrGroup.icon,
-      caption: attrGroup.perWalletQuestion.render({
-        typography: {
-          variant: 'caption',
-          fontStyle: 'italic',
-        },
-        ...wallet.metadata,
-      }),
-      body: null,
-      subsections: mapGroupAttributes(evalGroup, evalAttr => ({
+  mapAttributeGroups(
+    evalTree,
+    <Vs extends ValueSet>(attrGroup: AttributeGroup<Vs>, evalGroup: EvaluatedGroup<Vs>) => {
+      sections.push({
         header: attrGroup.id,
-        subHeader: evalAttr.attribute.id,
-        title: evalAttr.attribute.displayName,
-        icon: evalAttr.evaluation.value.icon ?? evalAttr.attribute.icon,
-        sx: {
-          backgroundColor: blend(
-            theme.palette.background.paper,
-            ratingToColor(evalAttr.evaluation.value.rating),
-            0.2,
-            1
-          ),
-        },
-        caption: evalAttr.attribute.question.render({
+        subHeader: null,
+        title: attrGroup.displayName,
+        icon: attrGroup.icon,
+        cornerControl: null,
+        caption: attrGroup.perWalletQuestion.render({
           typography: {
             variant: 'caption',
             fontStyle: 'italic',
           },
           ...wallet.metadata,
         }),
-        body: (
-          <WalletAttribute
-            wallet={wallet}
-            attrGroup={attrGroup}
-            evalGroup={evalGroup}
-            evalAttr={evalAttr}
-          />
+        body: null,
+        subsections: mapGroupAttributes<RichSection, Vs>(
+          evalGroup,
+          <V extends Value>(evalAttr: EvaluatedAttribute<V>): RichSection => ({
+            header: attrGroup.id,
+            subHeader: evalAttr.attribute.id,
+            title: evalAttr.attribute.displayName,
+            icon: evalAttr.evaluation.value.icon ?? evalAttr.attribute.icon,
+            cornerControl:
+              needsVariantFiltering && variantSpecificEvals.has(evalAttr.attribute.id) ? (
+                <Box
+                  key="variantSpecificEval"
+                  display="flex"
+                  flexDirection="row"
+                  alignItems="center"
+                  gap="0.25rem"
+                >
+                  <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                    {pickedVariant === null ? 'Version' : 'Viewing'}:
+                  </Typography>
+                  <VariantPicker
+                    pickerId={`variantSpecificEval-${evalAttr.attribute.id}`}
+                    variants={nonEmptyMap(
+                      nonEmptyEntries<Variant, ResolvedWallet>(wallet.variants),
+                      ([variant, variantResolvedWallet]): PickableVariant<Variant> => {
+                        const variantRating = getEvaluationFromOtherTree<V>(
+                          evalAttr,
+                          variantResolvedWallet.attributes
+                        ).evaluation.value.rating;
+                        return {
+                          id: variant,
+                          icon: variantToIcon(variant),
+                          colorTransform: (color: string | undefined): string =>
+                            blend(
+                              color ?? theme.palette.primary.light,
+                              ratingToColor(variantRating),
+                              0.25,
+                              1
+                            ),
+                          tooltip:
+                            pickedVariant !== null && pickedVariant === variant
+                              ? 'Remove version filter'
+                              : `View rating for ${variantToName(variant, false)} version`,
+                          click: () => {
+                            updatePickedVariant(pickedVariant === variant ? null : variant);
+                          },
+                        };
+                      }
+                    )}
+                    pickedVariant={pickedVariant}
+                  />
+                </Box>
+              ) : null,
+            sx: {
+              backgroundColor: blend(
+                theme.palette.background.paper,
+                ratingToColor(evalAttr.evaluation.value.rating),
+                0.2,
+                1
+              ),
+            },
+            caption: evalAttr.attribute.question.render({
+              typography: {
+                variant: 'caption',
+                fontStyle: 'italic',
+              },
+              ...wallet.metadata,
+            }),
+            body: (
+              <WalletAttribute
+                wallet={wallet}
+                attrGroup={attrGroup}
+                evalGroup={evalGroup}
+                evalAttr={evalAttr}
+                pickedVariant={pickedVariant}
+                isVariantSpecific={variantSpecificEvals.has(evalAttr.attribute.id)}
+              />
+            ),
+          })
         ),
-      })),
-    });
-  });
+      });
+    }
+  );
   const scrollMarginTop = `${headerHeight + headerBottomMargin + scrollPastHeaderPixels}px`;
 
   const navigationRef = React.useRef<{
@@ -199,7 +381,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
       ]}
       stickyHeaderId="walletHeader"
       stickyHeaderMargin={headerBottomMargin}
-      contentDependencies={[wallet]}
+      contentDependencies={[wallet, pickedVariant]}
       ref={navigationRef}
     >
       <StyledHeader key="walletHeader" id="walletHeader">
@@ -218,6 +400,11 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
           />
           {wallet.metadata.displayName}
         </Typography>
+        <VariantPicker
+          pickerId="variantPicker"
+          variants={headerVariants}
+          pickedVariant={pickedVariant}
+        />
       </StyledHeader>
       <Box key="walletPageBody" display="flex" flexDirection="row">
         <Box key="walletPageContent" component="main" flex="1">
@@ -240,24 +427,27 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                 />
               ) : null}
               <StyledSection key="sectionContainer" sx={section.sx}>
-                <AnchorHeader
-                  key="sectionHeader"
-                  id={sectionHeaderId(section)}
-                  sx={{ scrollMarginTop }}
-                  variant="h4"
-                  component="h2"
-                  marginBottom="0"
-                  paddingLeft={theme.spacing(2)}
-                  paddingRight={theme.spacing(2)}
-                  onClick={e => {
-                    if (e.button === 0) {
-                      scrollToSection(section);
-                      e.preventDefault();
-                    }
-                  }}
-                >
-                  {section.icon} {section.title}
-                </AnchorHeader>
+                {maybeAddCornerControl(
+                  section,
+                  <AnchorHeader
+                    key="sectionHeader"
+                    id={sectionHeaderId(section)}
+                    sx={{ scrollMarginTop }}
+                    variant="h4"
+                    component="h2"
+                    marginBottom="0"
+                    paddingLeft={theme.spacing(2)}
+                    paddingRight={theme.spacing(2)}
+                    onClick={e => {
+                      if (e.button === 0) {
+                        scrollToSection(section);
+                        e.preventDefault();
+                      }
+                    }}
+                  >
+                    {section.icon} {section.title}
+                  </AnchorHeader>
+                )}
                 {section.caption === null ? null : (
                   <Box
                     key="sectionCaption"
@@ -281,21 +471,24 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                 {section.subsections?.map(subsection => (
                   <StyledSubsection key={sectionHeaderId(subsection)} sx={subsection.sx}>
                     <ThemeProvider theme={subsectionTheme}>
-                      <AnchorHeader
-                        key="subsectionHeader"
-                        id={sectionHeaderId(subsection)}
-                        sx={{ scrollMarginTop }}
-                        variant="h3"
-                        marginBottom="0rem"
-                        onClick={e => {
-                          if (e.button === 0) {
-                            scrollToSection(subsection);
-                            e.preventDefault();
-                          }
-                        }}
-                      >
-                        {subsection.icon} {subsection.title}
-                      </AnchorHeader>
+                      {maybeAddCornerControl(
+                        subsection,
+                        <AnchorHeader
+                          key="subsectionHeader"
+                          id={sectionHeaderId(subsection)}
+                          sx={{ scrollMarginTop }}
+                          variant="h3"
+                          marginBottom="0rem"
+                          onClick={e => {
+                            if (e.button === 0) {
+                              scrollToSection(subsection);
+                              e.preventDefault();
+                            }
+                          }}
+                        >
+                          {subsection.icon} {subsection.title}
+                        </AnchorHeader>
+                      )}
                       {subsection.caption === null ? null : (
                         <Box
                           key="subsectionCaption"

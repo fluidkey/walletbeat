@@ -24,6 +24,7 @@ import type { WalletRowStateHandle } from '../WalletTableState';
 import { IconLink } from '../atoms/IconLink';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { slugifyCamelCase } from '@/beta/types/text';
+import { variantUrlQuery } from '../../variants';
 
 /**
  * Common properties of rating-type columns.
@@ -199,7 +200,7 @@ export function WalletRatingCell<Vs extends ValueSet>({
               })}
               <Box display="flex" flexDirection="row" justifyContent="center">
                 <IconLink
-                  href={`/beta/wallet/${row.wallet.metadata.id}#${slugifyCamelCase(highlightedEvalAttr.attribute.id)}`}
+                  href={`/beta/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}#${slugifyCamelCase(highlightedEvalAttr.attribute.id)}`}
                   IconComponent={InfoOutlinedIcon}
                 >
                   Learn more

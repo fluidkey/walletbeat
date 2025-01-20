@@ -1,47 +1,22 @@
 import type { ResolvedWallet } from '@/beta/schema/wallet';
-import { type SvgIconComponent, UnfoldLess, UnfoldMore } from '@mui/icons-material';
+import { UnfoldLess, UnfoldMore } from '@mui/icons-material';
 import { Box, Link, Tooltip, Typography } from '@mui/material';
 import type React from 'react';
 import { shortRowHeight, expandedRowHeight } from '../../constants';
 import { ExternalLink } from '../atoms/ExternalLink';
 import { type PickableVariant, VariantPicker } from '../atoms/VariantPicker';
 import { nonEmptyKeys, nonEmptyMap } from '@/beta/types/utils/non-empty';
-import { type AtLeastOneVariant, Variant } from '@/beta/schema/variants';
+import type { Variant } from '@/beta/schema/variants';
 import BlockIcon from '@mui/icons-material/Block';
-import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
-import LanguageIcon from '@mui/icons-material/Language';
-import MonitorIcon from '@mui/icons-material/Monitor';
 import type { WalletRowStateHandle } from '../WalletTableState';
 import { IconButton } from '../atoms/IconButton';
 import theme from '../../ThemeRegistry/theme';
 import { WalletIcon } from '../atoms/WalletIcon';
 import { IconLink } from '../atoms/IconLink';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { variantToIcon, variantToTooltip, variantUrlQuery } from '../../variants';
 
 const walletIconSize = shortRowHeight / 2;
-
-function variantToIcon(variant: Variant): SvgIconComponent {
-  switch (variant) {
-    case Variant.BROWSER:
-      return LanguageIcon;
-    case Variant.DESKTOP:
-      return MonitorIcon;
-    case Variant.MOBILE:
-      return PhoneAndroidIcon;
-  }
-}
-
-function variantToTooltip(variants: AtLeastOneVariant<unknown>, variant: Variant): string {
-  const singleVersion = Object.entries(variants).filter(([_, v]) => v !== undefined).length === 1;
-  switch (variant) {
-    case Variant.BROWSER:
-      return singleVersion ? 'Browser-only wallet' : 'View browser version';
-    case Variant.DESKTOP:
-      return singleVersion ? 'Desktop-only wallet' : 'View desktop version';
-    case Variant.MOBILE:
-      return singleVersion ? 'Mobile-only wallet' : 'View mobile version';
-  }
-}
 
 function CrossedOutVariant({ variant }: { variant: Variant }): React.JSX.Element {
   const Icon = variantToIcon(variant);
@@ -106,7 +81,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
           </IconButton>
         </Box>
         <Link
-          href={`/beta/wallet/${row.wallet.metadata.id}`}
+          href={`/beta/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}`}
           color="text.primary"
           underline="hover"
           display="flex"
@@ -166,7 +141,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
             paddingBottom="10px"
           >
             <IconLink
-              href={`/beta/wallet/${row.wallet.metadata.id}`}
+              href={`/beta/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}`}
               IconComponent={InfoOutlinedIcon}
             >
               Learn more

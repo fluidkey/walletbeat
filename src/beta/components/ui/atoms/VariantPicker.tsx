@@ -5,11 +5,13 @@ import type React from 'react';
 import { Box, Tooltip } from '@mui/material';
 import type { SvgIconComponent } from '@mui/icons-material';
 import { IconButton } from './IconButton';
+import theme from '../../ThemeRegistry/theme';
 
 export interface PickableVariant<V extends string> {
   id: V;
   icon: SvgIconComponent;
   tooltip: string | React.ReactNode;
+  colorTransform?: (color: string | undefined) => string;
   click?: () => void;
 }
 
@@ -48,18 +50,33 @@ export function VariantPicker<V extends string>({
             color = colorPicked;
           }
         }
+        if (variant.colorTransform !== undefined) {
+          if (color === 'primary.light') {
+            color = theme.palette.primary.light;
+          }
+          color = variant.colorTransform(color);
+        }
         return (
           <Tooltip key={variant.id} title={variant.tooltip} arrow={true} disableInteractive={true}>
             <Box flexDirection="row" display="flex" alignItems="center">
-              <IconButton
-                onClick={variant.click}
-                sx={{
-                  opacity,
-                  color,
-                }}
-              >
-                <variant.icon />
-              </IconButton>
+              {variant.click === undefined ? (
+                <variant.icon
+                  sx={{
+                    opacity,
+                    color,
+                  }}
+                />
+              ) : (
+                <IconButton
+                  onClick={variant.click}
+                  sx={{
+                    opacity,
+                    color,
+                  }}
+                >
+                  <variant.icon />
+                </IconButton>
+              )}
             </Box>
           </Tooltip>
         );
