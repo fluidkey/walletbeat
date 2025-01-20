@@ -11,6 +11,7 @@ import {
 } from '../../navigation';
 import { type NonEmptyArray, nonEmptyConcat, nonEmptyMap } from '@/beta/types/utils/non-empty';
 import type { NavigationContentItem } from '../organisms/Navigation';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 interface FAQEntry {
   anchor: string;
@@ -257,7 +258,7 @@ export function FrequentlyAskedQuestionsPage(): React.JSX.Element {
             nonEmptyMap(frequentlyAskedQuestions, faq => ({
               id: faq.anchor,
               title: faq.navTitle,
-              icon: '?',
+              icon: <QuestionMarkIcon />,
               contentId: faq.anchor,
             })),
           ]),

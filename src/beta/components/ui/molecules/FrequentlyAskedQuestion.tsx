@@ -1,6 +1,7 @@
 import { Box, type Typography } from '@mui/material';
 import { MarkdownBox } from '../atoms/MarkdownBox';
 import { AnchorHeader } from '../atoms/AnchorHeader';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 export default function FrequentlyAskedQuestion({
   question,
@@ -18,7 +19,7 @@ export default function FrequentlyAskedQuestion({
   return (
     <Box key={anchor}>
       <AnchorHeader id={anchor} {...questionTypographyProps}>
-        {question}
+        <HelpOutlineIcon /> {question}
       </AnchorHeader>
       <MarkdownBox pTypography={answerTypographyProps}>{children}</MarkdownBox>
     </Box>
