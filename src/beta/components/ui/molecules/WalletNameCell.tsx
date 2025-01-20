@@ -1,44 +1,22 @@
 import type { ResolvedWallet } from '@/beta/schema/wallet';
-import { type SvgIconComponent, UnfoldLess, UnfoldMore } from '@mui/icons-material';
+import { UnfoldLess, UnfoldMore } from '@mui/icons-material';
 import { Box, Link, Tooltip, Typography } from '@mui/material';
 import type React from 'react';
 import { shortRowHeight, expandedRowHeight } from '../../constants';
 import { ExternalLink } from '../atoms/ExternalLink';
 import { type PickableVariant, VariantPicker } from '../atoms/VariantPicker';
 import { nonEmptyKeys, nonEmptyMap } from '@/beta/types/utils/non-empty';
-import { Variant } from '@/beta/schema/variants';
+import type { Variant } from '@/beta/schema/variants';
 import BlockIcon from '@mui/icons-material/Block';
-import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
-import LanguageIcon from '@mui/icons-material/Language';
-import MonitorIcon from '@mui/icons-material/Monitor';
 import type { WalletRowStateHandle } from '../WalletTableState';
 import { IconButton } from '../atoms/IconButton';
 import theme from '../../ThemeRegistry/theme';
 import { WalletIcon } from '../atoms/WalletIcon';
+import { IconLink } from '../atoms/IconLink';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { variantToIcon, variantToTooltip, variantUrlQuery } from '../../variants';
 
 const walletIconSize = shortRowHeight / 2;
-
-function variantToIcon(variant: Variant): SvgIconComponent {
-  switch (variant) {
-    case Variant.BROWSER:
-      return LanguageIcon;
-    case Variant.DESKTOP:
-      return MonitorIcon;
-    case Variant.MOBILE:
-      return PhoneAndroidIcon;
-  }
-}
-
-function variantToTooltip(variant: Variant): string {
-  switch (variant) {
-    case Variant.BROWSER:
-      return 'View browser version';
-    case Variant.DESKTOP:
-      return 'View desktop version';
-    case Variant.MOBILE:
-      return 'View mobile version';
-  }
-}
 
 function CrossedOutVariant({ variant }: { variant: Variant }): React.JSX.Element {
   const Icon = variantToIcon(variant);
@@ -72,7 +50,9 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
       id: variant,
       icon: variantToIcon(variant),
       tooltip:
-        row.table.variantSelected === variant ? 'Remove version filter' : variantToTooltip(variant),
+        row.table.variantSelected === variant
+          ? 'Remove version filter'
+          : variantToTooltip(row.wallet.variants, variant),
       click: () => {
         row.table.variantClick(variant);
       },
@@ -101,7 +81,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
           </IconButton>
         </Box>
         <Link
-          href={`/beta/wallet/${row.wallet.metadata.id}`}
+          href={`/beta/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}`}
           color="text.primary"
           underline="hover"
           display="flex"
@@ -113,7 +93,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
             <WalletIcon walletMetadata={row.wallet.metadata} iconSize={walletIconSize} />
           </Box>
           <Box flex="1" sx={row.rowWideStyle}>
-            <Typography variant="subtitle1">{row.wallet.metadata.displayName}</Typography>
+            <Typography variant="h2">{row.wallet.metadata.displayName}</Typography>
           </Box>
         </Link>
 
@@ -139,38 +119,39 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
           <Box flex="1">
             {row.table.variantSelected !== null &&
             row.wallet.variants[row.table.variantSelected] === undefined ? (
-              <Typography
-                variant="body2"
-                fontWeight="normal"
-                lineHeight={1.25}
-                marginBottom="0.5rem"
-              >
+              <Typography variant="body1" marginBottom="0.5rem">
                 {row.wallet.metadata.displayName} does not have a {row.table.variantSelected}{' '}
                 version.
               </Typography>
             ) : (
               row.wallet.metadata.blurb.render({
                 typography: {
-                  variant: 'body2',
-                  fontWeight: 'normal',
-                  lineHeight: 1.25,
+                  variant: 'body1',
                   marginBottom: '0.5rem',
                 },
               })
             )}
           </Box>
           <Typography
-            variant="caption"
+            variant="body2"
             display="flex"
             flexDirection="row"
             alignItems="baseline"
             gap="6px"
             paddingBottom="10px"
           >
+            <IconLink
+              href={`/beta/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}`}
+              IconComponent={InfoOutlinedIcon}
+            >
+              Learn more
+            </IconLink>
+            |
             <ExternalLink
               url={row.wallet.metadata.url}
               defaultLabel={`${row.wallet.metadata.displayName} website`}
             />
+            |
             {row.wallet.metadata.repoUrl === null ? null : (
               <ExternalLink url={row.wallet.metadata.repoUrl} defaultLabel="Code" />
             )}
