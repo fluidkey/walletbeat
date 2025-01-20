@@ -21,6 +21,18 @@ export const rabby: Wallet = {
   },
   features: {
     multiAddress: true,
+    chainConfigurability: {
+      overrideL1RpcEndpoint: true,
+      overrideOtherRpcEndpoints: true,
+      customChains: true,
+    },
+    security: {
+      lightClient: {
+        ethereumL1: {
+          helios: false,
+        },
+      },
+    },
     privacy: {
       dataCollection: {
         browser: {

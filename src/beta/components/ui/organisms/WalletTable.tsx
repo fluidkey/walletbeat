@@ -10,6 +10,7 @@ import { WalletRatingCell, walletRatingColumnProps } from '../molecules/WalletRa
 import {
   type EvaluationTree,
   PrivacyAttributeGroup,
+  SecurityAttributeGroup,
   transparencyAttributeGroup,
 } from '@/beta/schema/attribute-groups';
 import { WalletNameCell } from '../molecules/WalletNameCell';
@@ -166,6 +167,7 @@ export default function WalletTable(): React.JSX.Element {
   };
   const columns: GridColDef[] = [
     walletNameColumn,
+    walletTableColumn(SecurityAttributeGroup, tree => tree.security),
     walletTableColumn(PrivacyAttributeGroup, tree => tree.privacy),
     walletTableColumn(transparencyAttributeGroup, tree => tree.transparency),
   ];

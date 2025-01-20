@@ -145,6 +145,18 @@ export function refs<T>(withRef: WithRef<T>): FullyQualifiedReference[] {
   return mergeRefs(...qualifiedRefs);
 }
 
+/** Extract references out of `withRef` and return an object without them. */
+export function popRefs<T>(withRef: WithRef<T>): {
+  withoutRefs: T;
+  refs: FullyQualifiedReference[];
+} {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we are reconstructing the object with its prior set of entries.
+  const withoutRefs = Object.fromEntries(
+    Object.entries(withRef).filter(([key]) => key !== 'ref')
+  ) as T;
+  return { withoutRefs, refs: refs(withRef) };
+}
+
 /** Deduplicate and merge references in `refs`. */
 export function mergeRefs(...refs: FullyQualifiedReference[]): FullyQualifiedReference[] {
   const byExplanation = new Map<string, FullyQualifiedReference>();

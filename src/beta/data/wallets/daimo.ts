@@ -31,6 +31,16 @@ export const daimo: Wallet = {
   },
   features: {
     multiAddress: true,
+    chainConfigurability: {
+      overrideL1RpcEndpoint: false,
+      overrideOtherRpcEndpoints: false,
+      customChains: false,
+    },
+    security: {
+      lightClient: {
+        ethereumL1: false,
+      },
+    },
     privacy: {
       dataCollection: {
         onchain: {

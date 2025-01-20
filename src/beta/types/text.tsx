@@ -164,3 +164,17 @@ export function slugifyCamelCase(camelCaseString: string): string {
     .replaceAll('_', '-')
     .replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
 }
+
+/**
+ * Return the prefix to use before a list item in a comma-separated list.
+ * For example, ["a", "b", "c", "d"] would be written as "a, b, c and d".
+ * @param index The index of the element being rendered.
+ * @param listSize The total size of the list.
+ * @returns The prefix to use before the element.
+ */
+export function commaListPrefix(index: number, listSize: number): '' | ', ' | ' and ' {
+  if (index === 0) {
+    return '';
+  }
+  return index < listSize - 1 ? ', ' : ' and ';
+}

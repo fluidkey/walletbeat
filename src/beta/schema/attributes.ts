@@ -258,7 +258,7 @@ export interface Attribute<V extends Value> {
   question: Sentence<WalletMetadata>;
 
   /** A paragraph explaining why this attribute is important to users. */
-  why: Paragraph;
+  why: Renderable<WithTypography>;
 
   /** General explanation of how wallets are rated on this attribute. */
   methodology: Renderable<WithTypography>;

@@ -8,20 +8,34 @@ import {
 } from './variants';
 import type { Monetization } from './features/monetization';
 import type { WithRef } from './reference';
+import type { EthereumL1LightClientSupport } from './features/security/light-client';
+import type { ChainConfigurability } from './features/chain-configurability';
 
 /**
  * A set of features about a wallet, each of which may or may not depend on
  * the wallet variant.
  */
 export interface WalletFeatures {
+  /** Security features. */
+  security: {
+    /** Light clients. */
+    lightClient: {
+      /** Light client used for Ethereum L1. False means no light client support. */
+      ethereumL1: VariantFeature<WithRef<EthereumL1LightClientSupport> | false>;
+    };
+  };
+
   /** Privacy features. */
   privacy: {
     /** Data collection information. */
-    dataCollection: VariantFeature<WithRef<DataCollection>>;
+    dataCollection: VariantFeature<DataCollection>;
 
     /** Privacy policy URL of the wallet. */
     privacyPolicy: VariantFeature<string>;
   };
+
+  /** Level of configurability for chains. */
+  chainConfigurability: VariantFeature<ChainConfigurability>;
 
   /**
    * Whether the wallet supports multiple addresses.
@@ -44,12 +58,18 @@ export interface ResolvedFeatures {
   /** The wallet variant which was used to resolve the feature tree. */
   variant: Variant;
 
+  security: {
+    lightClient: {
+      ethereumL1: ResolvedFeature<WithRef<EthereumL1LightClientSupport> | false>;
+    };
+  };
   privacy: {
     dataCollection: ResolvedFeature<DataCollection>;
     privacyPolicy: ResolvedFeature<string>;
   };
+  chainConfigurability: ResolvedFeature<ChainConfigurability>;
   multiAddress: ResolvedFeature<boolean>;
-  license: ResolvedFeature<License>;
+  license: ResolvedFeature<WithRef<License>>;
   monetization: ResolvedFeature<Monetization>;
 }
 
@@ -59,10 +79,16 @@ export function resolveFeatures(features: WalletFeatures, variant: Variant): Res
     resolveFeature<F>(feature, variant);
   return {
     variant,
+    security: {
+      lightClient: {
+        ethereumL1: feat(features.security.lightClient.ethereumL1),
+      },
+    },
     privacy: {
       dataCollection: feat(features.privacy.dataCollection),
       privacyPolicy: feat(features.privacy.privacyPolicy),
     },
+    chainConfigurability: feat(features.chainConfigurability),
     multiAddress: feat(features.multiAddress),
     license: feat(features.license),
     monetization: feat(features.monetization),

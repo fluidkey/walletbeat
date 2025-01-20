@@ -34,6 +34,31 @@ import {
 import { type Score, type WeightedScore, weightedScore } from './score';
 import { sentence } from '@/beta/types/text';
 import type { WalletMetadata } from './wallet';
+import {
+  chainVerification,
+  type ChainVerificationValue,
+} from './attributes/security/chain-verification';
+
+/** A ValueSet for security Values. */
+type SecurityValues = Dict<{
+  chainVerification: ChainVerificationValue;
+}>;
+
+/** Security attributes. */
+export const SecurityAttributeGroup: AttributeGroup<SecurityValues> = {
+  id: 'security',
+  icon: '\u{1f512}', // Lock
+  displayName: 'Security',
+  perWalletQuestion: sentence<WalletMetadata>(
+    (walletMetadata: WalletMetadata): string => `How secure is ${walletMetadata.displayName}?`
+  ),
+  attributes: {
+    chainVerification,
+  },
+  score: scoreGroup<SecurityValues>({
+    chainVerification: 1.0,
+  }),
+};
 
 /** A ValueSet for privacy Values. */
 type PrivacyValues = Dict<{
@@ -91,13 +116,20 @@ export const transparencyAttributeGroup: AttributeGroup<TransparencyValues> = {
 /** The set of attribute groups that make up wallet attributes. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Necessary to allow any Attribute implementation.
 export const attributeTree: NonEmptyRecord<string, AttributeGroup<any>> = {
+  security: SecurityAttributeGroup,
   privacy: PrivacyAttributeGroup,
   transparency: transparencyAttributeGroup,
 };
 
+/** Evaluated security attributes for a single wallet. */
+export interface SecurityEvaluations extends EvaluatedGroup<SecurityValues> {
+  chainVerification: EvaluatedAttribute<ChainVerificationValue>;
+}
+
 /** Evaluated privacy attributes for a single wallet. */
 export interface PrivacyEvaluations extends EvaluatedGroup<PrivacyValues> {
   addressCorrelation: EvaluatedAttribute<AddressCorrelationValue>;
+  multiAddressCorrelation: EvaluatedAttribute<MultiAddressCorrelationValue>;
 }
 
 /** Evaluated transparency attributes for a single wallet. */
@@ -108,7 +140,11 @@ export interface TransparencyEvaluations extends EvaluatedGroup<TransparencyValu
 
 /** Evaluated attributes for a single wallet. */
 export interface EvaluationTree
-  extends NonEmptyRecord<string, EvaluatedGroup<PrivacyValues | TransparencyValues>> {
+  extends NonEmptyRecord<
+    string,
+    EvaluatedGroup<SecurityValues | PrivacyValues | TransparencyValues>
+  > {
+  security: SecurityEvaluations;
   privacy: PrivacyEvaluations;
   transparency: TransparencyEvaluations;
 }
@@ -120,6 +156,9 @@ export function evaluateAttributes(features: ResolvedFeatures): EvaluationTree {
     evaluation: attr.evaluate(features),
   });
   return {
+    security: {
+      chainVerification: evalAttr(chainVerification),
+    },
     privacy: {
       addressCorrelation: evalAttr(addressCorrelation),
       multiAddressCorrelation: evalAttr(multiAddressCorrelation),
@@ -153,6 +192,9 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
     };
   };
   return {
+    security: {
+      chainVerification: attr(tree => tree.security.chainVerification),
+    },
     privacy: {
       addressCorrelation: attr(tree => tree.privacy.addressCorrelation),
       multiAddressCorrelation: attr(tree => tree.privacy.multiAddressCorrelation),
