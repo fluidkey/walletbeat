@@ -130,7 +130,7 @@ export function isRenderableTypography<I extends Input = Input>(
   }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- Safe because we just checked that the property exists.
   const brand = (renderable as any).__brand;
-  return brand === sentenceBrand || brand === paragraphBrand;
+  return brand === sentenceBrand || brand === paragraphBrand || brand === markdownBrand;
 }
 
 export function component<I extends Input = Input, P extends Input = Input>(
@@ -144,15 +144,22 @@ export function component<I extends Input = Input, P extends Input = Input>(
   };
 }
 
+const markdownBrand = 'markdown';
+
+export type Markdown<I extends Input> = Renderable<WithTypography<I>> & {
+  __brand: 'markdown';
+};
+
 export function markdown<I extends Input = Input>(
   markdown: string | ((input: I) => string)
-): Renderable<WithTypography<I>> {
+): Markdown<WithTypography<I>> {
   return {
     render: (input: WithTypography<I>): React.JSX.Element => (
       <MarkdownBox pTypography={input.typography}>
         {typeof markdown === 'string' ? markdown : markdown(input)}
       </MarkdownBox>
     ),
+    __brand: markdownBrand,
   };
 }
 

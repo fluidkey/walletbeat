@@ -1,8 +1,14 @@
+'use client';
+
 import { Box, type BoxProps, type TypographyProps } from '@mui/material';
 import type React from 'react';
-import { MarkdownBase } from './MarkdownBase';
+import {
+  deriveMarkdownPropsFromTypography,
+  MarkdownBase,
+  type MarkdownOwnProps,
+} from './MarkdownBase';
 
-interface MarkdownBoxProps extends BoxProps {
+interface MarkdownBoxProps extends BoxProps, MarkdownOwnProps {
   children: string;
   pTypography?: TypographyProps;
 }
@@ -57,17 +63,11 @@ function trimWhitespacePrefix(str: string): string {
  * Styled Markdown Box.
  */
 export function MarkdownBox(props: MarkdownBoxProps): React.JSX.Element {
-  const { pTypography, ...boxProps } = props;
+  const { pTypography, pSpacing, liSpacing, ...boxProps } = props;
+  const derivedMarkdownProps = deriveMarkdownPropsFromTypography(pTypography, props);
   return (
     <Box {...boxProps}>
-      <MarkdownBase
-        markdown={trimWhitespacePrefix(props.children)}
-        textColor={pTypography?.color}
-        pFontWeight={pTypography?.fontWeight}
-        pMarginTop={pTypography?.marginTop}
-        pMarginBottom={pTypography?.marginBottom}
-        pVariant={pTypography?.variant}
-      />
+      <MarkdownBase markdown={trimWhitespacePrefix(props.children)} {...derivedMarkdownProps} />
     </Box>
   );
 }

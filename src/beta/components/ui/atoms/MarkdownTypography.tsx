@@ -1,8 +1,14 @@
+'use client';
+
 import type { TypographyProps } from '@mui/material';
 import type React from 'react';
-import { MarkdownBase } from './MarkdownBase';
+import {
+  deriveMarkdownPropsFromTypography,
+  MarkdownBase,
+  type MarkdownOwnProps,
+} from './MarkdownBase';
 
-interface MarkdownTypographyProps extends TypographyProps {
+interface MarkdownTypographyProps extends TypographyProps, MarkdownOwnProps {
   children: string;
 }
 
@@ -10,14 +16,6 @@ interface MarkdownTypographyProps extends TypographyProps {
  * Styled Markdown Typography.
  */
 export function MarkdownTypography(props: MarkdownTypographyProps): React.JSX.Element {
-  return (
-    <MarkdownBase
-      markdown={props.children.trim()}
-      textColor={props.color}
-      pFontWeight={props.fontWeight}
-      pMarginTop={props.marginTop}
-      pMarginBottom={props.marginBottom}
-      pVariant={props.variant}
-    />
-  );
+  const derivedMarkdownProps = deriveMarkdownPropsFromTypography(props, props);
+  return <MarkdownBase markdown={props.children.trim()} {...derivedMarkdownProps} />;
 }
