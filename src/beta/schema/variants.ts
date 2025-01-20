@@ -1,4 +1,4 @@
-import type { NonEmptyRecord } from '@/beta/types/utils/non-empty';
+import { nonEmptyEntries, type NonEmptyRecord } from '@/beta/types/utils/non-empty';
 
 /**
  * An enum of wallet variants.
@@ -38,6 +38,27 @@ function isAtLeastOneVariants<T>(value: VariantFeature<T>): value is AtLeastOneV
     }
   });
   return foundVariant && !foundNonVariant; // eslint-disable-line @typescript-eslint/no-unnecessary-condition -- Not sure why it thinks this is an unnecessary conditional.
+}
+
+/**
+ * If the given object only has one variant, return it.
+ * Otherwise, return [null, null].
+ */
+export function getSingleVariant<T>(
+  obj: AtLeastOneVariant<T>
+): { singleVariant: Variant; val: T } | { singleVariant: null; val: null } {
+  const values = nonEmptyEntries<Variant, T>(obj).filter(([_, val]) => val !== undefined);
+  if (values.length === 1) {
+    return { singleVariant: values[0][0], val: values[0][1] };
+  }
+  return { singleVariant: null, val: null };
+}
+
+/**
+ * @returns Whether the given object has exactly one variant.
+ */
+export function hasSingleVariant(obj: AtLeastOneVariant<unknown>): boolean {
+  return getSingleVariant(obj).singleVariant !== null;
 }
 
 /**

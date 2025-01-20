@@ -10,6 +10,7 @@ import { WalletRatingCell, walletRatingColumnProps } from '../molecules/WalletRa
 import {
   type EvaluationTree,
   PrivacyAttributeGroup,
+  SecurityAttributeGroup,
   transparencyAttributeGroup,
 } from '@/beta/schema/attribute-groups';
 import { WalletNameCell } from '../molecules/WalletNameCell';
@@ -22,6 +23,8 @@ import type {
   WalletTableStateHandle,
 } from '../WalletTableState';
 import type { Variant } from '@/beta/schema/variants';
+import { ThemeProvider } from '@mui/system';
+import { walletTableTheme } from '../../ThemeRegistry/theme';
 
 class TableStateHandle implements WalletTableStateHandle {
   readonly variantSelected: Variant | null;
@@ -164,33 +167,36 @@ export default function WalletTable(): React.JSX.Element {
   };
   const columns: GridColDef[] = [
     walletNameColumn,
+    walletTableColumn(SecurityAttributeGroup, tree => tree.security),
     walletTableColumn(PrivacyAttributeGroup, tree => tree.privacy),
     walletTableColumn(transparencyAttributeGroup, tree => tree.transparency),
   ];
   return (
-    <Box maxWidth="100%" height="90vh" width="fit-content" overflow="auto">
-      <DataGrid<WalletRow>
-        rows={rows}
-        columns={columns}
-        getRowHeight={row => (row.model as WalletRow).getRowHeight()} // eslint-disable-line @typescript-eslint/no-unsafe-type-assertion -- The row model is WalletRow.
-        density="standard"
-        disableRowSelectionOnClick
-        initialState={{
-          sorting: {
-            sortModel: [{ field: walletNameColumn.field, sort: 'asc' }],
-          },
-        }}
-        disableVirtualization={true}
-        sx={{
-          '& .MuiDataGrid-cell:first-child': {
-            position: 'sticky',
-            left: 0,
-            zIndex: 1,
-            backgroundColor: 'background.default',
-            borderRight: '1px solid #141519',
-          },
-        }}
-      />
+    <Box maxWidth="100%" height="80vh" width="fit-content" overflow="auto">
+      <ThemeProvider theme={walletTableTheme}>
+        <DataGrid<WalletRow>
+          rows={rows}
+          columns={columns}
+          getRowHeight={row => (row.model as WalletRow).getRowHeight()} // eslint-disable-line @typescript-eslint/no-unsafe-type-assertion -- The row model is WalletRow.
+          density="standard"
+          disableRowSelectionOnClick
+          initialState={{
+            sorting: {
+              sortModel: [{ field: walletNameColumn.field, sort: 'asc' }],
+            },
+          }}
+          disableVirtualization={true}
+          sx={{
+            '& .MuiDataGrid-cell:first-child': {
+              position: 'sticky',
+              left: 0,
+              zIndex: 1,
+              backgroundColor: 'background.default',
+              borderRight: '1px solid #141519',
+            },
+          }}
+        />
+      </ThemeProvider>
     </Box>
   );
 }
