@@ -27,7 +27,7 @@ function supportsChainVerification(
   return {
     value: {
       id: `chain_verification_l1_${lightClients.join('_')}`,
-      rating: Rating.YES,
+      rating: Rating.PASS,
       displayName: 'L1 chain state verification',
       shortExplanation: sentence(
         (walletMetadata: WalletMetadata) => `
@@ -47,7 +47,7 @@ function noChainVerification(
   return {
     value: {
       id: 'no_chain_verification',
-      rating: Rating.NO,
+      rating: Rating.FAIL,
       icon: '\u{1f648}', // See-no-evil monkey
       displayName: 'No L1 chain state verification',
       shortExplanation: sentence(

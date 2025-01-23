@@ -26,7 +26,7 @@ export type MultiAddressCorrelationValue = Value & {
 const uniqueDestinations: Evaluation<MultiAddressCorrelationValue> = {
   value: {
     id: 'unique_destinations',
-    rating: Rating.YES,
+    rating: Rating.PASS,
     icon: '\u{26d3}', // Broken chain
     displayName: 'Wallet uses unique endpoints per address',
     shortExplanation: sentence(
@@ -48,7 +48,7 @@ const uniqueDestinations: Evaluation<MultiAddressCorrelationValue> = {
 const activeAddressOnly: Evaluation<MultiAddressCorrelationValue> = {
   value: {
     id: 'active_address_only',
-    rating: Rating.YES,
+    rating: Rating.PASS,
     icon: '\u{1f4ce}', // Single paperclip
     displayName: 'Wallet only handles one active address at a time',
     shortExplanation: sentence(
@@ -81,7 +81,7 @@ const activeAddressOnly: Evaluation<MultiAddressCorrelationValue> = {
 const bulkRequests: Evaluation<MultiAddressCorrelationValue> = {
   value: {
     id: 'bulkRequests',
-    rating: Rating.NO,
+    rating: Rating.FAIL,
     displayName: 'Multiple addresses are correlatable by a third party',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
@@ -121,7 +121,7 @@ const bulkRequests: Evaluation<MultiAddressCorrelationValue> = {
 const correlatableRequests: Evaluation<MultiAddressCorrelationValue> = {
   value: {
     id: 'correlatableRequests',
-    rating: Rating.NO,
+    rating: Rating.FAIL,
     displayName: 'Multiple addresses are correlatable by a third party',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
@@ -236,7 +236,7 @@ const separateCircuits: Evaluation<MultiAddressCorrelationValue> = {
 const staggeredAndSeparateCircuits: Evaluation<MultiAddressCorrelationValue> = {
   value: {
     id: 'staggered_and_separate_circuits',
-    rating: Rating.YES,
+    rating: Rating.PASS,
     icon: '\u{26d3}', // Broken chain
     displayName: 'Requests for multiple addresses are uncorrelated',
     shortExplanation: sentence(

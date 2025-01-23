@@ -1,4 +1,4 @@
-import { nonEmptyMap, type NonEmptyRecord, nonEmptyValues } from '@/beta/types/utils/non-empty';
+import { type NonEmptyArray, nonEmptyMap } from '@/beta/types/utils/non-empty';
 
 /** Score is a score between 0.0 (lowest) and 1.0 (highest). */
 export type Score = number;
@@ -11,19 +11,18 @@ export interface WeightedScore {
 
 /**
  * A score and a boolean indicating whether any component of it was unrated.
+ * May also be null in case of complete exemption.
  */
-export interface MaybeUnratedScore {
+export type MaybeUnratedScore = null | {
   score: Score;
-  hasUnrated: boolean;
-}
+  hasUnratedComponent: boolean;
+};
 
 /** Compute a weighted aggregate score. */
-export function weightedScore<K extends string | number | symbol>(
-  scores: NonEmptyRecord<K, WeightedScore>
-): Score {
+export function weightedScore(scores: NonEmptyArray<WeightedScore>): Score {
   let totalScore = 0.0;
   let totalWeight = 0.0;
-  nonEmptyMap(nonEmptyValues(scores), ({ score, weight }) => {
+  nonEmptyMap(scores, ({ score, weight }) => {
     totalScore += score * weight;
     totalWeight += weight;
   });

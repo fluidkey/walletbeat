@@ -47,11 +47,11 @@ export function pickWorstRating<V extends Value>(
       worst = evaluation;
       continue;
     }
-    if (worst.value.rating === Rating.UNRATED || worst.value.rating === Rating.YES) {
+    if (worst.value.rating === Rating.UNRATED || worst.value.rating === Rating.PASS) {
       worst = evaluation;
       continue;
     }
-    if (worst.value.rating === Rating.PARTIAL && evaluation.value.rating === Rating.NO) {
+    if (worst.value.rating === Rating.PARTIAL && evaluation.value.rating === Rating.FAIL) {
       worst = evaluation;
       continue;
     }

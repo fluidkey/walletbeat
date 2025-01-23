@@ -33,7 +33,7 @@ function transparent(
   return {
     value: {
       id: `transparent_${id.toLocaleLowerCase()}`,
-      rating: Rating.YES,
+      rating: Rating.PASS,
       displayName: `Transparent funding (${sourceName})`,
       shortExplanation: sentence(
         (walletMetadata: WalletMetadata) => `
@@ -81,7 +81,7 @@ function extractive(
 const noFunding: Evaluation<FundingValue> = {
   value: {
     id: 'noFunding',
-    rating: Rating.NO,
+    rating: Rating.FAIL,
     displayName: 'No funding source',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
@@ -110,7 +110,7 @@ const noFunding: Evaluation<FundingValue> = {
 const unclear: Evaluation<FundingValue> = {
   value: {
     id: 'unclear',
-    rating: Rating.NO,
+    rating: Rating.FAIL,
     displayName: 'Unclear funding source',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `

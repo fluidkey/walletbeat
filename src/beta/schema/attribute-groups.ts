@@ -1,4 +1,5 @@
 import {
+  isNonEmptyArray,
   nonEmptyGet,
   type NonEmptyRecord,
   nonEmptyRemap,
@@ -9,6 +10,7 @@ import {
   type AttributeGroup,
   defaultRatingScore,
   type EvaluatedAttribute,
+  evaluatedAttributes,
   type EvaluatedGroup,
   Rating,
   type Value,
@@ -31,7 +33,7 @@ import {
   multiAddressCorrelation,
   type MultiAddressCorrelationValue,
 } from './attributes/privacy/multi-address-correlation';
-import { type Score, type WeightedScore, weightedScore } from './score';
+import { type MaybeUnratedScore, type WeightedScore, weightedScore } from './score';
 import { sentence } from '@/beta/types/text';
 import type { WalletMetadata } from './wallet';
 import {
@@ -288,19 +290,27 @@ export function getEvaluationFromOtherTree<V extends Value>(
  */
 function scoreGroup<Vs extends ValueSet>(weights: { [k in keyof Vs]: number }): (
   evaluations: EvaluatedGroup<Vs>
-) => { score: Score; hasUnrated: boolean } {
-  return (evaluations: EvaluatedGroup<Vs>): { score: Score; hasUnrated: boolean } => {
-    let hasUnrated = false;
-    const score = weightedScore(
-      nonEmptyRemap(weights, (key: keyof Vs, weight: number): WeightedScore => {
+) => MaybeUnratedScore {
+  return (evaluations: EvaluatedGroup<Vs>): MaybeUnratedScore => {
+    const subScores: WeightedScore[] = nonEmptyValues<keyof Vs, WeightedScore | null>(
+      nonEmptyRemap(weights, (key: keyof Vs, weight: number): WeightedScore | null => {
         const value = evaluations[key].evaluation.value;
-        hasUnrated ||= value.rating === Rating.UNRATED;
-        return {
-          score: value.score ?? defaultRatingScore(value.rating),
-          weight,
-        };
+        const score = value.score ?? defaultRatingScore(value.rating);
+        return score === null
+          ? null
+          : {
+              score,
+              weight,
+            };
       })
-    );
-    return { score, hasUnrated };
+    ).filter(score => score !== null);
+    if (isNonEmptyArray(subScores)) {
+      let hasUnratedComponent = false;
+      for (const evalAttr of evaluatedAttributes(evaluations)) {
+        hasUnratedComponent ||= evalAttr.evaluation.value.rating === Rating.UNRATED;
+      }
+      return { score: weightedScore(subScores), hasUnratedComponent };
+    }
+    return null;
   };
 }

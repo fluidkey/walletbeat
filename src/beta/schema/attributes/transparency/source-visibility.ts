@@ -14,7 +14,7 @@ export type SourceVisibilityValue = Value & {
 const sourcePublic: Evaluation<SourceVisibilityValue> = {
   value: {
     id: 'public',
-    rating: Rating.YES,
+    rating: Rating.PASS,
     displayName: 'Source code publicly available',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `
@@ -29,7 +29,7 @@ const sourcePublic: Evaluation<SourceVisibilityValue> = {
 const sourcePrivate: Evaluation<SourceVisibilityValue> = {
   value: {
     id: 'private',
-    rating: Rating.NO,
+    rating: Rating.FAIL,
     displayName: 'Source code not publicly available',
     shortExplanation: sentence(
       (walletMetadata: WalletMetadata) => `

@@ -10,12 +10,23 @@ import type { Monetization } from './features/monetization';
 import type { WithRef } from './reference';
 import type { EthereumL1LightClientSupport } from './features/security/light-client';
 import type { ChainConfigurability } from './features/chain-configurability';
+import type { WalletProfile } from './features/profile';
 
 /**
  * A set of features about a wallet, each of which may or may not depend on
  * the wallet variant.
  */
 export interface WalletFeatures {
+  /**
+   * The profile of the wallet, determining the use-cases and audience
+   * that it is meant for. This has impact on which attributes are relevant
+   * to it, and which attributes it is exempt from.
+   * This is *not* per-variant, because users would not expect that a single
+   * wallet would fulfill different use-cases depending on which variant of
+   * the wallet they install.
+   */
+  profile: WalletProfile;
+
   /** Security features. */
   security: {
     /** Light clients. */
@@ -58,6 +69,9 @@ export interface ResolvedFeatures {
   /** The wallet variant which was used to resolve the feature tree. */
   variant: Variant;
 
+  /** The profile of the wallet. */
+  profile: WalletProfile;
+
   security: {
     lightClient: {
       ethereumL1: ResolvedFeature<WithRef<EthereumL1LightClientSupport> | false>;
@@ -79,6 +93,7 @@ export function resolveFeatures(features: WalletFeatures, variant: Variant): Res
     resolveFeature<F>(feature, variant);
   return {
     variant,
+    profile: features.profile,
     security: {
       lightClient: {
         ethereumL1: feat(features.security.lightClient.ethereumL1),

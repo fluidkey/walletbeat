@@ -11,36 +11,47 @@ import type { RatedWallet, WalletMetadata } from './wallet';
  */
 export enum Rating {
   /**
-   * UNRATED means the attribute was not rated.
-   *This is displayed in a neutral color.
+   * FAIL means the wallet does not fulfill this attribute.
    */
-  UNRATED = 'UNRATED',
+  FAIL = 'FAIL',
 
   /**
-   * No means the wallet does not fulfill this attribute.
-   */
-  NO = 'NO',
-
-  /**
-   * Partial means the wallet partially fulfills this attribute
+   * PARTIAL means the wallet partially fulfills this attribute
    * (e.g. only with non-trivial user configuration, or with important
    * caveats.)
    */
   PARTIAL = 'PARTIAL',
 
   /**
-   * Yes means the wallet fully fulfills this attribute.
+   * PASS means the wallet fully fulfills this attribute.
    */
-  YES = 'YES',
+  PASS = 'PASS',
+
+  /**
+   * UNRATED means the attribute was not rated.
+   * This is displayed in a neutral color.
+   */
+  UNRATED = 'UNRATED',
+
+  /**
+   * EXEMPT means the wallet is exempt from being rated on this attribute.
+   * This is useful for wallets that do not aim to be generic full-featured
+   * Ethereum wallets. For example, it would be irrelevant to rate a
+   * payments-focused browser extension wallet on whether it implements
+   * EIP-6963 ("Multi Injected Provider Discovery"), because such a wallet
+   * does not aim to be an injected provider in web pages at all.
+   */
+  EXEMPT = 'EXEMPT',
 }
 
 /** Type predicate for `Rating`. */
 export function isRating(value: unknown): value is Rating {
   return (
     value === Rating.UNRATED ||
-    value === Rating.YES ||
+    value === Rating.PASS ||
     value === Rating.PARTIAL ||
-    value === Rating.NO
+    value === Rating.FAIL ||
+    value === Rating.EXEMPT
   );
 }
 
@@ -49,14 +60,16 @@ export function isRating(value: unknown): value is Rating {
  */
 export function ratingToIcon(rating: Rating): string {
   switch (rating) {
-    case Rating.NO:
+    case Rating.FAIL:
       return '\u{274c}'; // Red X
     case Rating.PARTIAL:
       return '\u{26a0}'; // Warning sign
-    case Rating.YES:
+    case Rating.PASS:
       return '\u{2705}'; // Green checkmark
     case Rating.UNRATED:
       return '\u{2753}'; // Question mark
+    case Rating.EXEMPT:
+      return '\u{26aa}'; // White circle
   }
 }
 
@@ -65,14 +78,16 @@ export function ratingToIcon(rating: Rating): string {
  */
 export function ratingToColor(rating: Rating): string {
   switch (rating) {
-    case Rating.NO:
+    case Rating.FAIL:
       return '#FF0000';
     case Rating.PARTIAL:
       return '#FFA500';
-    case Rating.YES:
+    case Rating.PASS:
       return '#008000';
     case Rating.UNRATED:
       return '#808080';
+    case Rating.EXEMPT:
+      return '#C0C0C0';
   }
 }
 
@@ -123,8 +138,8 @@ export interface Value {
   /**
    * The visual representation of this value.
    * For example, when evaluating an attribute like open-source licensing,
-   * this could say "Yes" if the wallet is Apache-licensed or MIT-licensed,
-   * "Partial" if the wallet is BUSL-licensed, or "No" if the wallet is
+   * this could say "PASS" if the wallet is Apache-licensed or MIT-licensed,
+   * "PARTIAL" if the wallet is BUSL-licensed, or "FAIL" if the wallet is
    * proprietary.
    */
   rating: Rating;
@@ -139,16 +154,18 @@ export interface Value {
 }
 
 /** The numerical score corresponding to a rating by default. */
-export function defaultRatingScore(rating: Rating): Score {
+export function defaultRatingScore(rating: Rating): Score | null {
   switch (rating) {
-    case Rating.NO:
+    case Rating.FAIL:
       return 0.0;
     case Rating.PARTIAL:
       return 0.5;
-    case Rating.YES:
+    case Rating.PASS:
       return 1.0;
     case Rating.UNRATED:
       return 0.0;
+    case Rating.EXEMPT:
+      return null;
   }
 }
 

@@ -44,7 +44,7 @@ export type AddressCorrelationValue = Value & {
 
 const uncorrelated: AddressCorrelationValue = {
   id: 'no_correlation',
-  rating: Rating.YES,
+  rating: Rating.PASS,
   icon: '\u{26d3}', // Broken chain
   displayName: 'Wallet address is kept private',
   shortExplanation: sentence(
@@ -124,7 +124,7 @@ function linkable(
         };
       default:
         return {
-          rating: Rating.NO,
+          rating: Rating.FAIL,
           howToImprove: paragraph(
             ({ wallet }) => `
               ${wallet.metadata.displayName} should require user consent
@@ -229,7 +229,7 @@ export const addressCorrelation: Attribute<AddressCorrelationValue> = {
           pseudonyms) by default, and uploads this data to a third-party
           or records it onchain in a publicly-viewable manner.
         `),
-        Rating.NO
+        Rating.FAIL
       ),
     ],
     partial: [

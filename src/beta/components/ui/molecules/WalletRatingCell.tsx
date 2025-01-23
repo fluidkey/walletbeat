@@ -55,8 +55,12 @@ export function WalletRatingCell<Vs extends ValueSet>({
   evalGroupFn: (tree: EvaluationTree) => EvaluatedGroup<Vs>;
 }): React.JSX.Element {
   const evalGroup = evalGroupFn(row.evalTree);
-  const { score, hasUnrated } = attrGroup.score(evalGroup);
-  const centerLabel = hasUnrated
+  const groupScore = attrGroup.score(evalGroup);
+  if (groupScore === null) {
+    return <>N/A</>;
+  }
+  const { score, hasUnratedComponent } = groupScore;
+  const centerLabel = hasUnratedComponent
     ? ratingToIcon(Rating.UNRATED)
     : score <= 0.0
       ? '\u{1f480}' /* Skull */

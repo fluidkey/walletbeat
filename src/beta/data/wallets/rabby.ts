@@ -4,6 +4,7 @@ import { polymutex } from '../contributors/polymutex';
 import { paragraph } from '@/beta/types/text';
 import type { Wallet } from '@/beta/schema/wallet';
 import { License } from '@/beta/schema/features/license';
+import { WalletProfile } from '@/beta/schema/features/profile';
 
 export const rabby: Wallet = {
   metadata: {
@@ -20,6 +21,7 @@ export const rabby: Wallet = {
     lastUpdated: '2024-12-15',
   },
   features: {
+    profile: WalletProfile.GENERIC,
     multiAddress: true,
     chainConfigurability: {
       overrideL1RpcEndpoint: true,

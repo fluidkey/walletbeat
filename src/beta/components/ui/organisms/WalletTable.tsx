@@ -119,7 +119,8 @@ class WalletRow implements WalletRowStateHandle {
     attrGroup: AttributeGroup<Vs>,
     evalGroupFn: (tree: EvaluationTree) => EvaluatedGroup<Vs>
   ): number {
-    return attrGroup.score(evalGroupFn(this.wallet.overall)).score;
+    const score = attrGroup.score(evalGroupFn(this.wallet.overall));
+    return score === null ? 0.0 : score.score;
   }
 
   /** Render a cell for a rating column. */

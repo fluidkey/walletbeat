@@ -22,7 +22,7 @@ function open(license: License): Evaluation<OpenSourceValue> {
   return {
     value: {
       id: license,
-      rating: Rating.YES,
+      rating: Rating.PASS,
       icon: '\u{1f496}', // Sparkling heart
       displayName: `Open source (${licenseName(license)})`,
       shortExplanation: sentence(
@@ -61,7 +61,7 @@ function openInTheFuture(license: License): Evaluation<OpenSourceValue> {
 const proprietary: Evaluation<OpenSourceValue> = {
   value: {
     id: 'proprietary',
-    rating: Rating.NO,
+    rating: Rating.FAIL,
     icon: '\u{1f494}', // Broken heart
     displayName: 'Proprietary code license',
     shortExplanation: sentence(
@@ -89,7 +89,7 @@ const proprietary: Evaluation<OpenSourceValue> = {
 const unlicensed: Evaluation<OpenSourceValue> = {
   value: {
     id: 'unlicensed',
-    rating: Rating.NO,
+    rating: Rating.FAIL,
     icon: '\u{2754}', // White question mark
     displayName: 'Unlicensed or missing license file',
     shortExplanation: sentence(
@@ -153,7 +153,7 @@ export const openSource: Attribute<OpenSourceValue> = {
         [BSD](https://opensource.org/license/bsd-1-clause),
         and [GPL](https://opensource.org/license/gpl-2-0).
       `),
-      Rating.YES
+      Rating.PASS
     ),
     partial: exampleRating(
       mdParagraph(`

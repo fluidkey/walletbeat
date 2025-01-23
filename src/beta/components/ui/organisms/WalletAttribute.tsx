@@ -85,7 +85,7 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
     {
       id: `why-${evalAttr.attribute.id}`,
       summary:
-        evalAttr.evaluation.value.rating === Rating.YES ||
+        evalAttr.evaluation.value.rating === Rating.PASS ||
         evalAttr.evaluation.value.rating === Rating.UNRATED
           ? 'Why does this matter?'
           : 'Why should I care?',

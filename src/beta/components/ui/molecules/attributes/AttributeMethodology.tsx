@@ -124,7 +124,7 @@ function ExampleRatings<V extends Value>({
     };
   };
   const passRendered = renderExamples(
-    Rating.YES,
+    Rating.PASS,
     mdSentence('A wallet would get a **passing** rating if...'),
     mdSentence('A wallet would get a **passing** rating in any of these cases:'),
     passExamples
@@ -136,7 +136,7 @@ function ExampleRatings<V extends Value>({
     partialExamples
   );
   const failRendered = renderExamples(
-    Rating.NO,
+    Rating.FAIL,
     mdSentence('A wallet would get a **failing** rating if...'),
     mdSentence('A wallet would get a **failing** rating in any of these cases:'),
     failExamples
