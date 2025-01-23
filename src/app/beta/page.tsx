@@ -4,6 +4,7 @@ import type React from 'react';
 import './global.css';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import ForumIcon from '@mui/icons-material/Forum';
+import FoundationIcon from '@mui/icons-material/Foundation';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import type { Metadata } from 'next';
 import { generateBasicMetadata } from '@/beta/components/metadata';
@@ -49,6 +50,14 @@ export default function Page(): React.JSX.Element {
           <Typography component="div" variant="caption">
             <IconLink href="/beta/faq" IconComponent={HelpCenterIcon}>
               Frequently asked questions
+            </IconLink>
+          </Typography>
+          <Typography component="div" minWidth="1.5rem" textAlign="center" variant="caption">
+            |
+          </Typography>
+          <Typography component="div" variant="caption">
+            <IconLink href="/beta/about" IconComponent={FoundationIcon}>
+              About Walletbeat
             </IconLink>
           </Typography>
           <Typography component="div" minWidth="1.5rem" textAlign="center" variant="caption">

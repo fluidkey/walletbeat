@@ -37,6 +37,7 @@ import {
 } from '../../constants';
 import type { NavigationItem } from '../organisms/Navigation';
 import {
+  navigationAbout,
   navigationFaq,
   navigationFarcasterChannel,
   navigationHome,
@@ -375,7 +376,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
         },
         {
           id: 'rest-of-nav',
-          items: [navigationFaq, navigationRepository, navigationFarcasterChannel],
+          items: [navigationFaq, navigationAbout, navigationRepository, navigationFarcasterChannel],
           overflow: false,
         },
       ]}

@@ -4,6 +4,7 @@ import FrequentlyAskedQuestion from '../molecules/FrequentlyAskedQuestion';
 import React from 'react';
 import { NavigationPageLayout } from './NavigationPageLayout';
 import {
+  navigationAbout,
   navigationFaq,
   navigationFarcasterChannel,
   navigationHome,
@@ -149,6 +150,14 @@ const frequentlyAskedQuestions: NonEmptyArray<FAQEntry> = [
         implementation, there should also be other more pragmatic solutions,
         such as "the wallet rotates between with several public transaction
         broadcast endpoints in diverse jurisdictions".
+      * **Raising the bar over time**. While pragmatism is important and
+        wallets should be able to satisfy an attribute using
+        currently-available technology, said technology will improve over time
+        and rules should be expected to move along with it.
+        For example, while some features may be infeasible to implement in
+        browser-based wallets due to current limitations in browsers'
+        extension capabilities, these capabilities may change over time and
+        rules will be updated accordingly.
     `,
   },
   {
@@ -266,7 +275,7 @@ export function FrequentlyAskedQuestionsPage(): React.JSX.Element {
         },
         {
           id: 'rest-of-nav',
-          items: [navigationRepository, navigationFarcasterChannel],
+          items: [navigationAbout, navigationRepository, navigationFarcasterChannel],
           overflow: false,
         },
       ]}

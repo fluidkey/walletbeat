@@ -3,6 +3,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import ForumIcon from '@mui/icons-material/Forum';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import FoundationIcon from '@mui/icons-material/Foundation';
 
 export const navigationHome: NavigationLinkItem = {
   id: 'wallet-table',
@@ -16,6 +17,13 @@ export const navigationFaq: NavigationLinkItem = {
   icon: <HelpCenterIcon />,
   title: 'FAQ',
   href: '/beta/faq',
+};
+
+export const navigationAbout: NavigationLinkItem = {
+  id: 'about',
+  icon: <FoundationIcon />,
+  title: 'About Walletbeat',
+  href: '/beta/about',
 };
 
 export const navigationRepository: NavigationLinkItem = {
