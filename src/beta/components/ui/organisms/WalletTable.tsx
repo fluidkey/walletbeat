@@ -9,8 +9,9 @@ import type React from 'react';
 import { WalletRatingCell, walletRatingColumnProps } from '../molecules/WalletRatingCell';
 import {
   type EvaluationTree,
-  PrivacyAttributeGroup,
-  SecurityAttributeGroup,
+  privacyAttributeGroup,
+  securityAttributeGroup,
+  selfSovereigntyAttributeGroup,
   transparencyAttributeGroup,
 } from '@/beta/schema/attribute-groups';
 import { WalletNameCell } from '../molecules/WalletNameCell';
@@ -168,8 +169,9 @@ export default function WalletTable(): React.JSX.Element {
   };
   const columns: GridColDef[] = [
     walletNameColumn,
-    walletTableColumn(SecurityAttributeGroup, tree => tree.security),
-    walletTableColumn(PrivacyAttributeGroup, tree => tree.privacy),
+    walletTableColumn(securityAttributeGroup, tree => tree.security),
+    walletTableColumn(privacyAttributeGroup, tree => tree.privacy),
+    walletTableColumn(selfSovereigntyAttributeGroup, tree => tree.selfSovereignty),
     walletTableColumn(transparencyAttributeGroup, tree => tree.transparency),
   ];
   return (

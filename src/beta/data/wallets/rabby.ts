@@ -5,6 +5,7 @@ import { paragraph } from '@/beta/types/text';
 import type { Wallet } from '@/beta/schema/wallet';
 import { License } from '@/beta/schema/features/license';
 import { WalletProfile } from '@/beta/schema/features/profile';
+import { RpcEndpointConfiguration } from '@/beta/schema/features/chain-configurability';
 
 export const rabby: Wallet = {
   metadata: {
@@ -24,8 +25,8 @@ export const rabby: Wallet = {
     profile: WalletProfile.GENERIC,
     multiAddress: true,
     chainConfigurability: {
-      overrideL1RpcEndpoint: true,
-      overrideOtherRpcEndpoints: true,
+      l1RpcEndpoint: RpcEndpointConfiguration.YES_AFTER_OTHER_REQUESTS,
+      otherRpcEndpoints: RpcEndpointConfiguration.YES_AFTER_OTHER_REQUESTS,
       customChains: true,
     },
     security: {

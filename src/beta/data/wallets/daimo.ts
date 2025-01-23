@@ -10,6 +10,7 @@ import { merkleManufactory } from '../entities/merkle-manufactory';
 import { pimlico } from '../entities/pimlico';
 import { honeycomb } from '../entities/honeycomb';
 import { WalletProfile } from '@/beta/schema/features/profile';
+import { RpcEndpointConfiguration } from '@/beta/schema/features/chain-configurability';
 
 export const daimo: Wallet = {
   metadata: {
@@ -34,8 +35,8 @@ export const daimo: Wallet = {
     profile: WalletProfile.PAYMENTS,
     multiAddress: true,
     chainConfigurability: {
-      overrideL1RpcEndpoint: false,
-      overrideOtherRpcEndpoints: false,
+      l1RpcEndpoint: RpcEndpointConfiguration.NEVER_USED,
+      otherRpcEndpoints: RpcEndpointConfiguration.NO,
       customChains: false,
     },
     security: {

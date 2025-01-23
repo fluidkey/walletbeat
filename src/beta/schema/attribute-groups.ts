@@ -40,6 +40,10 @@ import {
   chainVerification,
   type ChainVerificationValue,
 } from './attributes/security/chain-verification';
+import {
+  selfHostedNode,
+  type SelfHostedNodeValue,
+} from './attributes/self-sovereignty/self-hosted-node';
 
 /** A ValueSet for security Values. */
 type SecurityValues = Dict<{
@@ -47,7 +51,7 @@ type SecurityValues = Dict<{
 }>;
 
 /** Security attributes. */
-export const SecurityAttributeGroup: AttributeGroup<SecurityValues> = {
+export const securityAttributeGroup: AttributeGroup<SecurityValues> = {
   id: 'security',
   icon: '\u{1f512}', // Lock
   displayName: 'Security',
@@ -69,7 +73,7 @@ type PrivacyValues = Dict<{
 }>;
 
 /** Privacy attributes. */
-export const PrivacyAttributeGroup: AttributeGroup<PrivacyValues> = {
+export const privacyAttributeGroup: AttributeGroup<PrivacyValues> = {
   id: 'privacy',
   icon: '\u{1f575}', // Detective
   displayName: 'Privacy',
@@ -84,6 +88,28 @@ export const PrivacyAttributeGroup: AttributeGroup<PrivacyValues> = {
   score: scoreGroup<PrivacyValues>({
     addressCorrelation: 1.0,
     multiAddressCorrelation: 1.0,
+  }),
+};
+
+/** A ValueSet for self-sovereignty Values. */
+type SelfSovereigntyValues = Dict<{
+  selfHostedNode: SelfHostedNodeValue;
+}>;
+
+/** Self-sovereignty attributes. */
+export const selfSovereigntyAttributeGroup: AttributeGroup<SelfSovereigntyValues> = {
+  id: 'selfSovereignty',
+  icon: '\u{1f3f0}', // Castle
+  displayName: 'Self-sovereignty',
+  perWalletQuestion: sentence<WalletMetadata>(
+    (walletMetadata: WalletMetadata): string =>
+      `How much control and ownership over your wallet does ${walletMetadata.displayName} give you?`
+  ),
+  attributes: {
+    selfHostedNode,
+  },
+  score: scoreGroup<SelfSovereigntyValues>({
+    selfHostedNode: 1.0,
   }),
 };
 
@@ -118,8 +144,9 @@ export const transparencyAttributeGroup: AttributeGroup<TransparencyValues> = {
 /** The set of attribute groups that make up wallet attributes. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Necessary to allow any Attribute implementation.
 export const attributeTree: NonEmptyRecord<string, AttributeGroup<any>> = {
-  security: SecurityAttributeGroup,
-  privacy: PrivacyAttributeGroup,
+  security: securityAttributeGroup,
+  privacy: privacyAttributeGroup,
+  selfSovereignty: selfSovereigntyAttributeGroup,
   transparency: transparencyAttributeGroup,
 };
 
@@ -134,6 +161,11 @@ export interface PrivacyEvaluations extends EvaluatedGroup<PrivacyValues> {
   multiAddressCorrelation: EvaluatedAttribute<MultiAddressCorrelationValue>;
 }
 
+/** Evaluated self-sovereignty attributes for a single wallet. */
+export interface SelfSovereigntyEvaluations extends EvaluatedGroup<SelfSovereigntyValues> {
+  selfHostedNode: EvaluatedAttribute<SelfHostedNodeValue>;
+}
+
 /** Evaluated transparency attributes for a single wallet. */
 export interface TransparencyEvaluations extends EvaluatedGroup<TransparencyValues> {
   openSource: EvaluatedAttribute<OpenSourceValue>;
@@ -144,10 +176,11 @@ export interface TransparencyEvaluations extends EvaluatedGroup<TransparencyValu
 export interface EvaluationTree
   extends NonEmptyRecord<
     string,
-    EvaluatedGroup<SecurityValues | PrivacyValues | TransparencyValues>
+    EvaluatedGroup<SecurityValues | PrivacyValues | SelfSovereigntyValues | TransparencyValues>
   > {
   security: SecurityEvaluations;
   privacy: PrivacyEvaluations;
+  selfSovereignty: SelfSovereigntyEvaluations;
   transparency: TransparencyEvaluations;
 }
 
@@ -164,6 +197,9 @@ export function evaluateAttributes(features: ResolvedFeatures): EvaluationTree {
     privacy: {
       addressCorrelation: evalAttr(addressCorrelation),
       multiAddressCorrelation: evalAttr(multiAddressCorrelation),
+    },
+    selfSovereignty: {
+      selfHostedNode: evalAttr(selfHostedNode),
     },
     transparency: {
       openSource: evalAttr(openSource),
@@ -200,6 +236,9 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
     privacy: {
       addressCorrelation: attr(tree => tree.privacy.addressCorrelation),
       multiAddressCorrelation: attr(tree => tree.privacy.multiAddressCorrelation),
+    },
+    selfSovereignty: {
+      selfHostedNode: attr(tree => tree.selfSovereignty.selfHostedNode),
     },
     transparency: {
       openSource: attr(tree => tree.transparency.openSource),

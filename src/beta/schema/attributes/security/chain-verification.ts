@@ -11,7 +11,10 @@ import { component, markdown, mdParagraph, paragraph, sentence } from '@/beta/ty
 import type { WalletMetadata } from '@/beta/schema/wallet';
 import { isNonEmptyArray, type NonEmptyArray, nonEmptyEntries } from '@/beta/types/utils/non-empty';
 import { EthereumL1LightClient } from '../../features/security/light-client';
-import type { ChainConfigurability } from '../../features/chain-configurability';
+import {
+  RpcEndpointConfiguration,
+  type ChainConfigurability,
+} from '../../features/chain-configurability';
 import { ChainVerificationDetails } from '@/beta/components/ui/molecules/attributes/security/ChainVerificationDetails';
 import { type FullyQualifiedReference, popRefs } from '../../reference';
 
@@ -57,22 +60,26 @@ function noChainVerification(
       ),
       __brand: brand,
     },
-    details: markdown(
-      ({ wallet }) => `
-        ${wallet.metadata.displayName} does not verify the integrity of the
-        Ethereum L1 blockchain when retrieving chain state or simulating
-        transactions.
+    details: markdown(({ wallet }) => {
+      const l1Configurability = chainConfigurability?.l1RpcEndpoint ?? RpcEndpointConfiguration.NO;
+      const canConfigureL1 =
+        l1Configurability === RpcEndpointConfiguration.YES_BEFORE_ANY_REQUEST ||
+        l1Configurability === RpcEndpointConfiguration.YES_AFTER_OTHER_REQUESTS;
+      return `
+          ${wallet.metadata.displayName} does not verify the integrity of the
+          Ethereum L1 blockchain when retrieving chain state or simulating
+          transactions.
 
-        ${
-          (chainConfigurability?.overrideL1RpcEndpoint ?? false)
-            ? `
-        Users may work around this by setting a custom RPC endpoint for the
-        L1 chain and running their own node or external light client.
-        `
-            : ''
-        }
-      `
-    ),
+          ${
+            canConfigureL1
+              ? `
+          Users may work around this by setting a custom RPC endpoint for the
+          L1 chain and running their own node or external light client.
+          `
+              : ''
+          }
+        `;
+    }),
     howToImprove: mdParagraph(
       ({ wallet }) => `
         ${wallet.metadata.displayName} should integrate
