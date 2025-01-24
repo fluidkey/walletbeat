@@ -7,7 +7,7 @@ export const ambire: Info = {
   updatedAt: '11/12/2023',
   updatedByName: '@jordan-enev',
   updatedByUrl: 'https://github.com/jordan-enev',
-  mobile: {
+  browser: {
     accountType: '4337',
     chainCompatibility: {
       configurable: true,
@@ -51,55 +51,6 @@ export const ambire: Info = {
       injected: true,
       embedded: false,
       inappBrowser: false,
-    },
-    modularity: {
-      modularity: false,
-    },
-  },
-  browser: {
-    accountType: '4337',
-    chainCompatibility: {
-      configurable: false,
-      autoswitch: true,
-      ethereum: true,
-      optimism: true,
-      arbitrum: true,
-      base: true,
-      polygon: true,
-      gnosis: true,
-      bnbSmartChain: true,
-      avalanche: true,
-    },
-    ensCompatibility: {
-      mainnet: true,
-      subDomains: true,
-      offchain: false,
-      L2s: false,
-      customDomains: false,
-      freeUsernames: false,
-    },
-    backupOptions: {
-      cloud: true,
-      local: true,
-      socialRecovery: true,
-    },
-    securityFeatures: {
-      multisig: false,
-      MPC: false,
-      keyRotation: false,
-      transactionScanning: false,
-      limitsAndTimelocks: true,
-      hardwareWalletSupport: true,
-    },
-    availableTestnets: {
-      availableTestnets: true,
-    },
-    license: 'OPEN_SOURCE',
-    connectionMethods: {
-      walletConnect: true,
-      injected: false,
-      embedded: true,
-      inappBrowser: true,
     },
     modularity: {
       modularity: false,
