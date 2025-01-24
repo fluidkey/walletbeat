@@ -30,9 +30,9 @@ export const ambire: Info = {
       freeUsernames: true,
     },
     backupOptions: {
-      cloud: true,
+      cloud: false,
       local: true,
-      socialRecovery: true,
+      socialRecovery: false,
     },
     securityFeatures: {
       multisig: false,
