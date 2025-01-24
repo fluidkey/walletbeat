@@ -25,9 +25,9 @@ export const ambire: Info = {
       mainnet: true,
       subDomains: true,
       offchain: false,
-      L2s: false,
-      customDomains: false,
-      freeUsernames: false,
+      L2s: true,
+      customDomains: true,
+      freeUsernames: true,
     },
     backupOptions: {
       cloud: true,
