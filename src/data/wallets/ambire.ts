@@ -4,9 +4,9 @@ export const ambire: Info = {
   url: 'https://ambire.com',
   submittedByName: '@jordan-enev',
   submittedByUrl: 'https://github.com/jordan-enev',
-  updatedAt: '11/12/2023',
-  updatedByName: '@jordan-enev',
-  updatedByUrl: 'https://github.com/jordan-enev',
+  updatedAt: '24/01/2025',
+  updatedByName: '@superKalo',
+  updatedByUrl: 'https://github.com/superkalo',
   browser: {
     accountType: '4337',
     chainCompatibility: {
