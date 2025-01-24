@@ -50,7 +50,7 @@ export const ambire: Info = {
       walletConnect: false,
       injected: true,
       embedded: false,
-      inappBrowser: true,
+      inappBrowser: false,
     },
     modularity: {
       modularity: false,
