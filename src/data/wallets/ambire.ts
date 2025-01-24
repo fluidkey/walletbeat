@@ -37,9 +37,9 @@ export const ambire: Info = {
     securityFeatures: {
       multisig: false,
       MPC: false,
-      keyRotation: true,
-      transactionScanning: false,
-      limitsAndTimelocks: true,
+      keyRotation: false,
+      transactionScanning: true,
+      limitsAndTimelocks: false,
       hardwareWalletSupport: true,
     },
     availableTestnets: {
