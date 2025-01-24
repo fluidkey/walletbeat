@@ -10,7 +10,7 @@ export const ambire: Info = {
   mobile: {
     accountType: '4337',
     chainCompatibility: {
-      configurable: false,
+      configurable: true,
       autoswitch: true,
       ethereum: true,
       optimism: true,
