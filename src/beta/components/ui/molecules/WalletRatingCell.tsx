@@ -12,7 +12,7 @@ import {
   ratingToIcon,
   ratingToColor,
 } from '@/beta/schema/attributes';
-import { attributeEvaluationIsUniqueToVariant } from '@/beta/schema/wallet';
+import { attributeVariantSpecificity, VariantSpecificity } from '@/beta/schema/wallet';
 import { type NonEmptyArray, nonEmptyMap } from '@/beta/types/utils/non-empty';
 import { Box, Typography } from '@mui/material';
 import type React from 'react';
@@ -24,7 +24,7 @@ import type { WalletRowStateHandle } from '../WalletTableState';
 import { IconLink } from '../atoms/IconLink';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { slugifyCamelCase } from '@/beta/types/text';
-import { variantUrlQuery } from '../../variants';
+import { variantToName, variantUrlQuery } from '../../variants';
 
 /**
  * Common properties of rating-type columns.
@@ -77,15 +77,28 @@ export function WalletRatingCell<Vs extends ValueSet>({
     evaluatedAttributesEntries(evalGroup),
     ([evalAttrId, evalAttr]: [keyof EvaluatedGroup<Vs>, EvaluatedAttribute<Value>]): PieSlice => {
       const icon = evalAttr.evaluation.value.icon ?? evalAttr.attribute.icon;
-      const tooltipSuffix =
-        row.table.variantSelected !== null &&
-        attributeEvaluationIsUniqueToVariant(
-          row.wallet,
-          row.table.variantSelected,
-          evalAttr.attribute
-        )
-          ? ` (${row.table.variantSelected} only)`
-          : '';
+      const tooltipSuffix: string = (() => {
+        if (
+          row.table.variantSelected === null ||
+          row.wallet.variants[row.table.variantSelected] === undefined
+        ) {
+          return '';
+        }
+        switch (
+          attributeVariantSpecificity(row.wallet, row.table.variantSelected, evalAttr.attribute)
+        ) {
+          case VariantSpecificity.ONLY_ASSESSED_FOR_THIS_VARIANT:
+            return '';
+          case VariantSpecificity.ALL_SAME:
+            return '';
+          case VariantSpecificity.EXEMPT_FOR_THIS_VARIANT:
+            return '';
+          case VariantSpecificity.UNIQUE_TO_VARIANT:
+            return ` (${variantToName(row.table.variantSelected, false)} only)`;
+          case VariantSpecificity.NOT_UNIVERSAL:
+            return ` (${variantToName(row.table.variantSelected, false)} specific)`;
+        }
+      })();
       return {
         id: evalAttrId.toString(),
         color: ratingToColor(evalAttr.evaluation.value.rating),
@@ -187,15 +200,32 @@ export function WalletRatingCell<Vs extends ValueSet>({
               {highlightedEvalAttr.evaluation.value.shortExplanation.render({
                 ...row.wallet.metadata,
                 textTransform: (input: string) => {
-                  const suffix =
-                    row.table.variantSelected !== null &&
-                    attributeEvaluationIsUniqueToVariant(
-                      row.wallet,
-                      row.table.variantSelected,
-                      highlightedEvalAttr.attribute
-                    )
-                      ? ` This is only the case on the ${row.table.variantSelected} version.`
-                      : '';
+                  const suffix: string = (() => {
+                    if (
+                      row.table.variantSelected === null ||
+                      row.wallet.variants[row.table.variantSelected] === undefined
+                    ) {
+                      return '';
+                    }
+                    switch (
+                      attributeVariantSpecificity(
+                        row.wallet,
+                        row.table.variantSelected,
+                        highlightedEvalAttr.attribute
+                      )
+                    ) {
+                      case VariantSpecificity.ALL_SAME:
+                        return '';
+                      case VariantSpecificity.ONLY_ASSESSED_FOR_THIS_VARIANT:
+                        return '';
+                      case VariantSpecificity.EXEMPT_FOR_THIS_VARIANT:
+                        return '';
+                      case VariantSpecificity.NOT_UNIVERSAL:
+                        return ` This is the case on the ${variantToName(row.table.variantSelected, false)} version.`;
+                      case VariantSpecificity.UNIQUE_TO_VARIANT:
+                        return ` This is only the case on the ${variantToName(row.table.variantSelected, false)} version.`;
+                    }
+                  })();
                   return `${ratingToIcon(highlightedEvalAttr.evaluation.value.rating)} ${input.trim()}${suffix}`;
                 },
                 typography: {

@@ -6,7 +6,7 @@ import {
   mapAttributesGetter,
   type EvaluationTree,
 } from './attribute-groups';
-import { type NonEmptyArray, nonEmptyRemap } from '@/beta/types/utils/non-empty';
+import { type NonEmptyArray, nonEmptyEntries, nonEmptyRemap } from '@/beta/types/utils/non-empty';
 import type { Paragraph, Renderable, WithTypography } from '@/beta/types/text';
 import type { Url } from './url';
 import { Rating, type Attribute, type EvaluatedAttribute, type Value } from './attributes';
@@ -122,6 +122,44 @@ export interface ResolvedWallet {
   attributes: EvaluationTree;
 }
 
+/** Whether a Value is specific to a variant within the same wallet. */
+export enum VariantSpecificity {
+  /**
+   * The value for this attribute is not assessed for this variant.
+   */
+  EXEMPT_FOR_THIS_VARIANT = 'EXEMPT_FOR_THIS_VARIANT',
+
+  /**
+   * The value for this attribute is only assessed for this variant.
+   * This can happen either because the wallet only has one variant,
+   * or because the values for this attribute on all other variants
+   * are EXEMPT.
+   */
+  ONLY_ASSESSED_FOR_THIS_VARIANT = 'ONLY_ASSESSED_FOR_THIS_VARIANT',
+
+  /**
+   * The value is not specific to a variant. All variants of the wallet have
+   * the same value (or EXEMPT) for this attribute.
+   */
+  ALL_SAME = 'ALL_SAME',
+
+  /**
+   * The value is specific to this variant.
+   * This implies that the wallet has other non-EXEMPT variants, and all such
+   * other variants have a value different from the one for the current
+   * variant.
+   */
+  UNIQUE_TO_VARIANT = 'UNIQUE_TO_VARIANT',
+
+  /**
+   * The value is shared with at least one other variant, but not all.
+   * This implies that the wallet has other non-EXEMPT variants, and that at
+   * least one of them shares the same value, and that at least another one
+   * of them does not.
+   */
+  NOT_UNIVERSAL = 'NOT_UNIVERSAL',
+}
+
 /** A fully-rated wallet ready for display. */
 export interface RatedWallet {
   /** Wallet metadata. */
@@ -130,8 +168,8 @@ export interface RatedWallet {
   /** Per-variant evaluation. */
   variants: AtLeastOneVariant<ResolvedWallet>;
 
-  /** For each variant, set of attribute IDs for which the rating is unique to this variant. */
-  variantSpecificEvaluations: AtLeastOneVariant<Set<string>>;
+  /** For each variant, map attribute IDs to whether they are variant-specific. */
+  variantSpecificity: AtLeastOneVariant<Map<string, VariantSpecificity>>;
 
   /** Aggregate evaluation across all variants. */
   overall: EvaluationTree;
@@ -167,64 +205,95 @@ export function rateWallet(wallet: Wallet): RatedWallet {
     (_: Variant, wallet: ResolvedWallet) => wallet.attributes
   );
   const hasMultipleVariants = Object.values(perVariantTree).length > 1;
-  const variantSpecificEvaluations = nonEmptyRemap(
+  const variantSpecificity = nonEmptyRemap(
     perVariantTree,
-    (variant: Variant, evalTree: EvaluationTree): Set<string> => {
-      const variantSpecificSet = new Set<string>();
-      if (hasMultipleVariants) {
-        mapAttributesGetter(
-          evalTree,
-          <V extends Value>(
-            getter: (tree: EvaluationTree) => EvaluatedAttribute<V> | undefined
-          ) => {
-            const currentVariantEval = getter(evalTree);
-            if (
-              currentVariantEval === undefined ||
-              currentVariantEval.evaluation.value.rating === Rating.UNRATED
-            ) {
-              return;
+    (variant: Variant, evalTree: EvaluationTree): Map<string, VariantSpecificity> => {
+      const variantSpecificityMap = new Map<string, VariantSpecificity>();
+      mapAttributesGetter(
+        evalTree,
+        <V extends Value>(getter: (tree: EvaluationTree) => EvaluatedAttribute<V> | undefined) => {
+          const currentVariantEval = getter(evalTree);
+          if (currentVariantEval === undefined) {
+            return;
+          }
+          if (currentVariantEval.evaluation.value.rating === Rating.EXEMPT) {
+            variantSpecificityMap.set(
+              currentVariantEval.attribute.id,
+              VariantSpecificity.EXEMPT_FOR_THIS_VARIANT
+            );
+            return;
+          }
+          if (!hasMultipleVariants) {
+            variantSpecificityMap.set(
+              currentVariantEval.attribute.id,
+              VariantSpecificity.ONLY_ASSESSED_FOR_THIS_VARIANT
+            );
+            return;
+          }
+          const currentVariantEvalId = currentVariantEval.evaluation.value.id;
+          let allOthersExempt = true;
+          let foundDifferentValue = false;
+          let foundSameValue = false;
+          for (const [versusVariant, versusTree] of nonEmptyEntries<Variant, EvaluationTree>(
+            perVariantTree
+          )) {
+            if (versusVariant === variant) {
+              continue;
             }
-            const currentVariantEvalId = currentVariantEval.evaluation.value.id;
-            let numSameIdFound = 0;
-            nonEmptyRemap(perVariantTree, (versusVariant: Variant, versusTree: EvaluationTree) => {
-              if (versusVariant === variant) {
-                return;
-              }
-              const versusEval = getter(versusTree);
-              if (versusEval === undefined) {
-                return;
-              }
-              if (
-                versusEval.evaluation.value.rating === Rating.UNRATED ||
-                versusEval.evaluation.value.id === currentVariantEvalId
-              ) {
-                numSameIdFound++;
-              }
-            });
-            if (numSameIdFound === 0) {
-              variantSpecificSet.add(currentVariantEval.attribute.id);
+            const versusEval = getter(versusTree);
+            if (versusEval === undefined) {
+              continue;
+            }
+            if (versusEval.evaluation.value.rating === Rating.EXEMPT) {
+              continue;
+            }
+            allOthersExempt = false;
+            if (versusEval.evaluation.value.id === currentVariantEvalId) {
+              foundSameValue = true;
+            } else {
+              foundDifferentValue = true;
             }
           }
-        );
-      }
-      return variantSpecificSet;
+          if (allOthersExempt) {
+            variantSpecificityMap.set(
+              currentVariantEval.attribute.id,
+              VariantSpecificity.ONLY_ASSESSED_FOR_THIS_VARIANT
+            );
+          } else if (foundDifferentValue && foundSameValue) {
+            variantSpecificityMap.set(
+              currentVariantEval.attribute.id,
+              VariantSpecificity.NOT_UNIVERSAL
+            );
+          } else if (foundDifferentValue && !foundSameValue) {
+            variantSpecificityMap.set(
+              currentVariantEval.attribute.id,
+              VariantSpecificity.UNIQUE_TO_VARIANT
+            );
+          } else if (!foundDifferentValue && foundSameValue) {
+            variantSpecificityMap.set(currentVariantEval.attribute.id, VariantSpecificity.ALL_SAME);
+          } else {
+            throw new Error('Logic error in rateWallet variant specificity computation');
+          }
+        }
+      );
+      return variantSpecificityMap;
     }
   );
   return {
     metadata: wallet.metadata,
     variants: perVariantWallets,
-    variantSpecificEvaluations,
+    variantSpecificity,
     overall: aggregateAttributes(perVariantTree),
     overrides: wallet.overrides ?? { attributes: {} },
   };
 }
 
 /**
- * Returns whether an attribute's evaluation is unique for the given variant
- * within this wallet.
+ * Returns how specific an attribute's evaluation is within a wallet.
+ *
  * For example, for a wallet that is licensed as MIT license for its desktop
- * web version, but proprietary for its mobile version, this function will
- * return true for the mobile variant only.
+ * and web version, but proprietary for its mobile version, this function will
+ * return VariantSpecific.VARIANT_SPECIFIC for the mobile variant only.
  *
  * @param ratedWallet The wallet from which the evaluation is taken.
  * @param variant The variant for which the attribute evaluation may be unique.
@@ -232,16 +301,20 @@ export function rateWallet(wallet: Wallet): RatedWallet {
  * @returns Whether the evaluation of the given attribute is unique to the
  *          given variant within the given wallet.
  */
-export function attributeEvaluationIsUniqueToVariant<V extends Value>(
+export function attributeVariantSpecificity<V extends Value>(
   ratedWallet: RatedWallet,
   variant: Variant,
   attribute: Attribute<V>
-): boolean {
-  const uniqueAttributeIds = ratedWallet.variantSpecificEvaluations[variant];
-  if (uniqueAttributeIds === undefined) {
-    return false;
+): VariantSpecificity {
+  const variantSpecificityMap = ratedWallet.variantSpecificity[variant];
+  if (variantSpecificityMap === undefined) {
+    throw new Error(`Wallet ${ratedWallet.metadata.id} does not have variant ${variant}`);
   }
-  return uniqueAttributeIds.has(attribute.id);
+  const specificity = variantSpecificityMap.get(attribute.id);
+  if (specificity === undefined) {
+    throw new Error(`Invalid attribute ID: ${attribute.id}`);
+  }
+  return specificity;
 }
 
 /**

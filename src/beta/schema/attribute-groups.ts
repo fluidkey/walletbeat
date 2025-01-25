@@ -44,6 +44,10 @@ import {
   selfHostedNode,
   type SelfHostedNodeValue,
 } from './attributes/self-sovereignty/self-hosted-node';
+import {
+  browserIntegration,
+  type BrowserIntegrationValue,
+} from './attributes/ecosystem/browser-integration';
 
 /** A ValueSet for security Values. */
 type SecurityValues = Dict<{
@@ -141,6 +145,28 @@ export const transparencyAttributeGroup: AttributeGroup<TransparencyValues> = {
   }),
 };
 
+/** A ValueSet for ecosystem Values. */
+type EcosystemValues = Dict<{
+  browserIntegration: BrowserIntegrationValue;
+}>;
+
+/** Ecosystem attributes. */
+export const ecosystemAttributeGroup: AttributeGroup<EcosystemValues> = {
+  id: 'ecosystem',
+  icon: '\u{1f331}', // Seedling
+  displayName: 'Ecosystem',
+  perWalletQuestion: sentence<WalletMetadata>(
+    (walletMetadata: WalletMetadata): string =>
+      `Does ${walletMetadata.displayName} follow the Ethereum ecosystem's standards and direction?`
+  ),
+  attributes: {
+    browserIntegration,
+  },
+  score: scoreGroup<EcosystemValues>({
+    browserIntegration: 1.0,
+  }),
+};
+
 /** The set of attribute groups that make up wallet attributes. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Necessary to allow any Attribute implementation.
 export const attributeTree: NonEmptyRecord<string, AttributeGroup<any>> = {
@@ -148,6 +174,7 @@ export const attributeTree: NonEmptyRecord<string, AttributeGroup<any>> = {
   privacy: privacyAttributeGroup,
   selfSovereignty: selfSovereigntyAttributeGroup,
   transparency: transparencyAttributeGroup,
+  ecosystem: ecosystemAttributeGroup,
 };
 
 /** Evaluated security attributes for a single wallet. */
@@ -172,16 +199,24 @@ export interface TransparencyEvaluations extends EvaluatedGroup<TransparencyValu
   sourceVisibility: EvaluatedAttribute<SourceVisibilityValue>;
 }
 
+/** Evaluated ecosystem attributes for a single wallet. */
+export interface EcosystemEvaluations extends EvaluatedGroup<EcosystemValues> {
+  browserIntegration: EvaluatedAttribute<BrowserIntegrationValue>;
+}
+
 /** Evaluated attributes for a single wallet. */
 export interface EvaluationTree
   extends NonEmptyRecord<
     string,
-    EvaluatedGroup<SecurityValues | PrivacyValues | SelfSovereigntyValues | TransparencyValues>
+    EvaluatedGroup<
+      SecurityValues | PrivacyValues | SelfSovereigntyValues | TransparencyValues | EcosystemValues
+    >
   > {
   security: SecurityEvaluations;
   privacy: PrivacyEvaluations;
   selfSovereignty: SelfSovereigntyEvaluations;
   transparency: TransparencyEvaluations;
+  ecosystem: EcosystemEvaluations;
 }
 
 /** Rate a wallet's attributes based on its features. */
@@ -205,6 +240,9 @@ export function evaluateAttributes(features: ResolvedFeatures): EvaluationTree {
       openSource: evalAttr(openSource),
       sourceVisibility: evalAttr(sourceVisibility),
       funding: evalAttr(funding),
+    },
+    ecosystem: {
+      browserIntegration: evalAttr(browserIntegration),
     },
   };
 }
@@ -244,6 +282,9 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
       openSource: attr(tree => tree.transparency.openSource),
       sourceVisibility: attr(tree => tree.transparency.sourceVisibility),
       funding: attr(tree => tree.transparency.funding),
+    },
+    ecosystem: {
+      browserIntegration: attr(tree => tree.ecosystem.browserIntegration),
     },
   };
 }

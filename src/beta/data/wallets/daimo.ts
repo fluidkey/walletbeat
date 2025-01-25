@@ -39,6 +39,9 @@ export const daimo: Wallet = {
       otherRpcEndpoints: RpcEndpointConfiguration.NO,
       customChains: false,
     },
+    integration: {
+      browser: 'NOT_A_BROWSER_WALLET',
+    },
     security: {
       lightClient: {
         ethereumL1: false,

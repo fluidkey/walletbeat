@@ -6,7 +6,7 @@ import {
   type Value,
   type ValueSet,
 } from '@/beta/schema/attributes';
-import { getAttributeOverride, type RatedWallet } from '@/beta/schema/wallet';
+import { getAttributeOverride, VariantSpecificity, type RatedWallet } from '@/beta/schema/wallet';
 import { isRenderableTypography } from '@/beta/types/text';
 import { Box, Typography } from '@mui/material';
 import React from 'react';
@@ -25,16 +25,26 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
   attrGroup,
   evalGroup,
   evalAttr,
-  isVariantSpecific,
-  pickedVariant,
+  variantSpecificity,
+  displayedVariant,
 }: {
   wallet: RatedWallet;
   attrGroup: AttributeGroup<Vs>;
   evalGroup: EvaluatedGroup<Vs>;
   evalAttr: EvaluatedAttribute<V>;
-  isVariantSpecific: boolean;
-  pickedVariant: Variant | null;
-}): React.JSX.Element {
+} & (
+  | {
+      variantSpecificity:
+        | VariantSpecificity.ALL_SAME
+        | VariantSpecificity.NOT_UNIVERSAL
+        | VariantSpecificity.UNIQUE_TO_VARIANT;
+      displayedVariant: Variant | null;
+    }
+  | {
+      variantSpecificity: VariantSpecificity.ONLY_ASSESSED_FOR_THIS_VARIANT;
+      displayedVariant: Variant;
+    }
+)): React.JSX.Element {
   const override = getAttributeOverride(wallet, attrGroup.id, evalAttr.attribute.id);
   const detailsIsTypography = isRenderableTypography(evalAttr.evaluation.details);
   const renderDetailsProps = {
@@ -46,20 +56,32 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
         }
       : undefined,
   };
+  const variantSpecificCaption: React.ReactNode = (() => {
+    switch (variantSpecificity) {
+      case VariantSpecificity.ALL_SAME:
+        return null;
+      case VariantSpecificity.ONLY_ASSESSED_FOR_THIS_VARIANT:
+        return (
+          <Typography variant="caption" sx={{ opacity: 0.8 }}>
+            This rating is only relevant for the {variantToName(displayedVariant, false)} version.
+          </Typography>
+        );
+      default:
+        return (
+          <Typography variant="caption" sx={{ opacity: 0.8 }}>
+            {displayedVariant === null
+              ? 'This rating differs across versions. Select a specific version for details.'
+              : `This rating is specific to the ${variantToName(displayedVariant, false)} version.`}
+          </Typography>
+        );
+    }
+  })();
   let rendered = (
     <>
       <React.Fragment key="details">
         {evalAttr.evaluation.details.render(renderDetailsProps)}
       </React.Fragment>
-      <React.Fragment key="variantSpecific">
-        {isVariantSpecific ? (
-          <Typography variant="caption" sx={{ opacity: 0.8 }}>
-            {pickedVariant === null
-              ? 'This rating differs across versions. Select a specific version for details.'
-              : `This rating is specific to the ${variantToName(pickedVariant, false)} version.`}
-          </Typography>
-        ) : null}
-      </React.Fragment>
+      <React.Fragment key="variantSpecific">{variantSpecificCaption}</React.Fragment>
       <React.Fragment key="impact">
         {evalAttr.evaluation.impact === undefined ? null : (
           <>

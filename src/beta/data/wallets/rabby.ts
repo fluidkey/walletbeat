@@ -29,6 +29,20 @@ export const rabby: Wallet = {
       otherRpcEndpoints: RpcEndpointConfiguration.YES_AFTER_OTHER_REQUESTS,
       customChains: true,
     },
+    integration: {
+      browser: {
+        '1193': true,
+        '2700': true,
+        '6963': true,
+        ref: [
+          {
+            url: 'https://github.com/RabbyHub/Rabby/blob/develop/src/background/utils/buildinProvider.ts',
+            explanation:
+              'Rabby implements the EIP-1193 Provider interface and injects it into web pages. EIP-2700 and EIP-6963 are also supported.',
+          },
+        ],
+      },
+    },
     security: {
       lightClient: {
         ethereumL1: {

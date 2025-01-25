@@ -13,8 +13,9 @@ import {
   nonEmptyEntries,
   nonEmptyKeys,
   nonEmptyMap,
+  nonEmptyValues,
 } from '@/beta/types/utils/non-empty';
-import { Box, Typography, Paper, styled, Divider } from '@mui/material';
+import { Box, Typography, Paper, styled, Divider, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { WalletIcon } from '../atoms/WalletIcon';
 import { AnchorHeader } from '../atoms/AnchorHeader';
@@ -25,6 +26,7 @@ import {
   type AttributeGroup,
   type EvaluatedAttribute,
   type EvaluatedGroup,
+  Rating,
   ratingToColor,
   type Value,
   type ValueSet,
@@ -56,7 +58,7 @@ import {
   variantToTooltip,
   variantUrlQuery,
 } from '../../variants';
-import type { ResolvedWallet } from '@/beta/schema/wallet';
+import { VariantSpecificity, type ResolvedWallet } from '@/beta/schema/wallet';
 
 const headerHeight = 80;
 const headerBottomMargin = 24;
@@ -157,11 +159,33 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
     pickedVariant === null || wallet.variants[pickedVariant] === undefined
       ? wallet.overall
       : wallet.variants[pickedVariant].attributes;
-  let variantSpecificEvals: Set<string> = new Set<string>();
-  for (const specificEvals of Object.values(wallet.variantSpecificEvaluations)) {
-    variantSpecificEvals = variantSpecificEvals.union(specificEvals);
+  const attrToRelevantVariants = new Map<string, NonEmptyArray<Variant>>();
+  let needsVariantFiltering = singleVariant === null;
+  for (const [variant, variantSpecificityMap] of nonEmptyEntries<
+    Variant,
+    Map<string, VariantSpecificity>
+  >(wallet.variantSpecificity)) {
+    for (const [evalAttrId, variantSpecificity] of variantSpecificityMap.entries()) {
+      let relevantVariants: NonEmptyArray<Variant> | undefined = undefined;
+      switch (variantSpecificity) {
+        case VariantSpecificity.ALL_SAME:
+          break; // Nothing.
+        case VariantSpecificity.EXEMPT_FOR_THIS_VARIANT:
+          break; // Nothing.
+        case VariantSpecificity.ONLY_ASSESSED_FOR_THIS_VARIANT:
+          attrToRelevantVariants.set(evalAttrId, [variant]);
+          break;
+        default:
+          needsVariantFiltering = true;
+          relevantVariants = attrToRelevantVariants.get(evalAttrId);
+          if (relevantVariants === undefined) {
+            attrToRelevantVariants.set(evalAttrId, [variant]);
+          } else {
+            relevantVariants.push(variant);
+          }
+      }
+    }
   }
-  const needsVariantFiltering = singleVariant === null && variantSpecificEvals.size > 0;
   const headerVariants = nonEmptyMap(
     nonEmptyKeys(wallet.variants),
     (variant): PickableVariant<Variant> => ({
@@ -225,7 +249,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
   mapAttributeGroups(
     evalTree,
     <Vs extends ValueSet>(attrGroup: AttributeGroup<Vs>, evalGroup: EvaluatedGroup<Vs>) => {
-      sections.push({
+      const section = {
         header: attrGroup.id,
         subHeader: null,
         title: attrGroup.displayName,
@@ -239,86 +263,186 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
           ...wallet.metadata,
         }),
         body: null,
-        subsections: mapGroupAttributes<RichSection, Vs>(
+        subsections: mapGroupAttributes<RichSection | null, Vs>(
           evalGroup,
-          <V extends Value>(evalAttr: EvaluatedAttribute<V>): RichSection => ({
-            header: attrGroup.id,
-            subHeader: evalAttr.attribute.id,
-            title: evalAttr.attribute.displayName,
-            icon: evalAttr.evaluation.value.icon ?? evalAttr.attribute.icon,
-            cornerControl:
-              needsVariantFiltering && variantSpecificEvals.has(evalAttr.attribute.id) ? (
-                <Box
-                  key="variantSpecificEval"
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  gap="0.25rem"
-                >
-                  <Typography variant="caption" sx={{ opacity: 0.7 }}>
-                    {pickedVariant === null ? 'Version' : 'Viewing'}:
-                  </Typography>
-                  <VariantPicker
-                    pickerId={`variantSpecificEval-${evalAttr.attribute.id}`}
-                    variants={nonEmptyMap(
-                      nonEmptyEntries<Variant, ResolvedWallet>(wallet.variants),
-                      ([variant, variantResolvedWallet]): PickableVariant<Variant> => {
-                        const variantRating = getEvaluationFromOtherTree<V>(
-                          evalAttr,
-                          variantResolvedWallet.attributes
-                        ).evaluation.value.rating;
-                        return {
-                          id: variant,
-                          icon: variantToIcon(variant),
-                          colorTransform: (color: string | undefined): string =>
-                            blend(
-                              color ?? theme.palette.primary.light,
-                              ratingToColor(variantRating),
+          <V extends Value>(evalAttr: EvaluatedAttribute<V>): RichSection | null => {
+            if (evalAttr.evaluation.value.rating === Rating.EXEMPT) {
+              return null;
+            }
+            const relevantVariants: Variant[] =
+              attrToRelevantVariants.get(evalAttr.attribute.id) ?? [];
+            const {
+              cornerControl,
+              body,
+            }: {
+              cornerControl: React.ReactNode;
+              body: React.ReactNode;
+            } = (() => {
+              if (!needsVariantFiltering || relevantVariants.length === 0) {
+                return {
+                  cornerControl: null,
+                  body: (
+                    <WalletAttribute
+                      wallet={wallet}
+                      attrGroup={attrGroup}
+                      evalGroup={evalGroup}
+                      evalAttr={evalAttr}
+                      displayedVariant={pickedVariant}
+                      variantSpecificity={VariantSpecificity.ALL_SAME}
+                    />
+                  ),
+                };
+              }
+              if (relevantVariants.length === 1) {
+                const VariantIcon = variantToIcon(relevantVariants[0]);
+                return {
+                  cornerControl: (
+                    <Tooltip
+                      title={`Only rated on the ${variantToName(relevantVariants[0], false)} version`}
+                      arrow={true}
+                    >
+                      <Box
+                        key="variantSpecificEval"
+                        display="flex"
+                        flexDirection="row"
+                        alignItems="center"
+                        gap="0.25rem"
+                      >
+                        <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                          Only
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            opacity: 0.7,
+                            lineHeight: 1,
+                            color: blend(
+                              theme.palette.primary.light,
+                              ratingToColor(evalAttr.evaluation.value.rating),
                               0.25,
                               1
                             ),
-                          tooltip:
-                            pickedVariant !== null && pickedVariant === variant
-                              ? 'Remove version filter'
-                              : `View rating for ${variantToName(variant, false)} version`,
-                          click: () => {
-                            updatePickedVariant(pickedVariant === variant ? null : variant);
-                          },
-                        };
-                      }
-                    )}
-                    pickedVariant={pickedVariant}
+                          }}
+                        >
+                          <VariantIcon />
+                        </Typography>
+                      </Box>
+                    </Tooltip>
+                  ),
+                  body: (
+                    <WalletAttribute
+                      wallet={wallet}
+                      attrGroup={attrGroup}
+                      evalGroup={evalGroup}
+                      evalAttr={evalAttr}
+                      displayedVariant={relevantVariants[0]}
+                      variantSpecificity={VariantSpecificity.ONLY_ASSESSED_FOR_THIS_VARIANT}
+                    />
+                  ),
+                };
+              }
+              const pickerVariants = nonEmptyValues<Variant, ResolvedWallet>(
+                wallet.variants
+              ).filter(
+                resolvedWallet =>
+                  resolvedWallet.variant === pickedVariant ||
+                  relevantVariants.includes(resolvedWallet.variant)
+              );
+              if (!isNonEmptyArray(pickerVariants)) {
+                throw new Error(
+                  `Found no relevant variants to pick from in ${wallet.metadata.id} with picked variant ${pickedVariant}`
+                );
+              }
+              return {
+                cornerControl: (
+                  <Box
+                    key="variantSpecificEval"
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    gap="0.25rem"
+                  >
+                    <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                      {pickedVariant === null ? 'Version' : 'Viewing'}:
+                    </Typography>
+                    <VariantPicker
+                      pickerId={`variantSpecificEval-${evalAttr.attribute.id}`}
+                      variants={nonEmptyMap(
+                        pickerVariants,
+                        (variantWallet: ResolvedWallet): PickableVariant<Variant> => {
+                          const variantRating = getEvaluationFromOtherTree<V>(
+                            evalAttr,
+                            variantWallet.attributes
+                          ).evaluation.value.rating;
+                          return {
+                            id: variantWallet.variant,
+                            icon: variantToIcon(variantWallet.variant),
+                            colorTransform: (color: string | undefined): string =>
+                              blend(
+                                color ?? theme.palette.primary.light,
+                                ratingToColor(variantRating),
+                                0.25,
+                                1
+                              ),
+                            tooltip:
+                              pickedVariant !== null && pickedVariant === variantWallet.variant
+                                ? 'Remove version filter'
+                                : `View rating for ${variantToName(variantWallet.variant, false)} version`,
+                            click: () => {
+                              updatePickedVariant(
+                                pickedVariant === variantWallet.variant
+                                  ? null
+                                  : variantWallet.variant
+                              );
+                            },
+                          };
+                        }
+                      )}
+                      pickedVariant={pickedVariant}
+                    />
+                  </Box>
+                ),
+                body: (
+                  <WalletAttribute
+                    wallet={wallet}
+                    attrGroup={attrGroup}
+                    evalGroup={evalGroup}
+                    evalAttr={evalAttr}
+                    displayedVariant={pickedVariant}
+                    variantSpecificity={VariantSpecificity.NOT_UNIVERSAL}
                   />
-                </Box>
-              ) : null,
-            sx: {
-              backgroundColor: blend(
-                theme.palette.background.paper,
-                ratingToColor(evalAttr.evaluation.value.rating),
-                0.2,
-                1
-              ),
-            },
-            caption: evalAttr.attribute.question.render({
-              typography: {
-                variant: 'caption',
-                fontStyle: 'italic',
+                ),
+              };
+            })();
+            return {
+              header: attrGroup.id,
+              subHeader: evalAttr.attribute.id,
+              title: evalAttr.attribute.displayName,
+              icon: evalAttr.evaluation.value.icon ?? evalAttr.attribute.icon,
+              cornerControl,
+              sx: {
+                backgroundColor: blend(
+                  theme.palette.background.paper,
+                  ratingToColor(evalAttr.evaluation.value.rating),
+                  0.2,
+                  1
+                ),
               },
-              ...wallet.metadata,
-            }),
-            body: (
-              <WalletAttribute
-                wallet={wallet}
-                attrGroup={attrGroup}
-                evalGroup={evalGroup}
-                evalAttr={evalAttr}
-                pickedVariant={pickedVariant}
-                isVariantSpecific={variantSpecificEvals.has(evalAttr.attribute.id)}
-              />
-            ),
-          })
-        ),
-      });
+              caption: evalAttr.attribute.question.render({
+                typography: {
+                  variant: 'caption',
+                  fontStyle: 'italic',
+                },
+                ...wallet.metadata,
+              }),
+              body,
+            };
+          }
+        ).filter(subsection => subsection !== null),
+      };
+      if (section.subsections.length > 0) {
+        sections.push(section);
+      }
     }
   );
   const scrollMarginTop = `${headerHeight + headerBottomMargin + scrollPastHeaderPixels}px`;

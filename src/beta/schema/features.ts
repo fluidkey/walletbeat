@@ -11,6 +11,7 @@ import type { WithRef } from './reference';
 import type { EthereumL1LightClientSupport } from './features/security/light-client';
 import type { ChainConfigurability } from './features/chain-configurability';
 import type { WalletProfile } from './features/profile';
+import type { WalletIntegration } from './features/integration';
 
 /**
  * A set of features about a wallet, each of which may or may not depend on
@@ -48,6 +49,9 @@ export interface WalletFeatures {
   /** Level of configurability for chains. */
   chainConfigurability: VariantFeature<ChainConfigurability>;
 
+  /** Integration inside browsers, mobile phones, etc. */
+  integration: WalletIntegration;
+
   /**
    * Whether the wallet supports multiple addresses.
    * A single seed phrase still counts as multiple addresses.
@@ -82,6 +86,7 @@ export interface ResolvedFeatures {
     privacyPolicy: ResolvedFeature<string>;
   };
   chainConfigurability: ResolvedFeature<ChainConfigurability>;
+  integration: WalletIntegration;
   multiAddress: ResolvedFeature<boolean>;
   license: ResolvedFeature<WithRef<License>>;
   monetization: ResolvedFeature<Monetization>;
@@ -104,6 +109,7 @@ export function resolveFeatures(features: WalletFeatures, variant: Variant): Res
       privacyPolicy: feat(features.privacy.privacyPolicy),
     },
     chainConfigurability: feat(features.chainConfigurability),
+    integration: features.integration,
     multiAddress: feat(features.multiAddress),
     license: feat(features.license),
     monetization: feat(features.monetization),

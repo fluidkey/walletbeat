@@ -185,3 +185,12 @@ export function commaListPrefix(index: number, listSize: number): '' | ', ' | ' 
   }
   return index < listSize - 1 ? ', ' : ' and ';
 }
+
+/**
+ * Format a list of strings into a comma-separated list.
+ * Null values, undefined values, and empty strings are ignored.
+ */
+export function commaListFormat(items: Array<string | null | undefined>): string {
+  const filtered = items.filter(item => typeof item === 'string' && item !== '');
+  return filtered.map((item, i) => `${commaListPrefix(i, filtered.length)}${item}`).join('');
+}

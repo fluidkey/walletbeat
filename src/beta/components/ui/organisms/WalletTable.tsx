@@ -8,6 +8,7 @@ import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import type React from 'react';
 import { WalletRatingCell, walletRatingColumnProps } from '../molecules/WalletRatingCell';
 import {
+  ecosystemAttributeGroup,
   type EvaluationTree,
   privacyAttributeGroup,
   securityAttributeGroup,
@@ -173,6 +174,7 @@ export default function WalletTable(): React.JSX.Element {
     walletTableColumn(privacyAttributeGroup, tree => tree.privacy),
     walletTableColumn(selfSovereigntyAttributeGroup, tree => tree.selfSovereignty),
     walletTableColumn(transparencyAttributeGroup, tree => tree.transparency),
+    walletTableColumn(ecosystemAttributeGroup, tree => tree.ecosystem),
   ];
   return (
     <Box maxWidth="100%" height="80vh" width="fit-content" overflow="auto">

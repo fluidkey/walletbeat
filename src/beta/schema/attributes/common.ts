@@ -76,15 +76,27 @@ export function pickWorstRating<V extends Value>(
 ): Evaluation<V> {
   let worst: Evaluation<V> | null = null;
   for (const evaluation of nonEmptyValues<Variant, Evaluation<V>>(perVariant)) {
+    if (evaluation.value.rating === Rating.UNRATED) {
+      // If any evaluation is UNRATED, then the aggregated rating also is.
+      // So return it immediately.
+      return evaluation;
+    }
     if (worst === null) {
+      // The first rating sets the initial value of `worst`.
       worst = evaluation;
       continue;
     }
-    if (worst.value.rating === Rating.UNRATED || worst.value.rating === Rating.PASS) {
+    if (evaluation.value.rating === Rating.EXEMPT) {
+      // Exempt ratings are ignored, unless they are the only rating we have.
+      continue;
+    }
+    if (worst.value.rating === Rating.PASS) {
+      // Any non-EXEMPT, non-UNRATED rating is worse or equal to PASS, so pick it.
       worst = evaluation;
       continue;
     }
     if (worst.value.rating === Rating.PARTIAL && evaluation.value.rating === Rating.FAIL) {
+      // If the worst rating is PARTIAL, pick FAIL over it.
       worst = evaluation;
       continue;
     }
