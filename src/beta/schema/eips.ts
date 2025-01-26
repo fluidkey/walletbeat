@@ -1,5 +1,3 @@
-import type { Paragraph } from '../types/text';
-
 /**
  * The set of all EIP numbers tracked by Walletbeat.
  */
@@ -32,7 +30,7 @@ export interface Eip {
   number: EipNumber;
 
   /** Walletbeat-specific friendly name. */
-  friendlyName: string | null;
+  friendlyName: string;
 
   /** Formal title as from the EIP repository. */
   formalTitle: string;
@@ -41,13 +39,13 @@ export interface Eip {
   status: EipStatus;
 
   /** EIP summary, as from the EIP repository with some minor tweaks if needed. */
-  summary: Paragraph;
+  summaryMarkdown: string;
 
   /** Walletbeat-specific explanation of why this EIP matters. */
-  whyItMatters: Paragraph;
+  whyItMattersMarkdown: string;
 
   /** Walletbeat-specific notes (e.g. precedent/alternative EIPs). */
-  note?: Paragraph;
+  noteMarkdown?: string;
 }
 
 /** Return a short label for an EIP (example: "ERC-20"). */
@@ -57,8 +55,7 @@ export function eipShortLabel(eip: Eip): string {
 
 /** Return a label for an EIP (example: "ERC-20 (fungible tokens)"). */
 export function eipLabel(eip: Eip): string {
-  const shortLabel = eipShortLabel(eip);
-  return eip.friendlyName === null ? shortLabel : `${shortLabel} (${eip.friendlyName})`;
+  return `${eipShortLabel(eip)}: ${eip.friendlyName}`;
 }
 
 /** Return the eips.ethereum.org URL for an EIP. */
@@ -66,12 +63,17 @@ export function eipEthereumDotOrgUrl(eip: EipNumber | Eip): string {
   return `https://eips.ethereum.org/EIPS/eip-${typeof eip === 'string' ? eip : eip.number}`;
 }
 
+/** Return a magic URL which the Markdown parser can turn into an EIP link. */
+function markdownMagicUrl(eip: EipNumber | Eip, format: 'long' | 'short'): string {
+  return `${eipEthereumDotOrgUrl(eip)}#wb-format=${format}`;
+}
+
 /**  Return a markdown link for an EIP. */
 export function eipMarkdownLink(eip: Eip): string {
-  return `[${eipLabel(eip)}](${eipEthereumDotOrgUrl(eip)})`;
+  return `[${eipLabel(eip)}](${markdownMagicUrl(eip, 'short')})`;
 }
 
 /** Return a markdown link and a title for an EIP. */
 export function eipMarkdownLinkAndTitle(eip: Eip): string {
-  return `[${eipShortLabel(eip)}](${eipEthereumDotOrgUrl(eip)}): ${eip.friendlyName ?? `"${eip.formalTitle}"`}`;
+  return `[${eipShortLabel(eip)} ${eip.friendlyName}](${markdownMagicUrl(eip, 'long')})`;
 }

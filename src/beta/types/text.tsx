@@ -66,7 +66,7 @@ function typography<I extends Input, B>(
 }
 
 const sentenceBrand = 'sentence';
-const sentenceMaxLength = 256;
+const sentenceMaxLength = 384;
 
 /** A single sentence. */
 export type Sentence<I extends Input = Input> = Renderable<WithTypography<I>> & {

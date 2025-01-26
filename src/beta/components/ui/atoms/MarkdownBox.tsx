@@ -63,7 +63,7 @@ function trimWhitespacePrefix(str: string): string {
  * Styled Markdown Box.
  */
 export function MarkdownBox(props: MarkdownBoxProps): React.JSX.Element {
-  const { pTypography, pSpacing, liSpacing, ...boxProps } = props;
+  const { markdownTransform, pTypography, pSpacing, liSpacing, ...boxProps } = props;
   const derivedMarkdownProps = deriveMarkdownPropsFromTypography(pTypography, props);
   return (
     <Box {...boxProps}>

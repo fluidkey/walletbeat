@@ -5,8 +5,11 @@ import Link from 'next/link';
 import type React from 'react';
 import Markdown, { type Components } from 'react-markdown';
 import { ExternalLink } from './ExternalLink';
+import { lookupEip } from '@/beta/data/eips';
+import { EipLink } from './EipLink';
 
 export interface MarkdownOwnProps {
+  markdownTransform?: (markdown: string) => string;
   pVariant?: React.ComponentProps<typeof Typography>['variant'];
   pFontWeight?: React.ComponentProps<typeof Typography>['fontWeight'];
   textColor?: React.ComponentProps<typeof Typography>['color'];
@@ -27,6 +30,7 @@ export function deriveMarkdownPropsFromTypography(
     }
   }
   return {
+    markdownTransform: markdownProps?.markdownTransform,
     textColor: markdownProps?.textColor ?? typographyProps?.color,
     pFontWeight: markdownProps?.pFontWeight ?? typographyProps?.fontWeight,
     pVariant: markdownProps?.pVariant ?? typographyProps?.variant,
@@ -68,6 +72,7 @@ const StyledMarkdown = styled(Box, {
  */
 export function MarkdownBase({
   markdown,
+  markdownTransform = undefined,
   pVariant = undefined,
   pFontWeight = undefined,
   pSpacing = '1rem',
@@ -79,6 +84,14 @@ export function MarkdownBase({
   const componentsMap: Components = {
     a: ({ href, children }) => {
       const hrefStr = href ?? '#';
+      const eipRegexp =
+        /^https:\/\/eips\.ethereum\.org\/EIPS\/eip-(\d+)#wb-format=(short|long)$/i.exec(hrefStr);
+      if (eipRegexp !== null) {
+        const eip = lookupEip(+eipRegexp[1]);
+        if (eip !== undefined) {
+          return <EipLink eip={eip} format={eipRegexp[2] === 'short' ? 'SHORT' : 'LONG'} />;
+        }
+      }
       if (/^[-_\w+:]/.exec(hrefStr) !== null) {
         // External link.
         return <ExternalLink url={hrefStr}>{children}</ExternalLink>;
@@ -98,6 +111,9 @@ export function MarkdownBase({
       </li>
     ),
   };
+  if (markdownTransform !== undefined) {
+    markdown = markdownTransform(markdown);
+  }
   return (
     <StyledMarkdown pSpacing={pSpacing} liSpacing={liSpacing}>
       <Markdown components={componentsMap}>{markdown}</Markdown>
