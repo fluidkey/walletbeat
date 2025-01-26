@@ -16,6 +16,7 @@
     "debank",
     "Defaultized",
     "Eips",
+    "Ercs",
     "evals",
     "evenodd",
     "Farcaster",
@@ -45,6 +46,7 @@
     "Uncorrelatable",
     "UNPROXIED",
     "Venmo",
+    "Viem",
     "Vitalik",
     "walletbeat",
     "Warpcast"

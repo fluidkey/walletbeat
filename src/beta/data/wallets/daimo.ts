@@ -39,6 +39,23 @@ export const daimo: Wallet = {
       otherRpcEndpoints: RpcEndpointConfiguration.NO,
       customChains: false,
     },
+    addressResolution: {
+      nonChainSpecificEnsResolution: {
+        support: 'SUPPORTED',
+        medium: 'CHAIN_CLIENT',
+      },
+      chainSpecificAddressing: {
+        erc7828: { support: 'NOT_SUPPORTED' },
+        erc7831: { support: 'NOT_SUPPORTED' },
+      },
+      ref: [
+        {
+          url: 'https://github.com/daimo-eth/daimo/blob/a960ddbbc0cb486f21b8460d22cebefc6376aac9/packages/daimo-api/src/network/viemClient.ts#L128',
+          explanation:
+            'Daimo resolves plain ENS addresses by querying the ENS Universal Resolver Contract on L1 using the Viem library.',
+        },
+      ],
+    },
     integration: {
       browser: 'NOT_A_BROWSER_WALLET',
     },

@@ -3,12 +3,13 @@ import type { Paragraph } from '../types/text';
 /**
  * The set of all EIP numbers tracked by Walletbeat.
  */
-export type EipNumber = '1193' | '2700' | '6963';
+export type EipNumber = '1193' | '2700' | '6963' | '7828' | '7831';
 
 /**
  * The status of an Ethereum Improvement Proposal (EIP).
  */
 export enum EipStatus {
+  DRAFT = 'DRAFT',
   FINAL = 'FINAL',
 }
 

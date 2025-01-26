@@ -90,9 +90,9 @@ function browserIntegrationSupport(support: ResolvedSupport): Evaluation<Browser
         ${unsupported.length === 0 ? 'all' : 'a subset of'} the prominent standards for
         web browser integration:
 
-        ${support[eip1193.number] ? `* ${eipMarkdownLinkAndTitle(eip1193)}` : ''}
-        ${support[eip2700.number] ? `* ${eipMarkdownLinkAndTitle(eip2700)}` : ''}
-        ${support[eip6963.number] ? `* ${eipMarkdownLinkAndTitle(eip6963)}` : ''}
+        ${support['1193'] ? `* ${eipMarkdownLinkAndTitle(eip1193)}` : ''}
+        ${support['2700'] ? `* ${eipMarkdownLinkAndTitle(eip2700)}` : ''}
+        ${support['6963'] ? `* ${eipMarkdownLinkAndTitle(eip6963)}` : ''}
       `
     ),
     howToImprove:

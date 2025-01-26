@@ -12,6 +12,7 @@ import type { EthereumL1LightClientSupport } from './features/security/light-cli
 import type { ChainConfigurability } from './features/chain-configurability';
 import type { WalletProfile } from './features/profile';
 import type { WalletIntegration } from './features/integration';
+import type { AddressResolution } from './features/address-resolution';
 
 /**
  * A set of features about a wallet, each of which may or may not depend on
@@ -58,6 +59,9 @@ export interface WalletFeatures {
    */
   multiAddress: VariantFeature<boolean>;
 
+  /** How the wallet resolves Ethereum addresses. */
+  addressResolution: VariantFeature<WithRef<AddressResolution>>;
+
   /** License of the wallet. */
   license: VariantFeature<WithRef<License>>;
 
@@ -88,6 +92,7 @@ export interface ResolvedFeatures {
   chainConfigurability: ResolvedFeature<ChainConfigurability>;
   integration: WalletIntegration;
   multiAddress: ResolvedFeature<boolean>;
+  addressResolution: ResolvedFeature<WithRef<AddressResolution>>;
   license: ResolvedFeature<WithRef<License>>;
   monetization: ResolvedFeature<Monetization>;
 }
@@ -111,6 +116,7 @@ export function resolveFeatures(features: WalletFeatures, variant: Variant): Res
     chainConfigurability: feat(features.chainConfigurability),
     integration: features.integration,
     multiAddress: feat(features.multiAddress),
+    addressResolution: feat(features.addressResolution),
     license: feat(features.license),
     monetization: feat(features.monetization),
   };

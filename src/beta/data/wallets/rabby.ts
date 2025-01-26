@@ -29,6 +29,22 @@ export const rabby: Wallet = {
       otherRpcEndpoints: RpcEndpointConfiguration.YES_AFTER_OTHER_REQUESTS,
       customChains: true,
     },
+    addressResolution: {
+      nonChainSpecificEnsResolution: {
+        support: 'NOT_SUPPORTED',
+      },
+      chainSpecificAddressing: {
+        erc7828: { support: 'NOT_SUPPORTED' },
+        erc7831: { support: 'NOT_SUPPORTED' },
+      },
+      ref: [
+        {
+          url: 'https://github.com/RabbyHub/Rabby/blob/5f2b84491b6af881ab4ef41f7627d5e068d10652/src/ui/views/ImportWatchAddress.tsx#L170',
+          explanation:
+            'Rabby supports resolving plain ENS addresses when importing watch addresses, but not when sending funds.',
+        },
+      ],
+    },
     integration: {
       browser: {
         '1193': true,

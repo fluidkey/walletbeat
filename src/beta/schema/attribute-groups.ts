@@ -48,6 +48,10 @@ import {
   browserIntegration,
   type BrowserIntegrationValue,
 } from './attributes/ecosystem/browser-integration';
+import {
+  addressResolution,
+  type AddressResolutionValue,
+} from './attributes/ecosystem/address-resolution';
 
 /** A ValueSet for security Values. */
 type SecurityValues = Dict<{
@@ -147,6 +151,7 @@ export const transparencyAttributeGroup: AttributeGroup<TransparencyValues> = {
 
 /** A ValueSet for ecosystem Values. */
 type EcosystemValues = Dict<{
+  addressResolution: AddressResolutionValue;
   browserIntegration: BrowserIntegrationValue;
 }>;
 
@@ -160,9 +165,11 @@ export const ecosystemAttributeGroup: AttributeGroup<EcosystemValues> = {
       `Does ${walletMetadata.displayName} follow the Ethereum ecosystem's standards and direction?`
   ),
   attributes: {
+    addressResolution,
     browserIntegration,
   },
   score: scoreGroup<EcosystemValues>({
+    addressResolution: 1.0,
     browserIntegration: 1.0,
   }),
 };
@@ -201,6 +208,7 @@ export interface TransparencyEvaluations extends EvaluatedGroup<TransparencyValu
 
 /** Evaluated ecosystem attributes for a single wallet. */
 export interface EcosystemEvaluations extends EvaluatedGroup<EcosystemValues> {
+  addressResolution: EvaluatedAttribute<AddressResolutionValue>;
   browserIntegration: EvaluatedAttribute<BrowserIntegrationValue>;
 }
 
@@ -242,6 +250,7 @@ export function evaluateAttributes(features: ResolvedFeatures): EvaluationTree {
       funding: evalAttr(funding),
     },
     ecosystem: {
+      addressResolution: evalAttr(addressResolution),
       browserIntegration: evalAttr(browserIntegration),
     },
   };
@@ -284,6 +293,7 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
       funding: attr(tree => tree.transparency.funding),
     },
     ecosystem: {
+      addressResolution: attr(tree => tree.ecosystem.addressResolution),
       browserIntegration: attr(tree => tree.ecosystem.browserIntegration),
     },
   };

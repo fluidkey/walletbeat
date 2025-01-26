@@ -210,7 +210,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
       title: 'Details',
       cornerControl: null,
       caption: null,
-      icon: '\u{1f4c7}', // Card index
+      icon: '\u{2139}', // Info
       body: (
         <>
           {wallet.metadata.blurb.render({ typography: { variant: 'body1' } })}
