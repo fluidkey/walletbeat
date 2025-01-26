@@ -364,7 +364,7 @@ export interface AttributeGroup<Vs extends ValueSet> {
   displayName: string;
 
   /**
-   * A short question to which this attribute is the answer.
+   * A short question to which this attribute group is the answer.
    * For example, for an attribute group about privacy, a good question
    * might be "How well does {wallet} protect your privacy?".
    */

@@ -161,6 +161,76 @@ const frequentlyAskedQuestions: NonEmptyArray<FAQEntry> = [
     `,
   },
   {
+    anchor: 'rating-categories',
+    question: 'What do the rating categories mean?',
+    navTitle: 'Rating categories',
+    answerMarkdown: `
+      Wallets are rated based on various attributes which are grouped under
+      five high-level buckets:
+
+      * \u{1f512} **Security** attributes measure how secure a wallet is.
+        This includes security features such as hardware wallet support,
+        chain verification, resilience against software supply chain attacks
+        on the wallet's development process, scam warning features, etc.
+      * \u{1f575} **Privacy** attributes look at how well a wallet protects
+        your privacy. This includes features to interact with the Ethereum
+        ecosystem privately such as private transfers, but also how much data
+        the wallet collects about you.
+      * \u{1f3f0} **Self-sovereignty** attributes determine the control and
+        ownership guarantees the wallet gives you over your account, as
+        opposed to being dependent on third-party providers to act in a
+        trustworthy and reliable manner. This includes the potential for
+        your transactions being censored by third-parties, or your ability to
+        use DeFi protocols and to withdraw funds from Ethereum layer 2
+        solutions without relying on third-parties.
+      * \u{1f50d} **Transparency** attributes determine the degree of
+        public scrutiny and accountability that a wallet's software
+        development process is subject to, and whether that process is
+        sustainable. This ensures that the wallet software is trustworthy
+        and that it will be maintained for the foreseeable future, which is
+        crucial when deciding to rely on a wallet to safeguard your assets
+        and data.
+      * \u{1f331} **Ecosystem** attributes refer to present-day Ethereum
+        ecosystem priorities and transitions that impact the feature set of
+        Ethereum wallets. For example, the transition to and fragmentation
+        caused by many layer 2 solutions in Ethereum requires wallets to
+        adapt by providing easy or seamless ways to move assets across layer
+        2 chains, or to support Ethereum addresses that contain chain
+        information in them.
+        *Note*: Unlike other attribute groups, which are mostly timeless
+        principle, the set of \u{1f331} **ecosystem attributes** should be
+        expected to change quickly as the Ethereum ecosystem itself evolves.
+
+      For more information on the specific attributes within these
+      high-level buckets, refer to these attributes on a wallet-specific
+      page.
+    `,
+  },
+  {
+    anchor: 'score-computation',
+    question: "How are wallets' score computed?",
+    navTitle: 'How is the score computed?',
+    answerMarkdown: `
+      Scores are computed as a weighted average of all the criteria that go
+      into assessing wallets.
+
+      Each high-level category has its own weighted-average score, and the
+      wallet's final score is a weighted average of those.
+
+      For wallets that have **multiple versions** or run on
+      **multiple platforms**, scores are computed for each individual version.
+      However, when browsing the Walletbeat homepage without selecting a
+      specific version, Walletbeat aggregates the per-version scores by
+      taking the **worst** rating on each attribute across versions.
+      This is because the worst rating acts as a "floor" for this attribute
+      for all versions of the wallet. Therefore, no matter which version of
+      this wallet a user chooses, they will be using a wallet that is
+      *at least as good* as this aggregated rating. This approach also
+      encourages wallet developers to reduce per-version differences and
+      reuse as much code and components as possible.
+    `,
+  },
+  {
     anchor: 'who-is-behind-walletbeat',
     question: 'Who is behind Walletbeat?',
     navTitle: 'Who runs Walletbeat?',

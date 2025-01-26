@@ -231,7 +231,7 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                 </React.Fragment>
                 {pickedVariant === null ? (
                   <React.Fragment key="variantReminder">
-                    You can select a specific version on individual attributes.
+                    Select a version to see version-specific ratings.
                   </React.Fragment>
                 ) : (
                   <React.Fragment key="variantReminder">
