@@ -18,3 +18,8 @@
 * {
   font-family: 'Work Sans', 'Work Sans Fallback', 'Noto Color Emoji';
 }
+
+code {
+  /* Why monospace twice? See https://github.com/necolas/normalize.css/issues/519#issuecomment-197131966 */
+  font-family: monospace, monospace;
+}
