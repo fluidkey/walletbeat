@@ -1,8 +1,22 @@
-import type { Entity } from '@/beta/schema/features/privacy/data-collection';
+import type { CorporateEntity, DataBroker } from '@/beta/schema/entity';
 
-export const honeycomb: Entity = {
+export const honeycomb: CorporateEntity & DataBroker = {
+  id: 'honeycomb',
   name: 'Honeycomb',
   legalName: { name: 'Hound Technology, Inc', soundsDifferent: true },
+  type: {
+    chainDataProvider: false,
+    corporate: true,
+    dataBroker: true,
+    exchange: false,
+    offchainDataProvider: false,
+    securityAuditor: false,
+    transactionBroadcastProvider: false,
+    walletDeveloper: false,
+  },
+  icon: {
+    extension: 'svg',
+  },
   jurisdiction: 'San Francisco, California, United States',
   url: 'https://www.honeycomb.io/',
   privacyPolicy: 'https://www.honeycomb.io/privacy',

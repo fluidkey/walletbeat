@@ -11,6 +11,7 @@ import type { Paragraph, Renderable, WithTypography } from '@/beta/types/text';
 import type { Url } from './url';
 import { Rating, type Attribute, type EvaluatedAttribute, type Value } from './attributes';
 import type { Dict } from '../types/utils/dict';
+import type { CalendarDate } from '../types/date';
 
 /** A contributor to walletbeat. */
 export interface Contributor {
@@ -23,7 +24,7 @@ export interface WalletMetadata {
   /**
    * ID of the wallet.
    * It is expected that a wallet image exists at
-   * `/public/images/wallet/${id}.${iconExtension}`.
+   * `/public/images/wallets/${id}.${iconExtension}`.
    */
   id: string;
 
@@ -31,7 +32,7 @@ export interface WalletMetadata {
   displayName: string;
 
   /** Extension of the wallet icon image at
-   * `/public/images/wallet/${id}.${iconExtension}`.
+   * `/public/images/wallets/${id}.${iconExtension}`.
    * Wallet icons should be cropped to touch all edges, then minimal margins
    * added to make the image aspect ratio be 1:1 (square).
    */
@@ -60,8 +61,8 @@ export interface WalletMetadata {
   /** Link to the wallet's source code repository, if public. */
   repoUrl: Url | null;
 
-  /** The last time the wallet information was updated. */
-  lastUpdated: string;
+  /** The last date the wallet information was updated. */
+  lastUpdated: CalendarDate;
 
   /** List of people who contributed to the information for this wallet. */
   contributors: NonEmptyArray<Contributor>;

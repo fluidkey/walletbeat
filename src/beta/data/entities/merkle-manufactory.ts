@@ -1,10 +1,22 @@
-import type { Entity } from '@/beta/schema/features/privacy/data-collection';
+import type { CorporateEntity } from '@/beta/schema/entity';
 
-export const merkleManufactory: Entity = {
+export const merkleManufactory: CorporateEntity = {
+  id: 'merkle-manufactory',
   name: 'Merkle Manufactory',
   legalName: { name: 'Merkle Manufactory Inc', soundsDifferent: false },
+  type: {
+    chainDataProvider: false,
+    corporate: true,
+    dataBroker: false,
+    exchange: false,
+    offchainDataProvider: false,
+    securityAuditor: false,
+    transactionBroadcastProvider: false,
+    walletDeveloper: false,
+  },
+  icon: 'NO_ICON',
   jurisdiction: 'Los Angeles, California, United States',
   url: 'https://merklemanufactory.com/',
-  privacyPolicy: null,
+  privacyPolicy: { type: 'NO_PRIVACY_POLICY' },
   crunchbase: 'https://www.crunchbase.com/organization/merkle-manufactory',
 };

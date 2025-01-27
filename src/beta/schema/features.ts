@@ -13,6 +13,7 @@ import type { ChainConfigurability } from './features/chain-configurability';
 import type { WalletProfile } from './features/profile';
 import type { WalletIntegration } from './features/integration';
 import type { AddressResolution } from './features/address-resolution';
+import type { SecurityAudit } from './features/security/security-audits';
 
 /**
  * A set of features about a wallet, each of which may or may not depend on
@@ -31,6 +32,13 @@ export interface WalletFeatures {
 
   /** Security features. */
   security: {
+    /**
+     * Public security audits the wallet has gone through.
+     * If never audited, this should be an empty array, as 'null' represents
+     * the fact that we haven't checked whether there have been any audit.
+     */
+    publicSecurityAudits: null | SecurityAudit[];
+
     /** Light clients. */
     lightClient: {
       /** Light client used for Ethereum L1. False means no light client support. */
@@ -81,6 +89,7 @@ export interface ResolvedFeatures {
   profile: WalletProfile;
 
   security: {
+    publicSecurityAudits: null | SecurityAudit[];
     lightClient: {
       ethereumL1: ResolvedFeature<WithRef<EthereumL1LightClientSupport> | false>;
     };
@@ -105,6 +114,13 @@ export function resolveFeatures(features: WalletFeatures, variant: Variant): Res
     variant,
     profile: features.profile,
     security: {
+      publicSecurityAudits:
+        features.security.publicSecurityAudits === null
+          ? null
+          : features.security.publicSecurityAudits.filter(
+              audit =>
+                audit.variantsScope === 'ALL_VARIANTS' || audit.variantsScope[variant] === true
+            ),
       lightClient: {
         ethereumL1: feat(features.security.lightClient.ethereumL1),
       },

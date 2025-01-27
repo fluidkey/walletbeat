@@ -13,6 +13,7 @@ import { ExternalLink } from '../../../atoms/ExternalLink';
 import { ReferenceLinks } from '../../../atoms/ReferenceLinks';
 import { subsectionWeight } from '@/beta/components/constants';
 import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
+import { isUrl } from '@/beta/schema/url';
 
 export function AddressCorrelationDetails({
   wallet,
@@ -69,7 +70,7 @@ export function AddressCorrelationDetails({
       return;
     }
     let entityName: React.ReactNode | null = null;
-    if (entity.legalName === null) {
+    if (entity.legalName === 'NOT_A_LEGAL_ENTITY') {
       entityName = <strong>{entity.name}</strong>;
     } else if (entity.legalName.soundsDifferent) {
       entityName = (
@@ -80,14 +81,14 @@ export function AddressCorrelationDetails({
     } else {
       entityName = <strong>{entity.legalName.name}</strong>;
     }
-    if (entity.url !== null) {
+    if (isUrl(entity.url)) {
       entityName = <ExternalLink url={entity.url}>{entityName}</ExternalLink>;
     }
     leaksList.push(
       <li key={sourceName}>
         <Typography>
           {entityName}{' '}
-          {entity.privacyPolicy !== null ? (
+          {isUrl(entity.privacyPolicy) ? (
             <>
               {' ('}
               <ExternalLink url={entity.privacyPolicy} defaultLabel="Privacy policy" />

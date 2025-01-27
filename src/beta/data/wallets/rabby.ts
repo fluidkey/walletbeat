@@ -6,6 +6,10 @@ import type { Wallet } from '@/beta/schema/wallet';
 import { License } from '@/beta/schema/features/license';
 import { WalletProfile } from '@/beta/schema/features/profile';
 import { RpcEndpointConfiguration } from '@/beta/schema/features/chain-configurability';
+import { leastAuthority } from '../entities/least-authority';
+import { slowMist } from '../entities/slowmist';
+import { SecurityFlawSeverity } from '@/beta/schema/features/security/security-audits';
+import { cure53 } from '../entities/cure53';
 
 export const rabby: Wallet = {
   metadata: {
@@ -60,6 +64,162 @@ export const rabby: Wallet = {
       },
     },
     security: {
+      publicSecurityAudits: [
+        {
+          auditor: slowMist,
+          auditDate: '2021-06-18',
+          ref: 'https://github.com/RabbyHub/Rabby/blob/master/docs/Rabby%20chrome%20extension%20Penetration%20Testing%20Report.pdf',
+          variantsScope: { browser: true },
+          codeSnapshot: {
+            date: '2021-06-23',
+          },
+          unpatchedFlaws: 'ALL_FIXED',
+        },
+        {
+          auditor: slowMist,
+          auditDate: '2022-03-18',
+          ref: 'https://github.com/RabbyHub/Rabby/blob/master/docs/SlowMist%20Audit%20Report%20-%20Rabby%20browser%20extension%20wallet-2022.03.18.pdf',
+          variantsScope: { browser: true },
+          codeSnapshot: {
+            date: '2022-01-26',
+            commit: 'f6d19bd70664a7214677918e298619d583f9c3f1',
+            tag: 'v0.21.1',
+          },
+          unpatchedFlaws: 'ALL_FIXED',
+        },
+        {
+          auditor: slowMist,
+          auditDate: '2023-07-20',
+          ref: 'https://github.com/RabbyHub/Rabby/blob/master/docs/SlowMist%20Audit%20Report%20-%20Rabby%20Wallet-2023.07.20.pdf',
+          variantsScope: { browser: true },
+          codeSnapshot: {
+            date: '2023-06-19',
+            commit: 'f6221693b877b3c4eb1c7ac61146137eb1908997',
+            tag: 'v0.91.0',
+          },
+          unpatchedFlaws: 'ALL_FIXED',
+        },
+        {
+          auditor: slowMist,
+          auditDate: '2023-09-26',
+          ref: 'https://github.com/RabbyHub/RabbyDesktop/blob/publish/prod/docs/SlowMist%20Audit%20Report%20-%20Rabby%20Wallet%20Desktop.pdf',
+          variantsScope: { desktop: true },
+          codeSnapshot: {
+            date: '2023-09-01',
+            commit: '586447a46bcd0abab6356076e369357050c97796',
+            tag: 'v0.33.0-prod',
+          },
+          unpatchedFlaws: 'ALL_FIXED',
+        },
+        {
+          auditor: leastAuthority,
+          auditDate: '2024-10-18',
+          ref: 'https://github.com/RabbyHub/rabby-mobile/blob/develop/docs/Least%20Authority%20-%20Debank%20Rabby%20Walle%20Audit%20Report.pdf',
+          variantsScope: { mobile: true },
+          codeSnapshot: {
+            date: '2024-09-08',
+            commit: 'a8dea5d8c530cb1acf9104a7854089256c36d85a',
+          },
+          unpatchedFlaws: [
+            {
+              name: 'Issue B: Insecure Key Derivation Function',
+              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
+              presentStatus: 'NOT_FIXED',
+            },
+            {
+              name: 'Issue C: Weak Encryption Method Used',
+              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
+              presentStatus: 'NOT_FIXED',
+            },
+            {
+              name: 'Issue D: Weak PBKDF2 Parameters Used',
+              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
+              presentStatus: 'NOT_FIXED',
+            },
+          ],
+        },
+        {
+          auditor: cure53,
+          auditDate: '2024-10-22',
+          ref: 'https://github.com/RabbyHub/rabby-mobile/blob/develop/docs/Cure53%20-%20Debank%20Rabby%20Wallet%20Audit%20Report.pdf',
+          variantsScope: { mobile: true },
+          codeSnapshot: {
+            date: '2024-09-08',
+            commit: 'a8dea5d8c530cb1acf9104a7854089256c36d85a',
+          },
+          unpatchedFlaws: [
+            {
+              name: 'RBY-01-001 WP1-WP2: Mnemonic recoverable via process dump',
+              severityAtAuditPublication: SecurityFlawSeverity.HIGH,
+              presentStatus: 'NOT_FIXED',
+            },
+            {
+              name: 'RBY-01-002 WP1-WP2: Password recoverable via process dump',
+              severityAtAuditPublication: SecurityFlawSeverity.HIGH,
+              presentStatus: 'NOT_FIXED',
+            },
+            {
+              name: 'RBY-01-012 WP1-WP2: RabbitCode secret recoverable from installer files',
+              severityAtAuditPublication: SecurityFlawSeverity.HIGH,
+              presentStatus: 'NOT_FIXED',
+            },
+            {
+              name: 'RBY-01-014 WP1-WP2: Backup password prompt bypassable',
+              severityAtAuditPublication: SecurityFlawSeverity.MEDIUM,
+              presentStatus: 'NOT_FIXED',
+            },
+            {
+              name: 'RBY-01-003 WP1-WP2: Lack of rate limiting for password unlock',
+              severityAtAuditPublication: SecurityFlawSeverity.MEDIUM,
+              presentStatus: 'NOT_FIXED',
+            },
+          ],
+        },
+        {
+          auditor: slowMist,
+          auditDate: '2024-10-23',
+          variantsScope: { mobile: true },
+          ref: 'https://github.com/RabbyHub/rabby-mobile/blob/develop/docs/SlowMist%20Audit%20Report%20-%20Rabby%20mobile%20wallet%20iOS.pdf',
+          codeSnapshot: {
+            date: '2024-06-17',
+            commit: 'a424dbe54bba464da7585769140f6b7136c9108b',
+          },
+          unpatchedFlaws: 'ALL_FIXED',
+        },
+        {
+          auditor: leastAuthority,
+          auditDate: '2024-12-12',
+          ref: 'https://github.com/RabbyHub/Rabby/blob/develop/docs/Least%20Authority%20-%20DeBank%20Rabby%20Wallet%20Extension%20Final%20Audit%20Report-20241212.pdf',
+          variantsScope: { browser: true },
+          codeSnapshot: {
+            date: '2024-10-14',
+            commit: 'eb5da18727b38a3fd693af8b74f6f151f2fd361c',
+          },
+          unpatchedFlaws: [
+            {
+              name: 'Issue B: Setting the Cache Before It Has Been Initialized Will Cause an Exception',
+              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
+              presentStatus: 'NOT_FIXED',
+            },
+            {
+              name: 'Issue C: persistStore Module Can Become Out of Sync With Browser Local Storage',
+              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
+              presentStatus: 'NOT_FIXED',
+            },
+          ],
+        },
+        {
+          auditor: slowMist,
+          auditDate: '2024-12-17',
+          variantsScope: { browser: true },
+          ref: 'https://github.com/RabbyHub/Rabby/blob/develop/docs/Rabby%20Browser%20Extension%20Wallet%20-%20SlowMist%20Audit%20Report-20241217.pdf',
+          codeSnapshot: {
+            date: '2024-11-28',
+            commit: '4e900e5944a671e99a135eea417bdfdb93072d99',
+          },
+          unpatchedFlaws: 'ALL_FIXED',
+        },
+      ],
       lightClient: {
         ethereumL1: {
           helios: false,

@@ -17,6 +17,11 @@ export type ComprehensiveVariants<T> = Record<Variant, T>;
 /** Maps at least one variant to a T. */
 export type AtLeastOneVariant<T> = NonEmptyRecord<Variant, T>;
 
+/** Maps at least one variant to a T. */
+export type AtLeastOneTrueVariant = {
+  [V in Variant]: Record<V, true> & Partial<Record<Exclude<Variant, V>, boolean>>;
+}[Variant];
+
 /**
  * A feature that may or may not depend on the wallet variant.
  * 'null' represents the fact that the feature was not evaluated on a wallet.

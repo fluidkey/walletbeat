@@ -1,7 +1,7 @@
 import type { WithRef } from '@/beta/schema/reference';
-import type { Url } from '@/beta/schema/url';
 import type { Dict } from '@/beta/types/utils/dict';
 import type { WalletMetadata } from '../../wallet';
+import type { Entity } from '../../entity';
 
 /**
  * An enum representing when data collection or leak occurs.
@@ -150,29 +150,6 @@ export type MultiAddressHandling =
  */
 export function leaksByDefault(leak: Leak): boolean {
   return leak >= Leak.BY_DEFAULT;
-}
-
-/**
- * An entity to which some data may be sent.
- */
-export interface Entity {
-  /** The name of the entity to which data may be sent. */
-  name: string;
-  /**
-   * Legal name of the entity, if any.
-   * `soundsDifferent` indicates whether the legal name sounds significantly
-   * different from `name`, such that most people may not be able to tell that
-   * these names refer to the same entity.
-   */
-  legalName: { name: string; soundsDifferent: boolean } | null;
-  /** Website of the entity to which data may be sent. */
-  url: Url | null;
-  /** The jurisdiction in which the entity is located. */
-  jurisdiction: string | null;
-  /** The privacy policy URL of the entity. */
-  privacyPolicy: Url | null;
-  /** The Crunchbase URL of the entity, if any. */
-  crunchbase: Url | null;
 }
 
 /** Personal information types. */

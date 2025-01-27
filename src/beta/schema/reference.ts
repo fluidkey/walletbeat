@@ -26,6 +26,7 @@ import {
   type LabeledUrl,
   type Url,
 } from './url';
+import type { CalendarDate } from '../types/date';
 
 /**
  * A loose reference which can be converted to a FullyQualifiedReference.
@@ -41,7 +42,7 @@ export interface LooseReference {
   explanation?: string;
 
   /** The date the reference was last retrieved. */
-  lastRetrieved?: string;
+  lastRetrieved?: CalendarDate;
 }
 
 /**
@@ -55,7 +56,7 @@ export interface FullyQualifiedReference {
   explanation?: string;
 
   /** The date the reference was last retrieved. */
-  lastRetrieved?: string;
+  lastRetrieved?: CalendarDate;
 }
 
 type Reference = Url | LooseReference | FullyQualifiedReference;
@@ -69,8 +70,11 @@ export function isFullyQualifiedReference(
 
 type References = Reference | NonEmptyArray<Reference>;
 
-/** An object that can be annotated with References. */
-export type WithRef<T> = T & { ref?: References };
+/** An object that *must* be annotated with References. */
+export type MustRef<T> = T & { ref: References };
+
+/** An object that *may or may not* be annotated with References. */
+export type WithRef<T> = MustRef<T> | (T & { ref?: undefined });
 
 /** Fully qualify a `Reference`. */
 function toFullyQualified(reference: Reference): FullyQualifiedReference[] {

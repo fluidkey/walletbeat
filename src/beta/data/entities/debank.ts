@@ -1,8 +1,30 @@
-import type { Entity } from '@/beta/schema/features/privacy/data-collection';
+import type {
+  ChainDataProvider,
+  CorporateEntity,
+  TransactionBroadcastProvider,
+  WalletDeveloper,
+} from '@/beta/schema/entity';
 
-export const deBank: Entity = {
+export const deBank: ChainDataProvider &
+  CorporateEntity &
+  TransactionBroadcastProvider &
+  WalletDeveloper = {
+  id: 'debank',
   name: 'DeBank',
   legalName: { name: 'DeBank Global PTE Ltd', soundsDifferent: false },
+  type: {
+    chainDataProvider: true,
+    corporate: true,
+    dataBroker: false,
+    exchange: false,
+    offchainDataProvider: false,
+    securityAuditor: false,
+    transactionBroadcastProvider: true,
+    walletDeveloper: true,
+  },
+  icon: {
+    extension: 'svg',
+  },
   jurisdiction: 'Singapore',
   url: 'https://debank.com/',
   privacyPolicy: 'https://rabby.io/docs/privacy/',

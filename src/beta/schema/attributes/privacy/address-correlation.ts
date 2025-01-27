@@ -11,7 +11,6 @@ import {
 import { pickWorstRating, unrated } from '../common';
 import {
   compareLeakedInfo,
-  type Entity,
   inferLeaks,
   Leak,
   type LeakedInfo,
@@ -35,6 +34,7 @@ import type { WalletMetadata } from '@/beta/schema/wallet';
 import { AddressCorrelationDetails } from '@/beta/components/ui/molecules/attributes/privacy/AddressCorrelationDetails';
 import { isNonEmptyArray, type NonEmptyArray, nonEmptyFirst } from '@/beta/types/utils/non-empty';
 import { type FullyQualifiedReference, refs } from '../../reference';
+import type { Entity } from '../../entity';
 
 const brand = 'attributes.privacy.address_correlation';
 export type AddressCorrelationValue = Value & {

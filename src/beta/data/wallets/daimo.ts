@@ -11,6 +11,7 @@ import { pimlico } from '../entities/pimlico';
 import { honeycomb } from '../entities/honeycomb';
 import { WalletProfile } from '@/beta/schema/features/profile';
 import { RpcEndpointConfiguration } from '@/beta/schema/features/chain-configurability';
+import { veridise } from '../entities/veridise';
 
 export const daimo: Wallet = {
   metadata: {
@@ -60,6 +61,23 @@ export const daimo: Wallet = {
       browser: 'NOT_A_BROWSER_WALLET',
     },
     security: {
+      // Note: Daimo has had their p256 verifier contract audited:
+      // https://github.com/daimo-eth/p256-verifier/blob/master/audits/2023-10-veridise.pdf
+      // However while the wallet relies on it, it is not the wallet software itself,
+      // so it is not a full-stack audit of the wallet software.
+      publicSecurityAudits: [
+        {
+          auditor: veridise,
+          auditDate: '2023-10-06',
+          ref: 'https://github.com/daimo-eth/daimo/blob/master/audits/2023-10-veridise-daimo.pdf',
+          variantsScope: { mobile: true },
+          codeSnapshot: {
+            date: '2023-09-12',
+            commit: 'f0dc56d68852c1488461e88a506ff7b0f027f245',
+          },
+          unpatchedFlaws: 'ALL_FIXED',
+        },
+      ],
       lightClient: {
         ethereumL1: false,
       },
