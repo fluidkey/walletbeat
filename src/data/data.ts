@@ -36,7 +36,7 @@ import { welldone } from './wallets/welldone';
 import { zerion } from './wallets/zerion';
 
 export const wallets: Record<string, Info> = {
-  Metamask: metamask,
+  MetaMask: metamask,
   Uniswap: uniswap,
   Coinbase: coinbase,
   Rainbow: rainbow,
