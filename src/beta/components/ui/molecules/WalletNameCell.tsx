@@ -15,6 +15,7 @@ import { WalletIcon } from '../atoms/WalletIcon';
 import { IconLink } from '../atoms/IconLink';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { variantToIcon, variantToTooltip, variantUrlQuery } from '../../variants';
+import { RenderTypographicContent } from '../atoms/RenderTypographicContent';
 
 const walletIconSize = shortRowHeight / 2;
 
@@ -124,12 +125,13 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
                 version.
               </Typography>
             ) : (
-              row.wallet.metadata.blurb.render({
-                typography: {
+              <RenderTypographicContent
+                content={row.wallet.metadata.blurb.render({})}
+                typography={{
                   variant: 'body1',
                   marginBottom: '0.5rem',
-                },
-              })
+                }}
+              />
             )}
           </Box>
           <Typography
