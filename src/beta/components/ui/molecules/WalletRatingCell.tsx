@@ -13,7 +13,7 @@ import {
   ratingToColor,
 } from '@/beta/schema/attributes';
 import { attributeVariantSpecificity, VariantSpecificity } from '@/beta/schema/wallet';
-import { type NonEmptyArray, nonEmptyMap } from '@/beta/types/utils/non-empty';
+import { isNonEmptyArray, type NonEmptyArray, nonEmptyMap } from '@/beta/types/utils/non-empty';
 import { Box, Typography } from '@mui/material';
 import type React from 'react';
 import { Arc, type PieSlice, RatingPie } from '../atoms/RatingPie';
@@ -57,8 +57,11 @@ export function WalletRatingCell<Vs extends ValueSet>({
   evalGroupFn: (tree: EvaluationTree) => EvaluatedGroup<Vs>;
 }): React.JSX.Element {
   const evalGroup = evalGroupFn(row.evalTree);
+  const evalEntries = evaluatedAttributesEntries(evalGroup).filter(
+    ([_, evalAttr]) => evalAttr.evaluation.value.rating !== Rating.EXEMPT
+  );
   const groupScore = attrGroup.score(evalGroup);
-  if (groupScore === null) {
+  if (groupScore === null || !isNonEmptyArray(evalEntries)) {
     return <>N/A</>;
   }
   const { score, hasUnratedComponent } = groupScore;
@@ -76,7 +79,7 @@ export function WalletRatingCell<Vs extends ValueSet>({
   const highlightedEvalAttr =
     highlightedSlice === null ? null : evalGroup[highlightedSlice.evalAttrId];
   const slices: NonEmptyArray<PieSlice> = nonEmptyMap(
-    evaluatedAttributesEntries(evalGroup),
+    evalEntries,
     ([evalAttrId, evalAttr]: [keyof EvaluatedGroup<Vs>, EvaluatedAttribute<Value>]): PieSlice => {
       const icon = evalAttr.evaluation.value.icon ?? evalAttr.attribute.icon;
       const tooltipSuffix: string = (() => {
