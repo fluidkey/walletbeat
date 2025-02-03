@@ -26,6 +26,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { variantToName, variantUrlQuery } from '../../variants';
 import { RenderTypographicContent } from '../atoms/RenderTypographicContent';
 import { slugifyCamelCase } from '@/beta/types/utils/text';
+import { betaSiteRoot } from '@/beta/constants';
 
 /**
  * Common properties of rating-type columns.
@@ -237,7 +238,7 @@ export function WalletRatingCell<Vs extends ValueSet>({
               />
               <Box display="flex" flexDirection="row" justifyContent="center">
                 <IconLink
-                  href={`/beta/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}#${slugifyCamelCase(highlightedEvalAttr.attribute.id)}`}
+                  href={`${betaSiteRoot}/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}#${slugifyCamelCase(highlightedEvalAttr.attribute.id)}`}
                   IconComponent={InfoOutlinedIcon}
                 >
                   Learn more
