@@ -5,6 +5,7 @@ import type { Value } from '../schema/attributes';
 import type { SourceVisibilityDetailsContent } from './content/source-visibility-details';
 import type { FundingDetailsContent } from './content/funding-details';
 import type { LicenseDetailsContent } from './content/license-details';
+import { trimWhitespacePrefix } from './utils/text';
 
 /**
  * Type of content that may be displayed on the UI.
@@ -94,7 +95,7 @@ function textContent<I extends Input = Input>(
 ): TextContent {
   return {
     contentType: ContentType.TEXT,
-    text: typeof text === 'string' ? text : text(input),
+    text: trimWhitespacePrefix(typeof text === 'string' ? text : text(input)),
   };
 }
 
@@ -104,7 +105,7 @@ function markdownContent<I extends Input = Input>(
 ): MarkdownContent {
   return {
     contentType: ContentType.MARKDOWN,
-    markdown: typeof md === 'string' ? md : md(input),
+    markdown: trimWhitespacePrefix(typeof md === 'string' ? md : md(input)),
   };
 }
 
