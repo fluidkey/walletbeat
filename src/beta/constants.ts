@@ -3,7 +3,7 @@
  * Useful to maintain a beta-endpoint-only branch with minimal code changes
  * versus the main branch.
  */
-export const betaSiteRoot = '/beta';
+export const betaSiteRoot = '';
 
 /**
  * Root for the /images/beta endpoint.
