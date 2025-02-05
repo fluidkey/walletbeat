@@ -1,6 +1,6 @@
-import { generateBasicMetadata } from '@/beta/components/metadata';
-import { AboutPage } from '@/beta/components/ui/pages/AboutPage';
-import { betaSiteRoot } from '@/beta/constants';
+import { generateBasicMetadata } from '@/components/metadata';
+import { AboutPage } from '@/components/ui/pages/AboutPage';
+import { betaSiteRoot } from '@/constants';
 import type { Metadata } from 'next';
 
 export function generateMetadata(): Metadata {

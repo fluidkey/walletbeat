@@ -1,4 +1,4 @@
-import WalletTable from '@/beta/components/ui/organisms/WalletTable';
+import WalletTable from '@/components/ui/organisms/WalletTable';
 import { Box, Typography } from '@mui/material';
 import type React from 'react';
 import './global.css';
@@ -7,9 +7,9 @@ import ForumIcon from '@mui/icons-material/Forum';
 import FoundationIcon from '@mui/icons-material/Foundation';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import type { Metadata } from 'next';
-import { generateBasicMetadata } from '@/beta/components/metadata';
-import { IconLink } from '@/beta/components/ui/atoms/IconLink';
-import { betaSiteRoot } from '@/beta/constants';
+import { generateBasicMetadata } from '@/components/metadata';
+import { IconLink } from '@/components/ui/atoms/IconLink';
+import { betaSiteRoot } from '@/constants';
 
 export function generateMetadata(): Metadata {
   return generateBasicMetadata({

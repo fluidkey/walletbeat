@@ -2,7 +2,7 @@ import type React from 'react';
 import { Work_Sans } from 'next/font/google';
 import PlausibleProvider from 'next-plausible';
 import type { Metadata } from 'next';
-import ThemeRegistry from '@/beta/components/ThemeRegistry/ThemeRegistry';
+import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry';
 
 export const metadata: Metadata = {
   title: `walletbeat`,

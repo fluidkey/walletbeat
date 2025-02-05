@@ -1,11 +1,11 @@
-import { IsValidWalletName, ratedWallets, wallets } from '@/beta/data/wallets';
-import { nonEmptyKeys, nonEmptyMap } from '@/beta/types/utils/non-empty';
-import { WalletPage } from '@/beta/components/ui/pages/WalletPage';
+import { IsValidWalletName, ratedWallets, wallets } from '@/data/wallets';
+import { nonEmptyKeys, nonEmptyMap } from '@/types/utils/non-empty';
+import { WalletPage } from '@/components/ui/pages/WalletPage';
 import '../../global.css';
 import type React from 'react';
 import type { Metadata } from 'next';
-import { generateBasicMetadata } from '@/beta/components/metadata';
-import { betaSiteRoot } from '@/beta/constants';
+import { generateBasicMetadata } from '@/components/metadata';
+import { betaSiteRoot } from '@/constants';
 
 interface WalletUrlParams {
   wallet: string;
