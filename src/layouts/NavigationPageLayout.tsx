@@ -1,7 +1,7 @@
 import theme from '@/components/ThemeRegistry/theme';
 import { Box, ThemeProvider } from '@mui/material';
 import type React from 'react';
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import {
   Navigation,
   type NavigationGroup,
@@ -10,20 +10,14 @@ import {
   type NavigationItem,
 } from '@/components/ui/organisms/Navigation';
 import type { NonEmptyArray } from '@/types/utils/non-empty';
-import { scrollPastHeaderPixels } from '@/components/navigation';
 
 const scrollNavigationMargin = 8;
-
-interface TargetContentItem {
-  target: NavigationContentItem | null;
-  untilTimestamp: number;
-}
 
 export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
   {
     groups,
     children,
-    contentDependencies = undefined,
+    contentDependencies = [],
     stickyHeaderId = undefined,
     stickyHeaderMargin = undefined,
   }: {
@@ -63,22 +57,16 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
     scrollToItemId: (itemId: string) => void;
   }>
 ) {
-  const [lastTargetedItem, setLastTargetedItem] = useState<TargetContentItem>({
-    target: null,
-    untilTimestamp: Date.now(),
-  });
-  const [activeItem, setActiveItem] = useState<NavigationContentItem | null>(null);
-  const scrollNavigationTo = (item: NavigationContentItem | null): void => {
-    if (item === null) {
-      return;
-    }
-    const listItem = document.getElementById(`listItem-${item.id}`);
+  const [activeItemId, setActiveItemId] = useState<string>();
+
+  const scrollNavigationTo = (itemId: string): void => {
+    const listItem = document.getElementById(`listItem-${itemId}`);
     if (listItem === null) {
       return;
     }
     const itemGroup: NavigationGroup | undefined = groups.find(
       (group: NavigationGroup): boolean =>
-        group.items.find((navItem: NavigationItem): boolean => navItem.id === item.id) !== undefined
+        group.items.some((navItem: NavigationItem): boolean => navItem.id === itemId)
     );
     if (itemGroup === undefined) {
       return;
@@ -101,102 +89,93 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
       });
     }
   };
-  const scrollToContent = (item: NavigationContentItem | null): void => {
-    if (item === null) {
-      return;
-    }
-    const content = document.getElementById(item.contentId);
-    if (content === null) {
-      return;
-    }
-    setLastTargetedItem({
-      target: item,
-      untilTimestamp: Date.now() + 1250,
-    });
-    history.replaceState(null, '', `#${item.contentId}`);
-    content.scrollIntoView({ behavior: 'smooth' });
-    scrollNavigationTo(item);
-  };
-  const handleScroll = useMemo(
-    (): (() => void) => () => {
-      const atBottom =
-        window.scrollY + window.innerHeight >= document.body.offsetHeight - scrollPastHeaderPixels;
-      const targetedItem =
-        lastTargetedItem.untilTimestamp >= Date.now() ? lastTargetedItem.target : null;
-      let bestItem: NavigationContentItem | null = null;
-      let bestItemDistance: number | null = null;
-      let headerHeight = 0;
-      if (stickyHeaderId !== undefined) {
-        const stickyHeader = document.getElementById(stickyHeaderId);
-        if (stickyHeader !== null) {
-          headerHeight = stickyHeader.getBoundingClientRect().bottom;
-        }
-      }
-      headerHeight += stickyHeaderMargin ?? 0;
-      for (const group of groups) {
-        for (const topLevelItem of group.items) {
-          for (const item of [topLevelItem].concat(topLevelItem.children ?? [])) {
-            if (!isNavigationContentItem(item)) {
-              continue;
-            }
-            const content = document.getElementById(item.contentId);
-            if (content === null) {
-              continue;
-            }
-            const rect = content.getBoundingClientRect();
-            const isTarget = targetedItem !== null && item.id === targetedItem.id;
-            if (isTarget && rect.top >= 0 && rect.bottom <= document.body.offsetHeight) {
-              bestItem = item;
-              bestItemDistance = -document.body.offsetHeight * 4;
-              break;
-            }
-            const distance = atBottom ? -rect.bottom : Math.abs(rect.top - headerHeight);
-            if (bestItemDistance === null || distance <= bestItemDistance) {
-              bestItem = item;
-              bestItemDistance = distance;
-            }
-          }
-        }
-      }
-      setActiveItem(bestItem);
-      scrollNavigationTo(bestItem);
-    },
-    ([groups, lastTargetedItem] as unknown[]).concat(contentDependencies ?? [])
-  );
+
   useEffect(
-    (): (() => void) => {
-      window.addEventListener('scroll', handleScroll);
-      return (): void => {
-        window.removeEventListener('scroll', handleScroll);
+    () => {
+      if(activeItemId)
+        scrollNavigationTo(activeItemId)
+    },
+    [activeItemId]
+  );
+
+  const isPageSmoothScrolling = useRef(false);
+
+  const onHashChange = useCallback(
+    (e: HashChangeEvent) => {
+      const newUrl = new URL(e.newURL)
+      if(newUrl.hash)
+        setActiveItemId(newUrl.hash.slice(1))
+
+      isPageSmoothScrolling.current = true
+
+      document.addEventListener(
+        'scrollend',
+        e => {
+          isPageSmoothScrolling.current = false
+        },
+        { once: true }
+      );
+
+      setTimeout(() => {
+        isPageSmoothScrolling.current = false
+      }, 1250)
+    },
+    []
+  );
+
+  useEffect(
+    () => {
+      window.addEventListener('hashchange', onHashChange, { passive: true });
+      return () => {
+        window.removeEventListener('hashchange', onHashChange);
       };
     },
-    ([groups, lastTargetedItem, handleScroll] as unknown[]).concat(contentDependencies ?? [])
+    [groups, onHashChange]
   );
+
+  const onScroll = useCallback(
+    (e: Event) => {
+      if(isPageSmoothScrolling.current)
+        return
+
+      const stickyHeaderElement = stickyHeaderId ? document.getElementById(stickyHeaderId) : undefined;
+
+      const topBound = (
+        (stickyHeaderElement?.getBoundingClientRect().bottom ?? 0)
+        + (stickyHeaderMargin ?? 0)
+      );
+
+      const items = (
+        groups
+          .flatMap(group => (
+            group.items
+              .flatMap(topLevelItem => [topLevelItem, ...topLevelItem.children ?? []])
+          ))
+          .filter(isNavigationContentItem)
+      );
+
+      const activeItem = items.find((item, i, { length }) => {
+        if(i === length - 1) return true
+
+        const headingElement = document.getElementById(item.contentId);
+        return headingElement && headingElement.getBoundingClientRect().bottom > topBound;
+      })!
+
+      setActiveItemId(activeItem.id);
+    },
+    [groups]
+  );
+
   useEffect(
-    handleScroll,
-    ([groups, lastTargetedItem, handleScroll] as unknown[]).concat(contentDependencies ?? [])
+    () => {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      return () => {
+        window.removeEventListener('scroll', onScroll);
+      };
+    },
+    [groups, onScroll, ...contentDependencies]
   );
-  useImperativeHandle(
-    ref,
-    () => ({
-      scrollToItemId: (itemId: string) => {
-        for (const group of groups) {
-          for (const topLevelItem of group.items) {
-            for (const item of [topLevelItem].concat(topLevelItem.children ?? [])) {
-              if (item.id === itemId) {
-                if (!isNavigationContentItem(item)) {
-                  continue;
-                }
-                scrollToContent(item);
-                return;
-              }
-            }
-          }
-        }
-      },
-    }),
-    ([groups] as unknown[]).concat(contentDependencies ?? [])
-  );
+
   return (
     <ThemeProvider theme={theme}>
       <Box key="pageViewport" display="flex" flexDirection="row" width="100%">
@@ -204,8 +183,7 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
           key="navigation"
           flex="0"
           groups={groups}
-          activeItemId={activeItem === null ? null : activeItem.id}
-          onContentItemClick={scrollToContent}
+          activeItemId={activeItemId}
         />
         <Box key="contentSpacerLeft" flex="1" />
         <Box
