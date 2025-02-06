@@ -29,6 +29,7 @@
     "react-markdown": "^9.0.3"
   },
   "devDependencies": {
+    "@fleek-platform/cli": "^3.8.2",
     "eslint": "^9.19.0",
     "eslint-config-love": "^118.0.0",
     "eslint-config-prettier": "^10.0.1",
