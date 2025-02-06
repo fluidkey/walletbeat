@@ -27,5 +27,12 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^9.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^9.19.0",
+    "eslint-config-love": "^118.0.0",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-react": "^7.37.4",
+    "globals": "^15.14.0"
   }
 }
