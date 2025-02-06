@@ -8,11 +8,11 @@ export function getBaseUrl(): string {
   }
 
   if (import.meta.env.WALLETBEAT_URL_ROOT !== undefined && import.meta.env.WALLETBEAT_URL_ROOT !== '') {
-    return import.meta.env.WALLETBEAT_URL_ROOT;
+    return `$${import.meta.env.WALLETBEAT_URL_ROOT}`;
   }
 
   if (import.meta.env.NEXT_PUBLIC_SITE_URL !== undefined && import.meta.env.NEXT_PUBLIC_SITE_URL !== '') {
-    return import.meta.env.NEXT_PUBLIC_SITE_URL;
+    return `${import.meta.env.NEXT_PUBLIC_SITE_URL}`;
   }
 
   if (import.meta.env.VERCEL_BRANCH_URL !== undefined && import.meta.env.VERCEL_BRANCH_URL !== '') {
