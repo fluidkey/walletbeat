@@ -1,5 +1,6 @@
 import type { ResolvedWallet } from '@/schema/wallet';
-import { UnfoldLess, UnfoldMore } from '@mui/icons-material';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import { Box, Link, Tooltip, Typography } from '@mui/material';
 import type React from 'react';
 import { shortRowHeight, expandedRowHeight } from '../../constants';
@@ -79,7 +80,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
           sx={row.rowWideStyle}
         >
           <IconButton size="small" onClick={row.toggleExpanded.bind(row)}>
-            {row.expanded ? <UnfoldLess /> : <UnfoldMore />}
+            {row.expanded ? <UnfoldLessIcon /> : <UnfoldMoreIcon />}
           </IconButton>
         </Box>
         <Link
