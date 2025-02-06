@@ -83,7 +83,7 @@ export function MarkdownBase({
     a: ({ href, children }) => {
       const hrefStr = href ?? '#';
       const eipRegexp =
-        /^https:\/\/eips\.ethereum\.org\/EIPS\/eip-(\d+)#wb-format=(short|long)@/i.exec(hrefStr);
+        /^https:\/\/eips\.ethereum\.org\/EIPS\/eip-(\d+)#wb-format=(short|long)$/i.exec(hrefStr);
       if (eipRegexp !== null) {
         const eip = lookupEip(+eipRegexp[1]);
         if (eip !== undefined) {
