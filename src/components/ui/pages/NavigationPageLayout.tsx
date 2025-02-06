@@ -8,6 +8,7 @@ import {
   type NavigationGroup,
   type NavigationContentItem,
   isNavigationContentItem,
+  type NavigationItem,
 } from '../organisms/Navigation';
 import type { NonEmptyArray } from '@/types/utils/non-empty';
 import { scrollPastHeaderPixels } from '../../navigation';
@@ -76,8 +77,9 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
     if (listItem === null) {
       return;
     }
-    const itemGroup: NavigationGroup | undefined = groups.find(group =>
-      group.items.find(navItem => navItem.id === item.id)
+    const itemGroup: NavigationGroup | undefined = groups.find(
+      (group: NavigationGroup): boolean =>
+        group.items.find((navItem: NavigationItem): boolean => navItem.id === item.id) !== undefined
     );
     if (itemGroup === undefined) {
       return;
