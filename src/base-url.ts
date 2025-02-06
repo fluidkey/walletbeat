@@ -7,35 +7,35 @@ export function getBaseUrl(): string {
     return `${window.location.protocol}//${window.location.host}`;
   }
 
-  if (process.env.WALLETBEAT_URL_ROOT !== undefined && process.env.WALLETBEAT_URL_ROOT !== '') {
-    return process.env.WALLETBEAT_URL_ROOT;
+  if (import.meta.env.WALLETBEAT_URL_ROOT !== undefined && import.meta.env.WALLETBEAT_URL_ROOT !== '') {
+    return import.meta.env.WALLETBEAT_URL_ROOT;
   }
 
-  if (process.env.NEXT_PUBLIC_SITE_URL !== undefined && process.env.NEXT_PUBLIC_SITE_URL !== '') {
-    return process.env.NEXT_PUBLIC_SITE_URL;
+  if (import.meta.env.NEXT_PUBLIC_SITE_URL !== undefined && import.meta.env.NEXT_PUBLIC_SITE_URL !== '') {
+    return import.meta.env.NEXT_PUBLIC_SITE_URL;
   }
 
-  if (process.env.VERCEL_BRANCH_URL !== undefined && process.env.VERCEL_BRANCH_URL !== '') {
-    return `https://${process.env.VERCEL_BRANCH_URL}`;
-  }
-
-  if (
-    process.env.VERCEL_PROJECT_PRODUCTION_URL !== undefined &&
-    process.env.VERCEL_PROJECT_PRODUCTION_URL !== ''
-  ) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-  }
-
-  if (process.env.VERCEL_URL !== undefined && process.env.VERCEL_URL !== '') {
-    return `https://${process.env.VERCEL_URL}`;
+  if (import.meta.env.VERCEL_BRANCH_URL !== undefined && import.meta.env.VERCEL_BRANCH_URL !== '') {
+    return `https://${import.meta.env.VERCEL_BRANCH_URL}`;
   }
 
   if (
-    process.env.WALLETBEAT_DEV !== undefined &&
-    process.env.WALLETBEAT_DEV !== '' &&
-    process.env.WALLETBEAT_DEV !== 'false'
+    import.meta.env.VERCEL_PROJECT_PRODUCTION_URL !== undefined &&
+    import.meta.env.VERCEL_PROJECT_PRODUCTION_URL !== ''
   ) {
-    return `http://${process.env.HOSTNAME ?? 'localhost'}:${process.env.PORT ?? 3000}`;
+    return `https://${import.meta.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+
+  if (import.meta.env.VERCEL_URL !== undefined && import.meta.env.VERCEL_URL !== '') {
+    return `https://${import.meta.env.VERCEL_URL}`;
+  }
+
+  if (
+    import.meta.env.WALLETBEAT_DEV !== undefined &&
+    import.meta.env.WALLETBEAT_DEV !== '' &&
+    import.meta.env.WALLETBEAT_DEV !== 'false'
+  ) {
+    return `http://${import.meta.env.HOSTNAME ?? 'localhost'}:${import.meta.env.PORT ?? 3000}`;
   }
 
   throw new Error(
