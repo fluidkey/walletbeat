@@ -5,7 +5,7 @@ import '../../global.css';
 import type React from 'react';
 import type { Metadata } from 'next';
 import { generateBasicMetadata } from '@/components/metadata';
-import { betaSiteRoot } from '@/constants';
+import { betaImagesRoot, betaSiteRoot } from '@/constants';
 
 interface WalletUrlParams {
   wallet: string;
@@ -37,7 +37,10 @@ export async function generateMetadata({
     title: `${walletMetadata.displayName} - Walletbeat`,
     description: `How does ${walletMetadata.displayName} stack up as an Ethereum wallet?`,
     route: `${betaSiteRoot}/wallet/${walletMetadata.id}`,
-    icons: `/images/wallets/${walletMetadata.id}.${walletMetadata.iconExtension}`,
+    mainIcon: {
+      url: `${betaImagesRoot}/wallets/${walletMetadata.id}.${walletMetadata.iconExtension}`,
+    },
+    favIcon: `${betaImagesRoot}/wallets/${walletMetadata.id}.${walletMetadata.iconExtension}`,
     keywordsBefore: [
       walletName,
       walletMetadata.displayName,

@@ -10,4 +10,4 @@ export const betaSiteRoot = '';
  * Useful to maintain a beta-endpoint-only branch with minimal code changes
  * versus the main branch.
  */
-export const betaImagesRoot = '/images/beta';
+export const betaImagesRoot = '/images';
