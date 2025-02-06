@@ -30,11 +30,7 @@ export function getBaseUrl(): string {
     return `https://${import.meta.env.VERCEL_URL}`;
   }
 
-  if (
-    import.meta.env.WALLETBEAT_DEV !== undefined &&
-    import.meta.env.WALLETBEAT_DEV !== '' &&
-    import.meta.env.WALLETBEAT_DEV !== 'false'
-  ) {
+  if (import.meta.env.MODE === 'development') {
     return `http://${import.meta.env.HOSTNAME ?? 'localhost'}:${import.meta.env.PORT ?? 3000}`;
   }
 
