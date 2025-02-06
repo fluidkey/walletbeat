@@ -1,6 +1,21 @@
 ---	
 // CSS
 import '@fontsource/work-sans'
+import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry.tsx'
+
+
+// Props
+interface Props {
+	metadata: Parameters<typeof Metadata>[0]['metadata'],
+}
+
+const {
+	metadata,
+} = Astro.props
+
+
+// Components
+import Metadata from '@/components/Metadata.astro'
 ---
 
 
@@ -11,12 +26,19 @@ import '@fontsource/work-sans'
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<Metadata {metadata} />
 	</head>
 	<body>
-		<slot />
+		<ThemeRegistry>
+			<slot />
+		</ThemeRegistry>
+
+		<!-- Plausible -->
+		<script src="https://plausible.io/js/script.js" async defer data-domain="walletbeat.fyi"></script>
+		<script id="plausible-init">window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
 	</body>
 </html>
+
 
 <style>
 	html,
@@ -24,5 +46,6 @@ import '@fontsource/work-sans'
 		margin: 0;
 		width: 100%;
 		height: 100%;
+		font-family: 'Work Sans', sans-serif;
 	}
 </style>

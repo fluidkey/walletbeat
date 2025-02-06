@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "lint": "eslint src --fix",
     "astro": "astro"
   },
   "dependencies": {
