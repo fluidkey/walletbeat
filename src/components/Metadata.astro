@@ -63,10 +63,10 @@ type Props = {
 };
 
 const {
-  metadata: _metadata,
+  metadata: rawMetadata,
 } = Astro.props;
 
-const metadata = generateBasicMetadata(_metadata);
+const metadata = generateBasicMetadata(rawMetadata);
 ---
 
 
