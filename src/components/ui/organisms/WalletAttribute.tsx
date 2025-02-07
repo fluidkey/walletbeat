@@ -14,7 +14,7 @@ import { subsectionBorderRadius, subsectionIconWidth, subsectionWeight } from '.
 import { type AccordionData, Accordions } from '../atoms/Accordions';
 import type { NonEmptyArray } from '@/types/utils/non-empty';
 import { WrapRatingIcon } from '../atoms/WrapRatingIcon';
-import { AttributeMethodology } from '../molecules/attributes/AttributeMethodology';
+import { AttributeMethodology } from '@/components/ui/molecules/attributes/AttributeMethodology';
 import { subsectionTheme } from '../../ThemeRegistry/theme';
 import type { Variant } from '@/schema/variants';
 import { variantToName } from '../../variants';

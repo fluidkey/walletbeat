@@ -155,12 +155,8 @@ const NavigationItem = memo(
       if (isNavigationContentItem(item)) {
         return (
           <ListItemButton
-            component="button"
-            onClick={() => {
-              if (onContentItemClick !== undefined) {
-                onContentItemClick(item);
-              }
-            }}
+		  	component="a"
+			href={`#${item.contentId}`}
             disableRipple={true}
             selected={active}
             sx={{ borderRadius: `${navigationListItemRadius}px` }}
@@ -236,7 +232,7 @@ const navigationBoxStyle = {
 interface NavigationGroupProps {
   group: NavigationGroup;
   groupIndex: number;
-  activeItemId: string | null;
+  activeItemId?: string;
   onContentItemClick?: (item: NavigationContentItem) => void;
 }
 
@@ -333,7 +329,7 @@ export function Navigation({
   onContentItemClick = undefined,
 }: {
   groups: NonEmptyArray<NavigationGroup>;
-  activeItemId: string | null;
+  activeItemId?: string;
   flex?: React.ComponentProps<typeof Box>['flex'];
   onContentItemClick?: (item: NavigationContentItem) => void;
 }): React.JSX.Element {

@@ -1,5 +1,3 @@
-'use client';
-
 import type React from 'react';
 import { Box, Link, type TypographyOwnProps } from '@mui/material';
 import { useState } from 'react';

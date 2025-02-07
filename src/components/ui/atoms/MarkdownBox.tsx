@@ -1,5 +1,3 @@
-'use client';
-
 import { Box, type BoxProps, type TypographyProps } from '@mui/material';
 import type React from 'react';
 import {
