@@ -24,7 +24,7 @@ export default [
     rules: {
       complexity: 'off',
       'max-lines': 'off',
-	  'max-nested-callbacks': 'off',
+      'max-nested-callbacks': 'off',
       '@typescript-eslint/no-magic-numbers': 'off',
       '@typescript-eslint/prefer-destructuring': 'off',
       '@typescript-eslint/no-inferrable-types': 'off',

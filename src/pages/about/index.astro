@@ -1,14 +1,18 @@
 ---
-import Layout from '@/layouts/Layout.astro'
-import { AboutPage } from './_AboutPage.tsx'
+// Layouts
+import Layout from '@/layouts/Layout.astro';
+
+
+// Components
+import { AboutPage } from './_AboutPage.tsx';
 ---
 
 
 <Layout
-	metadata={{
-		title: 'About Walletbeat',
-		keywordsAfter: ['about'],
-	}}
+  metadata={{
+    title: 'About Walletbeat',
+    keywordsAfter: ['about'],
+  }}
 >
-	<AboutPage client:load />
+  <AboutPage client:load />
 </Layout>
