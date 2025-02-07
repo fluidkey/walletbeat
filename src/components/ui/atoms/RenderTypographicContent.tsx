@@ -1,5 +1,3 @@
-'use client';
-
 import type React from 'react';
 import { ContentType, type TypographicContent } from '@/types/content';
 import { Typography } from '@mui/material';

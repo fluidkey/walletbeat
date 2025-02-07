@@ -1,16 +1,16 @@
 import { Typography, Divider } from '@mui/material';
 import { Box } from '@mui/system';
 import type React from 'react';
-import { NavigationPageLayout } from './NavigationPageLayout';
+import { NavigationPageLayout } from '@/layouts/NavigationPageLayout';
 import {
   navigationAbout,
   navigationFaq,
   navigationFarcasterChannel,
   navigationHome,
   navigationRepository,
-} from '../../navigation';
-import { ExternalLink } from '../atoms/ExternalLink';
-import { IconLink } from '../atoms/IconLink';
+} from '@/components/navigation';
+import { ExternalLink } from '@/components/ui/atoms/ExternalLink';
+import { IconLink } from '@/components/ui/atoms/IconLink';
 import HelpCenterIcon from '@mui/icons-material/HelpCenter';
 import ForumIcon from '@mui/icons-material/Forum';
 import GitHubIcon from '@mui/icons-material/GitHub';

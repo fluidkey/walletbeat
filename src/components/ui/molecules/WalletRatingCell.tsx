@@ -1,5 +1,3 @@
-'use client';
-
 import type { EvaluationTree } from '@/schema/attribute-groups';
 import {
   type AttributeGroup,

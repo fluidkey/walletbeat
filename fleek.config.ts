@@ -4,8 +4,8 @@ export default {
   sites: [
     {
       slug: 'walletbeat-beta',
-      distDir: 'out',
-      buildCommand: 'npm install && npm run build',
+      distDir: 'dist',
+      buildCommand: 'pnpm install && pnpm build',
     },
   ],
 } satisfies FleekConfig;

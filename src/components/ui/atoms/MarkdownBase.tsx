@@ -1,7 +1,4 @@
-'use client';
-
 import { Box, styled, Typography, type TypographyProps } from '@mui/material';
-import Link from 'next/link';
 import type React from 'react';
 import Markdown, { type Components } from 'react-markdown';
 import { ExternalLink } from './ExternalLink';
@@ -97,7 +94,7 @@ export function MarkdownBase({
         // External link.
         return <ExternalLink url={hrefStr}>{children}</ExternalLink>;
       }
-      return <Link href={hrefStr}>{children}</Link>;
+      return <a href={hrefStr}>{children}</a>;
     },
     p: ({ children }) => (
       <Typography variant={pVariant} color={textColor} fontWeight={pFontWeight}>

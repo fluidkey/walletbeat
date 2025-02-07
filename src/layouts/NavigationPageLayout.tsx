@@ -1,6 +1,5 @@
-'use client';
-
-import { Box } from '@mui/material';
+import theme from '@/components/ThemeRegistry/theme';
+import { Box, ThemeProvider } from '@mui/material';
 import type React from 'react';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import {
@@ -9,9 +8,9 @@ import {
   type NavigationContentItem,
   isNavigationContentItem,
   type NavigationItem,
-} from '../organisms/Navigation';
+} from '@/components/ui/organisms/Navigation';
 import type { NonEmptyArray } from '@/types/utils/non-empty';
-import { scrollPastHeaderPixels } from '../../navigation';
+import { scrollPastHeaderPixels } from '@/components/navigation';
 
 const scrollNavigationMargin = 8;
 
@@ -199,26 +198,28 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
     ([groups] as unknown[]).concat(contentDependencies ?? [])
   );
   return (
-    <Box key="pageViewport" display="flex" flexDirection="row" width="100%">
-      <Navigation
-        key="navigation"
-        flex="0"
-        groups={groups}
-        activeItemId={activeItem === null ? null : activeItem.id}
-        onContentItemClick={scrollToContent}
-      />
-      <Box key="contentSpacerLeft" flex="1" />
-      <Box
-        key="contentContainer"
-        display="flex"
-        flex="0"
-        flexDirection="column"
-        minWidth="60vw"
-        maxWidth="80vw"
-      >
-        {children}
+    <ThemeProvider theme={theme}>
+      <Box key="pageViewport" display="flex" flexDirection="row" width="100%">
+        <Navigation
+          key="navigation"
+          flex="0"
+          groups={groups}
+          activeItemId={activeItem === null ? null : activeItem.id}
+          onContentItemClick={scrollToContent}
+        />
+        <Box key="contentSpacerLeft" flex="1" />
+        <Box
+          key="contentContainer"
+          display="flex"
+          flex="0"
+          flexDirection="column"
+          minWidth="60vw"
+          maxWidth="80vw"
+        >
+          {children}
+        </Box>
+        <Box key="contentSpacerRight" flex="1" />
       </Box>
-      <Box key="contentSpacerRight" flex="1" />
-    </Box>
+    </ThemeProvider>
   );
 });

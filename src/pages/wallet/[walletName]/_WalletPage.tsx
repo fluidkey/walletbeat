@@ -1,5 +1,3 @@
-'use client';
-
 import { ratedWallets, type WalletName } from '@/data/wallets';
 import {
   type EvaluationTree,
@@ -17,9 +15,9 @@ import {
 } from '@/types/utils/non-empty';
 import { Box, Typography, Paper, styled, Divider, Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { WalletIcon } from '../atoms/WalletIcon';
-import { AnchorHeader } from '../atoms/AnchorHeader';
-import { WalletAttribute } from '../organisms/WalletAttribute';
+import { WalletIcon } from '@/components/ui/atoms/WalletIcon';
+import { AnchorHeader } from '@/components/ui/atoms/AnchorHeader';
+import { WalletAttribute } from '@/components/ui/organisms/WalletAttribute';
 import { blend, ThemeProvider } from '@mui/system';
 import theme, { subsectionTheme } from '@/components/ThemeRegistry/theme';
 import {
@@ -36,8 +34,8 @@ import {
   sectionIconWidth,
   subsectionBorderRadius,
   subsectionIconWidth,
-} from '../../constants';
-import type { NavigationItem } from '../organisms/Navigation';
+} from '@/components/constants';
+import type { NavigationItem } from '@/components/ui/organisms/Navigation';
 import {
   navigationAbout,
   navigationFaq,
@@ -45,9 +43,9 @@ import {
   navigationHome,
   navigationRepository,
   scrollPastHeaderPixels,
-} from '../../navigation';
-import { NavigationPageLayout } from './NavigationPageLayout';
-import { type PickableVariant, VariantPicker } from '../atoms/VariantPicker';
+} from '@/components/navigation';
+import { NavigationPageLayout } from '@/layouts/NavigationPageLayout';
+import { type PickableVariant, VariantPicker } from '@/components/ui/atoms/VariantPicker';
 import { getSingleVariant, type Variant } from '@/schema/variants';
 import {
   variantFromUrlQuery,
@@ -56,9 +54,9 @@ import {
   variantToRunsOn,
   variantToTooltip,
   variantUrlQuery,
-} from '../../variants';
+} from '@/components/variants';
 import { VariantSpecificity, type ResolvedWallet } from '@/schema/wallet';
-import { RenderTypographicContent } from '../atoms/RenderTypographicContent';
+import { RenderTypographicContent } from '@/components/ui/atoms/RenderTypographicContent';
 import { commaListPrefix, slugifyCamelCase } from '@/types/utils/text';
 
 const headerHeight = 80;

@@ -1,0 +1,18 @@
+---
+// Layouts
+import Layout from '@/layouts/Layout.astro';
+
+
+// Components
+import { FrequentlyAskedQuestionsPage } from './_FrequentlyAskedQuestionsPage.tsx';
+---
+
+
+<Layout
+  metadata={{
+    title: 'Walletbeat FAQ',
+    keywordsAfter: ['faq'],
+  }}
+>
+  <FrequentlyAskedQuestionsPage client:load />
+</Layout>
