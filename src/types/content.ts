@@ -6,6 +6,7 @@ import type { SourceVisibilityDetailsContent } from './content/source-visibility
 import type { FundingDetailsContent } from './content/funding-details';
 import type { LicenseDetailsContent } from './content/license-details';
 import { trimWhitespacePrefix } from './utils/text';
+import type { SecurityAuditsDetailsContent } from './content/security-audits-details';
 
 /**
  * Type of content that may be displayed on the UI.
@@ -27,9 +28,10 @@ export enum ContentType {
 export type ComponentAndProps =
   | AddressCorrelationDetailsContent
   | ChainVerificationDetailsContent
-  | SourceVisibilityDetailsContent
   | FundingDetailsContent
   | LicenseDetailsContent
+  | SecurityAuditsDetailsContent
+  | SourceVisibilityDetailsContent
   | UnratedAttributeContent<Value>;
 
 /**

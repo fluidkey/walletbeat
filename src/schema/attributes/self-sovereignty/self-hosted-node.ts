@@ -136,7 +136,9 @@ export const selfHostedNode: Attribute<SelfHostedNodeValue> = {
   id: 'selfHostedNode',
   icon: '\u{1f3e0}', // House
   displayName: 'Self-hosted node',
-  midSentenceName: 'support for self-hosted nodes',
+  wording: {
+    midSentenceName: 'support for self-hosted nodes',
+  },
   question: sentence(`
     Can the wallet be used with your own self-hosted Ethereum node?
   `),

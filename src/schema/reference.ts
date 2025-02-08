@@ -77,7 +77,14 @@ export type MustRef<T> = T & { ref: References };
 export type WithRef<T> = MustRef<T> | (T & { ref?: undefined });
 
 /** Fully qualify a `Reference`. */
-function toFullyQualified(reference: Reference): FullyQualifiedReference[] {
+export function toFullyQualified(reference: References): FullyQualifiedReference[] {
+  if (Array.isArray(reference)) {
+    const qualified: FullyQualifiedReference[] = [];
+    for (const ref of reference) {
+      qualified.push(...toFullyQualified(ref));
+    }
+    return mergeRefs(...qualified);
+  }
   if (isUrl(reference)) {
     reference = labeledUrl(reference);
   }

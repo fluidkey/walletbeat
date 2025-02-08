@@ -112,7 +112,9 @@ export const browserIntegration: Attribute<BrowserIntegrationValue> = {
   id: 'browserIntegration',
   icon: '\u{1f310}', // Globe with Meridians
   displayName: 'Browser integration',
-  midSentenceName: 'browser integration',
+  wording: {
+    midSentenceName: 'browser integration',
+  },
   question: sentence(`
     Does the wallet comply with web browser integration standards?
   `),

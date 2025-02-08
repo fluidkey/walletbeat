@@ -268,7 +268,9 @@ export const addressResolution: Attribute<AddressResolutionValue> = {
   id: 'addressResolution',
   icon: '\u{1f4c7}', // Card index
   displayName: 'Address resolution',
-  midSentenceName: 'address resolution',
+  wording: {
+    midSentenceName: 'address resolution',
+  },
   question: sentence(`
     Can you send funds to human-readable Ethereum addresses?
   `),

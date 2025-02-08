@@ -9,6 +9,7 @@ import { FundingDetails } from '../molecules/attributes/transparency/FundingDeta
 import { LicenseDetails } from '../molecules/attributes/transparency/LicenseDetails';
 import { SourceVisibilityDetails } from '../molecules/attributes/transparency/SourceVisibilityDetails';
 import { UnratedAttribute } from '../molecules/attributes/UnratedAttribute';
+import { SecurityAuditsDetails } from '../molecules/attributes/security/SecurityAuditsDetails';
 
 export function RenderContent({
   content,
@@ -29,6 +30,8 @@ export function RenderContent({
       return <FundingDetails {...componentProps} {...otherProps} />;
     case 'LicenseDetails':
       return <LicenseDetails {...componentProps} {...otherProps} />;
+    case 'SecurityAuditsDetails':
+      return <SecurityAuditsDetails {...componentProps} {...otherProps} />;
     case 'SourceVisibilityDetails':
       return <SourceVisibilityDetails {...componentProps} {...otherProps} />;
     case 'UnratedAttribute':

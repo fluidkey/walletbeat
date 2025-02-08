@@ -178,7 +178,9 @@ export const addressCorrelation: Attribute<AddressCorrelationValue> = {
   id: 'addressCorrelation',
   icon: '\u{1f517}', // Link
   displayName: 'Wallet address privacy',
-  midSentenceName: 'wallet address privacy',
+  wording: {
+    midSentenceName: 'wallet address privacy',
+  },
   question: sentence(`
     Is your wallet address linkable to other information about yourself?
   `),

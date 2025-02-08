@@ -2,7 +2,7 @@ import type { WalletAddressLinkableBy } from '@/schema/attributes/privacy/addres
 import { compareLeakedInfo, leakedInfoName } from '@/schema/features/privacy/data-collection';
 import { mergeRefs } from '@/schema/reference';
 import { type NonEmptyArray, nonEmptyGet, nonEmptySorted } from '@/types/utils/non-empty';
-import { Tooltip, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import type React from 'react';
 import { JoinedList } from '../../../atoms/JoinedList';
 import { ExternalLink } from '../../../atoms/ExternalLink';
@@ -11,6 +11,7 @@ import { subsectionWeight } from '@/components/constants';
 import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';
 import { isUrl } from '@/schema/url';
 import type { AddressCorrelationDetailsProps } from '@/types/content/address-correlation-details';
+import { EntityLink } from '@/components/ui/atoms/EntityLink';
 
 export function AddressCorrelationDetails({
   wallet,
@@ -62,25 +63,10 @@ export function AddressCorrelationDetails({
       );
       return;
     }
-    let entityName: React.ReactNode | null = null;
-    if (entity.legalName === 'NOT_A_LEGAL_ENTITY') {
-      entityName = <strong>{entity.name}</strong>;
-    } else if (entity.legalName.soundsDifferent) {
-      entityName = (
-        <Tooltip title={entity.legalName.name} arrow={true}>
-          <strong>{entity.name}</strong>
-        </Tooltip>
-      );
-    } else {
-      entityName = <strong>{entity.legalName.name}</strong>;
-    }
-    if (isUrl(entity.url)) {
-      entityName = <ExternalLink url={entity.url}>{entityName}</ExternalLink>;
-    }
     leaksList.push(
       <li key={sourceName}>
         <Typography>
-          {entityName}{' '}
+          <EntityLink entity={entity} />{' '}
           {isUrl(entity.privacyPolicy) ? (
             <>
               {' ('}
