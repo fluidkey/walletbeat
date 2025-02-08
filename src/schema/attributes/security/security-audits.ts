@@ -94,14 +94,15 @@ function audited(
         displayName: 'Unaddressed security flaws',
         shortExplanation: sentence(
           walletMetadata => `
-            ${walletMetadata.displayName} has undergone a recent security audit but not all of security flaws have been addressed.
+            ${walletMetadata.displayName} has undergone a recent security audit,
+            but some security flaws have not been addressed.
           `
         ),
         howToImprove: paragraph(
           ({ wallet }) => `
             ${wallet.metadata.displayName} should fix the security flaws
-            pointed out in past audits, then should consider undergoing a
-            new security audit.
+            pointed out in past security audits, then should consider
+            undergoing a new security audit.
           `
         ),
       };
