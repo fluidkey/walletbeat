@@ -261,5 +261,6 @@ export const daimo: Wallet = {
     mobile: true,
     browser: false,
     desktop: false,
+    embedded: false,
   },
 };

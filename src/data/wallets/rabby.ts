@@ -17,9 +17,9 @@ export const rabby: Wallet = {
     displayName: 'Rabby',
     iconExtension: 'svg',
     blurb: paragraph(`
-        Rabby is a user-friendly Ethereum wallet focusing on smooth UX and security.
-        It features an intuitive transaction preview feature and works on many chains.
-      `),
+      Rabby is a user-friendly Ethereum wallet focusing on smooth UX and security.
+      It features an intuitive transaction preview feature and works on many chains.
+    `),
     url: 'https://rabby.io',
     repoUrl: 'https://github.com/RabbyHub/Rabby',
     contributors: [polymutex],
@@ -292,5 +292,6 @@ export const rabby: Wallet = {
     mobile: true,
     browser: true,
     desktop: true,
+    embedded: false,
   },
 };

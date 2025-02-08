@@ -9,10 +9,8 @@ export enum Variant {
   MOBILE = 'mobile',
   DESKTOP = 'desktop',
   BROWSER = 'browser',
+  EMBEDDED = 'embedded',
 }
-
-/** Maps all variants to a T. */
-export type ComprehensiveVariants<T> = Record<Variant, T>;
 
 /** Maps at least one variant to a T. */
 export type AtLeastOneVariant<T> = NonEmptyRecord<Variant, T>;
