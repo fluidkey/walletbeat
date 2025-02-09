@@ -5,18 +5,18 @@ import type { WithRef } from '@/schema/reference';
 import type { EthereumL1LightClient } from '@/schema/features/security/light-client';
 import { polymutex } from '../contributors/polymutex';
 
-export const metamask: Wallet = {
+export const phantom: Wallet = {
   metadata: {
-    id: 'metamask',
-    displayName: 'Metamask',
+    id: 'phantom',
+    displayName: 'Phantom',
     iconExtension: 'svg',
     blurb: paragraph(`
-      MetaMask is a popular Ethereum wallet created by Consensys and that has
-      been around for a long time. It is a jack-of-all-trades wallet that can
-      be extended through MetaMask Snaps.
+      Phantom is a user-friendly Ethereum and Solana wallet. It focuses
+      on ease of use, easy swapping of tokens and NFTs, and integration
+      with popular DeFi and NFT exchange protocols within the wallet.
     `),
-    url: 'https://metamask.io',
-    repoUrl: 'https://github.com/MetaMask/metamask-extension',
+    url: 'https://www.phantom.com',
+    repoUrl: null,
     contributors: [polymutex],
     lastUpdated: '2025-02-08',
   },
@@ -52,7 +52,7 @@ export const metamask: Wallet = {
     },
     privacy: {
       dataCollection: null,
-      privacyPolicy: 'https://consensys.io/privacy-notice',
+      privacyPolicy: 'https://www.phantom.com/privacy',
     },
     license: null,
     monetization: {
