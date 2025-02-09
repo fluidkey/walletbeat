@@ -3,6 +3,7 @@ import { rabby } from './wallets/rabby';
 import { daimo } from './wallets/daimo';
 import { metamask } from './wallets/metamask';
 import { phantom } from './wallets/phantom';
+import { rainbow } from './wallets/rainbow';
 
 /** Set of all known wallets. */
 export const wallets = {
@@ -10,6 +11,7 @@ export const wallets = {
   metamask,
   phantom,
   rabby,
+  rainbow,
 };
 
 /** A valid wallet name. */
