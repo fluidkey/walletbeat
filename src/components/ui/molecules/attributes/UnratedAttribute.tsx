@@ -10,7 +10,7 @@ export function UnratedAttribute<V extends Value>({
   return (
     <WrapRatingIcon rating={Rating.UNRATED}>
       <Typography>
-        Walletbeat&apos;s database does not have the necessary information on
+        Walletbeat&apos;s database does not have the necessary information on{' '}
         {wallet.metadata.displayName} to assess this question.
       </Typography>
       <Typography>
