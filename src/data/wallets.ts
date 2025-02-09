@@ -1,10 +1,12 @@
 import { type RatedWallet, rateWallet } from '@/schema/wallet';
 import { rabby } from './wallets/rabby';
 import { daimo } from './wallets/daimo';
+import { metamask } from './wallets/metamask';
 
 /** Set of all known wallets. */
 export const wallets = {
   daimo,
+  metamask,
   rabby,
 };
 

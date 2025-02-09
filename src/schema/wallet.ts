@@ -1,5 +1,5 @@
 import { resolveFeatures, type ResolvedFeatures, type WalletFeatures } from './features';
-import { type AtLeastOneVariant, Variant } from './variants';
+import { AtLeastOneTrueVariant, type AtLeastOneVariant, Variant } from './variants';
 import {
   aggregateAttributes,
   evaluateAttributes,
@@ -100,7 +100,7 @@ export interface Wallet {
   metadata: WalletMetadata;
 
   /** Set of variants for which the wallet has an implementation. */
-  variants: Record<Variant, boolean>;
+  variants: AtLeastOneTrueVariant;
 
   /** All wallet features. */
   features: WalletFeatures;
