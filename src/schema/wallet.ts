@@ -196,10 +196,10 @@ export function rateWallet(wallet: Wallet): RatedWallet {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe because each feature must already have at least one variant populated.
   const perVariantWallets: AtLeastOneVariant<ResolvedWallet> = Object.fromEntries(
     Object.entries({
+      embedded: resolveVariant(wallet, Variant.EMBEDDED),
+      desktop: resolveVariant(wallet, Variant.DESKTOP),
       browser: resolveVariant(wallet, Variant.BROWSER),
       mobile: resolveVariant(wallet, Variant.MOBILE),
-      desktop: resolveVariant(wallet, Variant.DESKTOP),
-      embedded: resolveVariant(wallet, Variant.EMBEDDED),
     }).filter(([_, val]) => val !== null)
   ) as AtLeastOneVariant<ResolvedWallet>;
   const perVariantTree: AtLeastOneVariant<EvaluationTree> = nonEmptyRemap(
