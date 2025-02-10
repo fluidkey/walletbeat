@@ -9,6 +9,7 @@ export const unratedTemplate: Wallet = {
   metadata: {
     id: 'unrated',
     displayName: 'Unrated wallet template',
+    tableName: 'Unrated',
     iconExtension: 'svg',
     blurb: paragraph(`
       This is a fictitious wallet with all of its fields unrated.

@@ -16,6 +16,7 @@ export const rabby: Wallet = {
   metadata: {
     id: 'rabby',
     displayName: 'Rabby',
+    tableName: 'Rabby',
     iconExtension: 'svg',
     blurb: paragraph(`
       Rabby is a user-friendly Ethereum wallet focusing on smooth UX and security.

@@ -9,6 +9,7 @@ export const rainbow: Wallet = {
   metadata: {
     id: 'rainbow',
     displayName: 'Rainbow',
+    tableName: 'Rainbow',
     iconExtension: 'svg',
     blurb: paragraph(`
       Rainbow is an Ethereum wallet that prides itself in rewarding its

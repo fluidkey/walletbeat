@@ -95,7 +95,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
             <WalletIcon walletMetadata={row.wallet.metadata} iconSize={walletIconSize} />
           </Box>
           <Box flex="1" sx={row.rowWideStyle}>
-            <Typography variant="h2">{row.wallet.metadata.displayName}</Typography>
+            <Typography variant="h2">{row.wallet.metadata.tableName}</Typography>
           </Box>
         </Link>
 

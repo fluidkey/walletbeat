@@ -18,6 +18,7 @@ export const daimo: Wallet = {
   metadata: {
     id: 'daimo',
     displayName: 'Daimo',
+    tableName: 'Daimo',
     iconExtension: 'svg',
     blurb: paragraph(`
       Daimo aims to replicate a Venmo-like experience onchain.

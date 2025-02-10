@@ -8,7 +8,8 @@ import { polymutex } from '../contributors/polymutex';
 export const coinbase: Wallet = {
   metadata: {
     id: 'coinbase',
-    displayName: 'Coinbase',
+    displayName: 'Coinbase Wallet',
+    tableName: 'Coinbase',
     iconExtension: 'svg',
     blurb: paragraph(`
       Coinbase Wallet is a self-custodial wallet built by Coinbase. It

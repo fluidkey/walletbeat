@@ -28,8 +28,18 @@ export interface WalletMetadata {
    */
   id: string;
 
-  /** Human-readable name of the wallet. */
+  /**
+   * Human-readable name of the wallet, when written in a sentence.
+   * For example, `Users of ${displayName} are happy with their experience`
+   * should make sense.
+   */
   displayName: string;
+
+  /**
+   * Human-readable name of the wallet, when written standalone in the
+   * comparison table.
+   */
+  tableName: string;
 
   /** Extension of the wallet icon image at
    * `/public/images/wallets/${id}.${iconExtension}`.

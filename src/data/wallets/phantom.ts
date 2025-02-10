@@ -9,6 +9,7 @@ export const phantom: Wallet = {
   metadata: {
     id: 'phantom',
     displayName: 'Phantom',
+    tableName: 'Phantom',
     iconExtension: 'svg',
     blurb: paragraph(`
       Phantom is a user-friendly Ethereum and Solana wallet. It focuses

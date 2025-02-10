@@ -8,7 +8,8 @@ import { polymutex } from '../contributors/polymutex';
 export const metamask: Wallet = {
   metadata: {
     id: 'metamask',
-    displayName: 'Metamask',
+    displayName: 'MetaMask',
+    tableName: 'MetaMask',
     iconExtension: 'svg',
     blurb: paragraph(`
       MetaMask is a popular Ethereum wallet created by Consensys and that has
