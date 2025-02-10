@@ -10,7 +10,7 @@ export const navigationHome: NavigationLinkItem = {
   id: 'wallet-table',
   icon: <HomeIcon />,
   title: 'Walletbeat',
-  href: betaSiteRoot,
+  href: `${betaSiteRoot}/`,
 };
 
 export const navigationFaq: NavigationLinkItem = {
