@@ -152,20 +152,22 @@ export const transactionInclusion: Attribute<TransactionInclusionValue> = {
     intermediaries?
   `),
   why: markdown(`
-    One of the core tenets of Ethereum is censorship resistance. This means
-    that users must be able to reliably get transactions included onchain,
-    without the ability for intermediaries to prevent this from happening.
+    One of the core tenets of Ethereum is **censorship resistance**.
+    This means that users must be able to reliably get transactions
+    included onchain, without the ability for intermediaries to prevent
+    this from happening.
 
     This property is critical to ensure that all Ethereum participants are
     provided equal-opportunity, unfettered access to Ethereum, and to ensure
-    that Ethereum is resilient to nation-state attackers that would want to
-    prevent their residents from using Ethereum on such footing.
+    that Ethereum is resilient to attackers that would want to prevent others
+    from using Ethereum on such footing.
 
     In order to uphold this property on Ethereum L2s, users must be able to
-    force transactions to be included on the Ethereum L2 chain as well.
-    Most L2s implement such functionality by allowing L2 transactions to be
+    force transactions to be included on L2 chains as well. Most L2s
+    implement such functionality by allowing L2 transactions to be
     submitted on the L1, and enforcing that their sequencing logic must
-    respect such L1 force-inclusion requests on the L2 chain.
+    respect such L1 force-inclusion requests by including them on the L2
+    chain, typically within some fixed duration.
 
     By verifying that the wallet supports L2 force-withdrawal transactions,
     this attribute verifies censorship resistance at both levels: L1 and L2.

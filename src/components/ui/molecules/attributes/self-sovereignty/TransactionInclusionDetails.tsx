@@ -28,8 +28,8 @@ export function TransactionInclusionDetails({
                 {commaListPrefix(index, allSupportedForceWithdrawals.length)}
                 <strong>{transactionSubmissionL2TypeName(l2Type)}</strong>
               </React.Fragment>
-            ))}
-            .
+            ))}{' '}
+            L2s.
           </Typography>
           <Typography fontWeight={subsectionWeight}>
             This means users may withdraw funds from these L2s without relying on intermediaries.
@@ -45,11 +45,11 @@ export function TransactionInclusionDetails({
             does not support L2 force-inclusion withdrawal transactions on{' '}
             {unsupportedL2s.map((l2Type, index) => (
               <React.Fragment key={l2Type}>
-                {commaListPrefix(index, unsupportedL2s.length)}
+                {commaListPrefix(index, unsupportedL2s.length, 'or')}
                 <strong>{transactionSubmissionL2TypeName(l2Type)}</strong>
               </React.Fragment>
-            ))}
-            .
+            ))}{' '}
+            L2s.
           </Typography>
           <Typography fontWeight={subsectionWeight}>
             This means users rely on intermediaries in order to withdraw their funds from these L2s.

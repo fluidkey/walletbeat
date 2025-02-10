@@ -16,20 +16,20 @@ export function slugifyCamelCase(camelCaseString: string): string {
  * @param listSize The total size of the list.
  * @returns The prefix to use before the element.
  */
-export function commaListPrefix(index: number, listSize: number): '' | ', ' | ' and ' {
+export function commaListPrefix(index: number, listSize: number, and?: string): string {
   if (index === 0) {
     return '';
   }
-  return index < listSize - 1 ? ', ' : ' and ';
+  return index < listSize - 1 ? ', ' : ` ${and ?? 'and'} `;
 }
 
 /**
  * Format a list of strings into a comma-separated list.
  * Null values, undefined values, and empty strings are ignored.
  */
-export function commaListFormat(items: Array<string | null | undefined>): string {
+export function commaListFormat(items: Array<string | null | undefined>, and?: string): string {
   const filtered = items.filter(item => typeof item === 'string' && item !== '');
-  return filtered.map((item, i) => `${commaListPrefix(i, filtered.length)}${item}`).join('');
+  return filtered.map((item, i) => `${commaListPrefix(i, filtered.length, and)}${item}`).join('');
 }
 
 /**
