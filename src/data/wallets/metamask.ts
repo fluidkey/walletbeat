@@ -54,6 +54,18 @@ export const metamask: Wallet = {
       dataCollection: null,
       privacyPolicy: 'https://consensys.io/privacy-notice',
     },
+    selfSovereignty: {
+      transactionSubmission: {
+        l1: {
+          selfBroadcastViaDirectGossip: null,
+          selfBroadcastViaSelfHostedNode: null,
+        },
+        l2: {
+          arbitrum: null,
+          opStack: null,
+        },
+      },
+    },
     license: null,
     monetization: {
       revenueBreakdownIsPublic: false,

@@ -54,6 +54,18 @@ export const unratedTemplate: Wallet = {
       dataCollection: null,
       privacyPolicy: 'https://example.com/privacy-policy',
     },
+    selfSovereignty: {
+      transactionSubmission: {
+        l1: {
+          selfBroadcastViaDirectGossip: null,
+          selfBroadcastViaSelfHostedNode: null,
+        },
+        l2: {
+          arbitrum: null,
+          opStack: null,
+        },
+      },
+    },
     license: null,
     monetization: {
       revenueBreakdownIsPublic: false,

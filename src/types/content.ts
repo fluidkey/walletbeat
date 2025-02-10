@@ -7,6 +7,7 @@ import type { FundingDetailsContent } from './content/funding-details';
 import type { LicenseDetailsContent } from './content/license-details';
 import { trimWhitespacePrefix } from './utils/text';
 import type { SecurityAuditsDetailsContent } from './content/security-audits-details';
+import type { TransactionInclusionDetailsContent } from './content/transaction-inclusion-details';
 
 /**
  * Type of content that may be displayed on the UI.
@@ -32,6 +33,7 @@ export type ComponentAndProps =
   | LicenseDetailsContent
   | SecurityAuditsDetailsContent
   | SourceVisibilityDetailsContent
+  | TransactionInclusionDetailsContent
   | UnratedAttributeContent<Value>;
 
 /**

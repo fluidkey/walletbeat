@@ -53,6 +53,10 @@ import {
   type AddressResolutionValue,
 } from './attributes/ecosystem/address-resolution';
 import { securityAudits, type SecurityAuditsValue } from './attributes/security/security-audits';
+import {
+  transactionInclusion,
+  type TransactionInclusionValue,
+} from './attributes/self-sovereignty/transaction-inclusion';
 
 /** A ValueSet for security Values. */
 type SecurityValues = Dict<{
@@ -106,6 +110,7 @@ export const privacyAttributeGroup: AttributeGroup<PrivacyValues> = {
 /** A ValueSet for self-sovereignty Values. */
 type SelfSovereigntyValues = Dict<{
   selfHostedNode: SelfHostedNodeValue;
+  transactionInclusion: TransactionInclusionValue;
 }>;
 
 /** Self-sovereignty attributes. */
@@ -119,9 +124,11 @@ export const selfSovereigntyAttributeGroup: AttributeGroup<SelfSovereigntyValues
   ),
   attributes: {
     selfHostedNode,
+    transactionInclusion,
   },
   score: scoreGroup<SelfSovereigntyValues>({
     selfHostedNode: 1.0,
+    transactionInclusion: 1.0,
   }),
 };
 
@@ -203,6 +210,7 @@ export interface PrivacyEvaluations extends EvaluatedGroup<PrivacyValues> {
 /** Evaluated self-sovereignty attributes for a single wallet. */
 export interface SelfSovereigntyEvaluations extends EvaluatedGroup<SelfSovereigntyValues> {
   selfHostedNode: EvaluatedAttribute<SelfHostedNodeValue>;
+  transactionInclusion: EvaluatedAttribute<TransactionInclusionValue>;
 }
 
 /** Evaluated transparency attributes for a single wallet. */
@@ -249,6 +257,7 @@ export function evaluateAttributes(features: ResolvedFeatures): EvaluationTree {
     },
     selfSovereignty: {
       selfHostedNode: evalAttr(selfHostedNode),
+      transactionInclusion: evalAttr(transactionInclusion),
     },
     transparency: {
       openSource: evalAttr(openSource),
@@ -293,6 +302,7 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
     },
     selfSovereignty: {
       selfHostedNode: attr(tree => tree.selfSovereignty.selfHostedNode),
+      transactionInclusion: attr(tree => tree.selfSovereignty.transactionInclusion),
     },
     transparency: {
       openSource: attr(tree => tree.transparency.openSource),

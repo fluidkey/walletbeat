@@ -10,6 +10,7 @@ import { LicenseDetails } from '../molecules/attributes/transparency/LicenseDeta
 import { SourceVisibilityDetails } from '../molecules/attributes/transparency/SourceVisibilityDetails';
 import { UnratedAttribute } from '../molecules/attributes/UnratedAttribute';
 import { SecurityAuditsDetails } from '../molecules/attributes/security/SecurityAuditsDetails';
+import { TransactionInclusionDetails } from '../molecules/attributes/self-sovereignty/TransactionInclusionDetails';
 
 export function RenderContent({
   content,
@@ -34,6 +35,8 @@ export function RenderContent({
       return <SecurityAuditsDetails {...componentProps} {...otherProps} />;
     case 'SourceVisibilityDetails':
       return <SourceVisibilityDetails {...componentProps} {...otherProps} />;
+    case 'TransactionInclusionDetails':
+      return <TransactionInclusionDetails {...componentProps} {...otherProps} />;
     case 'UnratedAttribute':
       return <UnratedAttribute {...componentProps} {...otherProps} />;
   }

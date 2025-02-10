@@ -54,6 +54,18 @@ export const rainbow: Wallet = {
       dataCollection: null,
       privacyPolicy: 'https://rainbow.me/privacy',
     },
+    selfSovereignty: {
+      transactionSubmission: {
+        l1: {
+          selfBroadcastViaDirectGossip: null,
+          selfBroadcastViaSelfHostedNode: null,
+        },
+        l2: {
+          arbitrum: null,
+          opStack: null,
+        },
+      },
+    },
     license: null,
     monetization: {
       revenueBreakdownIsPublic: false,

@@ -14,6 +14,7 @@ import type { WalletProfile } from './features/profile';
 import type { WalletIntegration } from './features/integration';
 import type { AddressResolution } from './features/address-resolution';
 import type { SecurityAudit } from './features/security/security-audits';
+import type { TransactionSubmission } from './features/self-sovereignty/transaction-submission';
 
 /**
  * A set of features about a wallet, each of which may or may not depend on
@@ -53,6 +54,12 @@ export interface WalletFeatures {
 
     /** Privacy policy URL of the wallet. */
     privacyPolicy: VariantFeature<string>;
+  };
+
+  /** Self-sovereignty features. */
+  selfSovereignty: {
+    /** Describes the set of options for submitting transactions. */
+    transactionSubmission: VariantFeature<TransactionSubmission>;
   };
 
   /** Level of configurability for chains. */
@@ -98,6 +105,9 @@ export interface ResolvedFeatures {
     dataCollection: ResolvedFeature<DataCollection>;
     privacyPolicy: ResolvedFeature<string>;
   };
+  selfSovereignty: {
+    transactionSubmission: ResolvedFeature<TransactionSubmission>;
+  };
   chainConfigurability: ResolvedFeature<ChainConfigurability>;
   integration: WalletIntegration;
   multiAddress: ResolvedFeature<boolean>;
@@ -128,6 +138,9 @@ export function resolveFeatures(features: WalletFeatures, variant: Variant): Res
     privacy: {
       dataCollection: feat(features.privacy.dataCollection),
       privacyPolicy: feat(features.privacy.privacyPolicy),
+    },
+    selfSovereignty: {
+      transactionSubmission: feat(features.selfSovereignty.transactionSubmission),
     },
     chainConfigurability: feat(features.chainConfigurability),
     integration: features.integration,
