@@ -92,8 +92,8 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
 
   useEffect(
     () => {
-      if(activeItemId)
-        scrollNavigationTo(activeItemId)
+      if (activeItemId)
+        scrollNavigationTo(activeItemId);
     },
     [activeItemId]
   );
@@ -102,22 +102,22 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
 
   const onHashChange = useCallback(
     (e: HashChangeEvent) => {
-      const newUrl = new URL(e.newURL)
-      if(newUrl.hash)
-        setActiveItemId(newUrl.hash.slice(1))
+      const newUrl = new URL(e.newURL);
+      if (newUrl.hash)
+        setActiveItemId(newUrl.hash.slice(1));
 
-      isPageSmoothScrolling.current = true
+      isPageSmoothScrolling.current = true;
 
       document.addEventListener(
         'scrollend',
         e => {
-          isPageSmoothScrolling.current = false
+          isPageSmoothScrolling.current = false;
         },
         { once: true }
       );
 
       setTimeout(() => {
-        isPageSmoothScrolling.current = false
+        isPageSmoothScrolling.current = false;
       }, 1250)
     },
     []
@@ -135,8 +135,8 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
 
   const onScroll = useCallback(
     (e: Event) => {
-      if(isPageSmoothScrolling.current)
-        return
+      if (isPageSmoothScrolling.current)
+        return;
 
       const stickyHeaderElement = stickyHeaderId ? document.getElementById(stickyHeaderId) : undefined;
 
@@ -155,11 +155,11 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout(
       );
 
       const activeItem = items.find((item, i, { length }) => {
-        if(i === length - 1) return true
+        if (i === length - 1) return true;
 
         const headingElement = document.getElementById(item.contentId);
         return headingElement && headingElement.getBoundingClientRect().bottom > topBound;
-      })!
+      })!;
 
       setActiveItemId(activeItem.id);
     },
