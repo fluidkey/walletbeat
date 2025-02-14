@@ -56,7 +56,9 @@ export const sourceVisibility: Attribute<SourceVisibilityValue> = {
   id: 'sourceVisibility',
   icon: '\u{1f35d}', // Spaghetti
   displayName: 'Source visibility',
-  midSentenceName: 'source visibility',
+  wording: {
+    midSentenceName: 'source visibility',
+  },
   question: sentence('Is the source code for the wallet visible to the public?'),
   why: paragraph(`
     When using a wallet, users are entrusting it to preserve their funds

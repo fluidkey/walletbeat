@@ -90,6 +90,11 @@ export function pickWorstRating<V extends Value>(
       // Exempt ratings are ignored, unless they are the only rating we have.
       continue;
     }
+    if (worst.value.rating === Rating.EXEMPT) {
+      // Any non-EXEMPT rating takes precedence over an EXEMPT rating.
+      worst = evaluation;
+      continue;
+    }
     if (worst.value.rating === Rating.PASS) {
       // Any non-EXEMPT, non-UNRATED rating is worse or equal to PASS, so pick it.
       worst = evaluation;

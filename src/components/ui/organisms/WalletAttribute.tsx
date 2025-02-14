@@ -123,7 +123,10 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
     },
     {
       id: `methodology-${evalAttr.attribute.id}`,
-      summary: `How is ${evalAttr.attribute.midSentenceName} evaluated?`,
+      summary:
+        evalAttr.attribute.wording.midSentenceName === null
+          ? evalAttr.attribute.wording.howIsEvaluated
+          : `How is ${evalAttr.attribute.wording.midSentenceName} evaluated?`,
       contents: (
         <AttributeMethodology attribute={evalAttr.attribute} evaluation={evalAttr.evaluation} />
       ),
@@ -134,7 +137,10 @@ export function WalletAttribute<Vs extends ValueSet, V extends Value>({
   if (howToImprove !== undefined) {
     accordions.push({
       id: `how-${evalAttr.attribute.id}`,
-      summary: `What can ${wallet.metadata.displayName} do about its ${evalAttr.attribute.midSentenceName}?`,
+      summary:
+        evalAttr.attribute.wording.midSentenceName === null
+          ? evalAttr.attribute.wording.whatCanWalletDoAboutIts(wallet.metadata)
+          : `What can ${wallet.metadata.displayName} do about its ${evalAttr.attribute.wording.midSentenceName}?`,
       contents: (
         <RenderTypographicContent
           content={howToImprove.render({ wallet, value: evalAttr.evaluation.value })}

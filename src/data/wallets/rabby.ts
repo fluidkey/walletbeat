@@ -10,16 +10,18 @@ import { leastAuthority } from '../entities/least-authority';
 import { slowMist } from '../entities/slowmist';
 import { SecurityFlawSeverity } from '@/schema/features/security/security-audits';
 import { cure53 } from '../entities/cure53';
+import { TransactionSubmissionL2Support } from '@/schema/features/self-sovereignty/transaction-submission';
 
 export const rabby: Wallet = {
   metadata: {
     id: 'rabby',
     displayName: 'Rabby',
+    tableName: 'Rabby',
     iconExtension: 'svg',
     blurb: paragraph(`
-        Rabby is a user-friendly Ethereum wallet focusing on smooth UX and security.
-        It features an intuitive transaction preview feature and works on many chains.
-      `),
+      Rabby is a user-friendly Ethereum wallet focusing on smooth UX and security.
+      It features an intuitive transaction preview feature and works on many chains.
+    `),
     url: 'https://rabby.io',
     repoUrl: 'https://github.com/RabbyHub/Rabby',
     contributors: [polymutex],
@@ -123,17 +125,17 @@ export const rabby: Wallet = {
           unpatchedFlaws: [
             {
               name: 'Issue B: Insecure Key Derivation Function',
-              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
+              severityAtAuditPublication: SecurityFlawSeverity.MEDIUM,
               presentStatus: 'NOT_FIXED',
             },
             {
               name: 'Issue C: Weak Encryption Method Used',
-              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
+              severityAtAuditPublication: SecurityFlawSeverity.MEDIUM,
               presentStatus: 'NOT_FIXED',
             },
             {
               name: 'Issue D: Weak PBKDF2 Parameters Used',
-              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
+              severityAtAuditPublication: SecurityFlawSeverity.MEDIUM,
               presentStatus: 'NOT_FIXED',
             },
           ],
@@ -195,18 +197,7 @@ export const rabby: Wallet = {
             date: '2024-10-14',
             commit: 'eb5da18727b38a3fd693af8b74f6f151f2fd361c',
           },
-          unpatchedFlaws: [
-            {
-              name: 'Issue B: Setting the Cache Before It Has Been Initialized Will Cause an Exception',
-              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
-              presentStatus: 'NOT_FIXED',
-            },
-            {
-              name: 'Issue C: persistStore Module Can Become Out of Sync With Browser Local Storage',
-              severityAtAuditPublication: SecurityFlawSeverity.NOT_CATEGORIZED,
-              presentStatus: 'NOT_FIXED',
-            },
-          ],
+          unpatchedFlaws: 'ALL_FIXED',
         },
         {
           auditor: slowMist,
@@ -264,6 +255,18 @@ export const rabby: Wallet = {
       },
       privacyPolicy: 'https://rabby.io/docs/privacy',
     },
+    selfSovereignty: {
+      transactionSubmission: {
+        l1: {
+          selfBroadcastViaDirectGossip: false,
+          selfBroadcastViaSelfHostedNode: true,
+        },
+        l2: {
+          arbitrum: TransactionSubmissionL2Support.SUPPORTED_BUT_NO_FORCE_INCLUSION,
+          opStack: TransactionSubmissionL2Support.SUPPORTED_BUT_NO_FORCE_INCLUSION,
+        },
+      },
+    },
     license: {
       browser: License.MIT,
       desktop: License.MIT,
@@ -303,5 +306,6 @@ export const rabby: Wallet = {
     mobile: true,
     browser: true,
     desktop: true,
+    embedded: false,
   },
 };

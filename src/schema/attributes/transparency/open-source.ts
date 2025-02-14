@@ -125,7 +125,9 @@ export const openSource: Attribute<OpenSourceValue> = {
   id: 'openSource',
   icon: '\u{2764}', // Heart
   displayName: 'Source code license',
-  midSentenceName: 'source code license',
+  wording: {
+    midSentenceName: 'source code license',
+  },
   question: sentence(`
     Is the wallet's source code licensed under a Free and Open Source Software (FOSS) license?
   `),

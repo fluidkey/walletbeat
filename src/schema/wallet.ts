@@ -1,5 +1,5 @@
 import { resolveFeatures, type ResolvedFeatures, type WalletFeatures } from './features';
-import { type AtLeastOneVariant, Variant } from './variants';
+import { type AtLeastOneTrueVariant, type AtLeastOneVariant, Variant } from './variants';
 import {
   aggregateAttributes,
   evaluateAttributes,
@@ -28,8 +28,18 @@ export interface WalletMetadata {
    */
   id: string;
 
-  /** Human-readable name of the wallet. */
+  /**
+   * Human-readable name of the wallet, when written in a sentence.
+   * For example, `Users of ${displayName} are happy with their experience`
+   * should make sense.
+   */
   displayName: string;
+
+  /**
+   * Human-readable name of the wallet, when written standalone in the
+   * comparison table.
+   */
+  tableName: string;
 
   /** Extension of the wallet icon image at
    * `/public/images/wallets/${id}.${iconExtension}`.
@@ -100,7 +110,7 @@ export interface Wallet {
   metadata: WalletMetadata;
 
   /** Set of variants for which the wallet has an implementation. */
-  variants: Record<Variant, boolean>;
+  variants: Record<Variant, boolean> & AtLeastOneTrueVariant;
 
   /** All wallet features. */
   features: WalletFeatures;
@@ -196,9 +206,10 @@ export function rateWallet(wallet: Wallet): RatedWallet {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe because each feature must already have at least one variant populated.
   const perVariantWallets: AtLeastOneVariant<ResolvedWallet> = Object.fromEntries(
     Object.entries({
+      embedded: resolveVariant(wallet, Variant.EMBEDDED),
+      desktop: resolveVariant(wallet, Variant.DESKTOP),
       browser: resolveVariant(wallet, Variant.BROWSER),
       mobile: resolveVariant(wallet, Variant.MOBILE),
-      desktop: resolveVariant(wallet, Variant.DESKTOP),
     }).filter(([_, val]) => val !== null)
   ) as AtLeastOneVariant<ResolvedWallet>;
   const perVariantTree: AtLeastOneVariant<EvaluationTree> = nonEmptyRemap(

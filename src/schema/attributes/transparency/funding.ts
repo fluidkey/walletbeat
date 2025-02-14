@@ -159,7 +159,9 @@ export const funding: Attribute<FundingValue> = {
   id: 'funding',
   icon: '\u{1fa99}', // Coin
   displayName: 'Funding',
-  midSentenceName: 'funding',
+  wording: {
+    midSentenceName: 'funding',
+  },
   question: sentence(`
     How is the wallet's development team funded?
   `),
