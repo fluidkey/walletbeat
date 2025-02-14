@@ -5,8 +5,10 @@ import '@fontsource/work-sans';
 
 
 // Props
+import type { ComponentProps } from 'astro/types'
+
 type Props = {
-  metadata: Parameters<typeof Metadata>[0]['metadata'];
+  metadata: ComponentProps<typeof Metadata>['metadata']
 };
 
 const {
