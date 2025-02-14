@@ -1,6 +1,7 @@
 import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import LanguageIcon from '@mui/icons-material/Language';
 import MonitorIcon from '@mui/icons-material/Monitor';
+import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 import type { SvgIconComponent } from '@mui/icons-material';
 import { type AtLeastOneVariant, hasSingleVariant, Variant } from '@/schema/variants';
 
@@ -15,6 +16,8 @@ export function variantToIcon(variant: Variant): SvgIconComponent {
       return MonitorIcon;
     case Variant.MOBILE:
       return PhoneAndroidIcon;
+    case Variant.EMBEDDED:
+      return SettingsEthernetIcon;
   }
 }
 
@@ -29,6 +32,8 @@ export function variantToName(variant: Variant, titleCase: boolean): string {
       return titleCase ? 'Desktop' : 'desktop';
     case Variant.MOBILE:
       return titleCase ? 'Mobile' : 'mobile';
+    case Variant.EMBEDDED:
+      return titleCase ? 'Embedded' : 'embedded';
   }
 }
 
@@ -44,6 +49,8 @@ export function variantToRunsOn(variant: Variant): string {
       return 'as a desktop application';
     case Variant.MOBILE:
       return 'on mobile';
+    case Variant.EMBEDDED:
+      return 'within other applications';
   }
 }
 

@@ -74,10 +74,17 @@ type References = Reference | NonEmptyArray<Reference>;
 export type MustRef<T> = T & { ref: References };
 
 /** An object that *may or may not* be annotated with References. */
-export type WithRef<T> = MustRef<T> | (T & { ref?: undefined });
+export type WithRef<T> = MustRef<T> | (T & { ref?: null });
 
 /** Fully qualify a `Reference`. */
-function toFullyQualified(reference: Reference): FullyQualifiedReference[] {
+export function toFullyQualified(reference: References): FullyQualifiedReference[] {
+  if (Array.isArray(reference)) {
+    const qualified: FullyQualifiedReference[] = [];
+    for (const ref of reference) {
+      qualified.push(...toFullyQualified(ref));
+    }
+    return mergeRefs(...qualified);
+  }
   if (isUrl(reference)) {
     reference = labeledUrl(reference);
   }
@@ -133,7 +140,7 @@ function toFullyQualified(reference: Reference): FullyQualifiedReference[] {
 
 /** Extract references out of `withRef`. */
 export function refs<T>(withRef: WithRef<T>): FullyQualifiedReference[] {
-  if (withRef.ref === undefined) {
+  if (withRef.ref === undefined || withRef.ref === null) {
     return [];
   }
   let refs = withRef.ref;

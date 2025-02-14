@@ -11,9 +11,20 @@ export enum SecurityFlawSeverity {
   MEDIUM = 'MEDIUM',
 
   // Lower-than-medium security flaws are not tracked.
+  // If the security auditor does not assign a severity rating, use your
+  // best judgement.
+}
 
-  /** The security auditing entity did not assign a severity rating. */
-  NOT_CATEGORIZED = 'NOT_CATEGORIZED',
+/** Human-friendly name for a security level. */
+export function securityFlawSeverityName(severity: SecurityFlawSeverity): string {
+  switch (severity) {
+    case SecurityFlawSeverity.CRITICAL:
+      return 'Critical';
+    case SecurityFlawSeverity.HIGH:
+      return 'High';
+    case SecurityFlawSeverity.MEDIUM:
+      return 'Medium';
+  }
 }
 
 /** A security flaw which was not addressed at audit publication time. */
@@ -85,3 +96,8 @@ export type SecurityAudit = MustRef<{
    */
   unpatchedFlaws: 'NONE_FOUND' | 'ALL_FIXED' | NonEmptyArray<UnpatchedSecurityFlaw>;
 }>;
+
+/** Unique ID for a given security audit. */
+export function securityAuditId(audit: SecurityAudit): string {
+  return `${audit.auditor.id}-${audit.auditDate}`;
+}

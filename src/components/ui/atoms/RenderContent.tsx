@@ -7,6 +7,8 @@ import { FundingDetails } from '@/components/ui/molecules/attributes/transparenc
 import { LicenseDetails } from '@/components/ui/molecules/attributes/transparency/LicenseDetails';
 import { SourceVisibilityDetails } from '@/components/ui/molecules/attributes/transparency/SourceVisibilityDetails';
 import { UnratedAttribute } from '@/components/ui/molecules/attributes/UnratedAttribute';
+import { SecurityAuditsDetails } from '@/components/ui/molecules/attributes/security/SecurityAuditsDetails';
+import { TransactionInclusionDetails } from '@/components/ui/molecules/attributes/self-sovereignty/TransactionInclusionDetails';
 
 export function RenderContent({
   content,
@@ -27,8 +29,12 @@ export function RenderContent({
       return <FundingDetails {...componentProps} {...otherProps} />;
     case 'LicenseDetails':
       return <LicenseDetails {...componentProps} {...otherProps} />;
+    case 'SecurityAuditsDetails':
+      return <SecurityAuditsDetails {...componentProps} {...otherProps} />;
     case 'SourceVisibilityDetails':
       return <SourceVisibilityDetails {...componentProps} {...otherProps} />;
+    case 'TransactionInclusionDetails':
+      return <TransactionInclusionDetails {...componentProps} {...otherProps} />;
     case 'UnratedAttribute':
       return <UnratedAttribute {...componentProps} {...otherProps} />;
   }

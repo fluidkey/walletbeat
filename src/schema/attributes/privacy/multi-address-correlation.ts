@@ -304,7 +304,9 @@ export const multiAddressCorrelation: Attribute<MultiAddressCorrelationValue> = 
   id: 'multiAddressCorrelation',
   icon: '\u{1f587}', // Linked paperclips
   displayName: 'Multi-address privacy',
-  midSentenceName: 'multi-address privacy',
+  wording: {
+    midSentenceName: 'multi-address privacy',
+  },
   question: sentence(`
     Can a third-party learn that your various wallet addresses belong to the same person?
   `),

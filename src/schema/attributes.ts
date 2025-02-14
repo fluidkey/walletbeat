@@ -261,15 +261,33 @@ export interface Attribute<V extends Value> {
    */
   displayName: string;
 
-  /**
-   * A very short, human-readable name for the attribute in a sentence.
-   * Should be no more than 3 or 4 words.
-   * Used in the context of mid-sentence descriptions. For example, the
-   * following string should make sense:
-   * "Is this wallet's ${midSentenceName} good or bad?"
-   * In most cases, a lowercase version of `displayName` will be appropriate.
-   */
-  midSentenceName: string;
+  wording:
+    | {
+        /**
+         * A very short, human-readable name for the attribute in a sentence.
+         * Should be no more than 3 or 4 words.
+         * Used in the context of mid-sentence descriptions. For example, the
+         * following string should make sense:
+         * "Is this wallet's ${midSentenceName} good or bad?"
+         * In most cases, a lowercase version of `displayName` will be appropriate.
+         * In more complex cases, this should be omitted and the more complex
+         * variation of `wording` should be used.
+         */
+        midSentenceName: string;
+      }
+    | {
+        /**
+         * midSentenceName can be set to `null` for more complex attribute
+         * names.
+         */
+        midSentenceName: null;
+
+        /** The sentence "How is <attribute> evaluated?"  */
+        howIsEvaluated: string;
+
+        /** The sentence "What can <wallet> do about its <attribute>?" */
+        whatCanWalletDoAboutIts: (walletMetadata: WalletMetadata) => string;
+      };
 
   /** A question explaining what question the attribute is answering. */
   question: Sentence<WalletMetadata>;

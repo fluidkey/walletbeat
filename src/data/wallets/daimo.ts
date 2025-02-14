@@ -12,11 +12,13 @@ import { honeycomb } from '../entities/honeycomb';
 import { WalletProfile } from '@/schema/features/profile';
 import { RpcEndpointConfiguration } from '@/schema/features/chain-configurability';
 import { veridise } from '../entities/veridise';
+import { TransactionSubmissionL2Support } from '@/schema/features/self-sovereignty/transaction-submission';
 
 export const daimo: Wallet = {
   metadata: {
     id: 'daimo',
     displayName: 'Daimo',
+    tableName: 'Daimo',
     iconExtension: 'svg',
     blurb: paragraph(`
       Daimo aims to replicate a Venmo-like experience onchain.
@@ -210,6 +212,18 @@ export const daimo: Wallet = {
       },
       privacyPolicy: 'https://daimo.com/privacy',
     },
+    selfSovereignty: {
+      transactionSubmission: {
+        l1: {
+          selfBroadcastViaDirectGossip: false,
+          selfBroadcastViaSelfHostedNode: false,
+        },
+        l2: {
+          arbitrum: TransactionSubmissionL2Support.NOT_SUPPORTED_BY_WALLET_BY_DEFAULT,
+          opStack: TransactionSubmissionL2Support.SUPPORTED_BUT_NO_FORCE_INCLUSION,
+        },
+      },
+    },
     license: License.GPL_3_0,
     monetization: {
       revenueBreakdownIsPublic: false,
@@ -261,5 +275,6 @@ export const daimo: Wallet = {
     mobile: true,
     browser: false,
     desktop: false,
+    embedded: false,
   },
 };

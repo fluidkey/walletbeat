@@ -94,7 +94,9 @@ export const chainVerification: Attribute<ChainVerificationValue> = {
   id: 'chainVerification',
   icon: '\u{2693}', // Anchor
   displayName: 'Chain verification',
-  midSentenceName: 'chain verification',
+  wording: {
+    midSentenceName: 'chain verification',
+  },
   question: sentence(`
     Does the wallet verify the integrity of the chain(s) it interacts with?
   `),
