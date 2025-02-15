@@ -3,11 +3,11 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
+    "dev": "pnpm run astro dev",
+    "build": "pnpm run astro build",
+    "preview": "pnpm run astro preview",
     "lint": "eslint src --fix",
-    "astro": "astro"
+    "astro": "ASTRO_TELEMETRY_DISABLED=1 astro"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",
