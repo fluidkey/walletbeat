@@ -5,7 +5,6 @@ import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import {
   Navigation,
   type NavigationGroup,
-  type NavigationContentItem,
   isNavigationContentItem,
   type NavigationItem,
 } from '@/components/ui/organisms/Navigation';
