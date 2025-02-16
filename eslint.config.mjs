@@ -28,6 +28,7 @@ export default [
       '@typescript-eslint/no-magic-numbers': 'off',
       '@typescript-eslint/prefer-destructuring': 'off',
       '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/no-misused-spread': 'off',
     },
   },
   eslintConfigPrettier,
