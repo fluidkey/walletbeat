@@ -1,5 +1,3 @@
-'use client';
-
 import { type NonEmptyArray, nonEmptyGet, nonEmptyMap } from '@/types/utils/non-empty';
 import { PieChart } from '@mui/x-charts/PieChart';
 import type React from 'react';

@@ -1,12 +1,10 @@
-'use client';
-
 import { ratedWallets } from '@/data/wallets';
 import type { AttributeGroup, ValueSet, EvaluatedGroup } from '@/schema/attributes';
 import type { RatedWallet } from '@/schema/wallet';
 import { Box, type SxProps } from '@mui/material';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import type React from 'react';
-import { WalletRatingCell, walletRatingColumnProps } from '../molecules/WalletRatingCell';
+import { WalletRatingCell, walletRatingColumnProps } from '@/components/ui/molecules/WalletRatingCell';
 import {
   ecosystemAttributeGroup,
   type EvaluationTree,
@@ -15,7 +13,7 @@ import {
   selfSovereigntyAttributeGroup,
   transparencyAttributeGroup,
 } from '@/schema/attribute-groups';
-import { WalletNameCell } from '../molecules/WalletNameCell';
+import { WalletNameCell } from '@/components/ui/molecules/WalletNameCell';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { expandedRowHeight, shortRowHeight } from '../../constants';
 import type {
@@ -26,7 +24,7 @@ import type {
 } from '../WalletTableState';
 import type { Variant } from '@/schema/variants';
 import { ThemeProvider } from '@mui/system';
-import { walletTableTheme } from '../../ThemeRegistry/theme';
+import { walletTableTheme } from '@/components/ThemeRegistry/theme';
 
 class TableStateHandle implements WalletTableStateHandle {
   readonly variantSelected: Variant | null;

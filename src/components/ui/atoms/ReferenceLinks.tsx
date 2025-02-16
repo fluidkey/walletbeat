@@ -3,7 +3,7 @@ import React from 'react';
 import { JoinedList } from './JoinedList';
 import { nonEmptyMap } from '@/types/utils/non-empty';
 import { Link, Tooltip } from '@mui/material';
-import { Info } from '@mui/icons-material';
+import InfoIcon from '@mui/icons-material/Info';
 
 export function ReferenceLinks({
   key,
@@ -34,7 +34,7 @@ export function ReferenceLinks({
             value: (
               <Tooltip title={ref.explanation ?? url.label} arrow={true}>
                 <Link href={url.url} target="_blank" rel="noopener noreferrer nofollow">
-                  <Info color="inherit" fontSize="inherit" />
+                  <InfoIcon color="inherit" fontSize="inherit" />
                 </Link>
               </Tooltip>
             ),

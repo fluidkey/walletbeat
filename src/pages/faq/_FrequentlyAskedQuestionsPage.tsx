@@ -1,17 +1,17 @@
 import { Typography, Divider } from '@mui/material';
 import { Box } from '@mui/system';
-import FrequentlyAskedQuestion from '../molecules/FrequentlyAskedQuestion';
+import FrequentlyAskedQuestion from '@/components/ui/molecules/FrequentlyAskedQuestion';
 import React from 'react';
-import { NavigationPageLayout } from './NavigationPageLayout';
+import { NavigationPageLayout } from '@/layouts/NavigationPageLayout';
 import {
   navigationAbout,
   navigationFaq,
   navigationFarcasterChannel,
   navigationHome,
   navigationRepository,
-} from '../../navigation';
+} from '../../components/navigation';
 import { type NonEmptyArray, nonEmptyConcat, nonEmptyMap } from '@/types/utils/non-empty';
-import type { NavigationContentItem } from '../organisms/Navigation';
+import type { NavigationContentItem } from '../../components/ui/organisms/Navigation';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
 interface FAQEntry {

@@ -17,8 +17,8 @@ export function FundingDetails({
   monetization,
 }: FundingDetailsProps): React.JSX.Element {
   const strategies = monetizationStrategies(monetization)
-    .filter(({ strategy, value }) => value === true)
-    .map(({ strategy, value }) => strategy);
+    .filter(({ value }) => value === true)
+    .map(({ strategy }) => strategy);
   const ref = refs(monetization);
   return (
     <WrapRatingIcon rating={value.rating}>

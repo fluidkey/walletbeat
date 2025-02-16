@@ -1,10 +1,7 @@
-'use client';
-
 import React, { useState } from 'react';
 import { Box, Divider, Link, styled, Typography } from '@mui/material';
 import Tooltip, { tooltipClasses, type TooltipProps } from '@mui/material/Tooltip';
 import { type Eip, eipEthereumDotOrgUrl, eipLabel, eipShortLabel } from '@/schema/eips';
-import Image from 'next/image';
 import { MarkdownBox } from './MarkdownBox';
 import { betaImagesRoot } from '@/constants';
 
@@ -111,7 +108,7 @@ export function EipLink({
           }}
         >
           <Box component="span" display="inline-block" sx={{ filter: 'invert(100%)' }}>
-            <Image src={`${betaImagesRoot}/ethereum-logo.svg`} alt="" width={14} height={14} />
+            <img src={`${betaImagesRoot}/ethereum-logo.svg`} alt="" width={14} height={14} />
           </Box>
           <Box
             component="span"

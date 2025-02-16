@@ -1,8 +1,6 @@
-'use client';
-
 import type React from 'react';
 import { labeledUrl, type Url } from '@/schema/url';
-import { OpenInNewRounded } from '@mui/icons-material';
+import OpenInNewRoundedIcon from '@mui/icons-material/OpenInNewRounded';
 import { Box, Link, type TypographyOwnProps } from '@mui/material';
 import { useState } from 'react';
 
@@ -46,7 +44,7 @@ export function ExternalLink({
         >
           {children ?? labeled.label}
         </Box>{' '}
-        <OpenInNewRounded color="inherit" fontSize="inherit" />
+        <OpenInNewRoundedIcon color="inherit" fontSize="inherit" />
       </Link>
     </Box>
   );

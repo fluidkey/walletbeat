@@ -1,5 +1,3 @@
-'use client';
-
 import { type NonEmptyArray, nonEmptyMap } from '@/types/utils/non-empty';
 import type React from 'react';
 import { Box, Tooltip } from '@mui/material';

@@ -1,6 +1,5 @@
 import { betaImagesRoot } from '@/constants';
 import type { WalletMetadata } from '@/schema/wallet';
-import Image from 'next/image';
 import type React from 'react';
 
 export function WalletIcon({
@@ -11,7 +10,7 @@ export function WalletIcon({
   iconSize: number;
 }): React.JSX.Element {
   return (
-    <Image
+    <img
       alt={walletMetadata.displayName}
       width={iconSize}
       height={iconSize}
