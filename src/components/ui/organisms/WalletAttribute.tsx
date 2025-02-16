@@ -25,7 +25,6 @@ import { isTypographicContent } from '@/types/content';
 export function WalletAttribute<Vs extends ValueSet, V extends Value>({
   wallet,
   attrGroup,
-  evalGroup,
   evalAttr,
   variantSpecificity,
   displayedVariant,

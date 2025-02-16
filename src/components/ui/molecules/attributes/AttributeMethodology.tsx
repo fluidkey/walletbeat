@@ -175,7 +175,6 @@ function ExampleRatings<V extends Value>({
  */
 export function AttributeMethodology<V extends Value>({
   attribute,
-  evaluation = undefined,
 }: {
   attribute: Attribute<V>;
   evaluation?: Evaluation<V>;
