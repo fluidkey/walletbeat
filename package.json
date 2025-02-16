@@ -11,7 +11,6 @@
     "astro": "ASTRO_TELEMETRY_DISABLED=1 astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
     "@astrojs/react": "^4.2.0",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
@@ -28,15 +27,16 @@
     "astro": "^5.2.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-markdown": "^9.0.3",
-    "typescript": "^5.7.3"
+    "react-markdown": "^9.0.3"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.4",
     "@fleek-platform/cli": "^3.8.2",
     "eslint": "^9.19.0",
     "eslint-config-love": "^118.0.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-react": "^7.37.4",
-    "globals": "^15.14.0"
+    "globals": "^15.14.0",
+    "typescript": "^5.7.3"
   }
 }
