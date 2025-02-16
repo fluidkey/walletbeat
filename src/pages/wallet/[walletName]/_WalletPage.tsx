@@ -453,15 +453,6 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
   );
   const scrollMarginTop = `${headerHeight + headerBottomMargin + scrollPastHeaderPixels}px`;
 
-  const navigationRef = React.useRef<{
-    scrollToItemId: (itemId: string) => void;
-  }>(null);
-  const scrollToSection = (section: Section): void => {
-    if (navigationRef.current !== null) {
-      navigationRef.current.scrollToItemId(sectionHeaderId(section));
-    }
-  };
-
   return (
     <NavigationPageLayout
       groups={[
@@ -513,7 +504,6 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
       stickyHeaderId="walletHeader"
       stickyHeaderMargin={headerBottomMargin}
       contentDependencies={[wallet, pickedVariant]}
-      ref={navigationRef}
     >
       <StyledHeader key="walletHeader" id="walletHeader">
         <Typography
@@ -569,12 +559,6 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                     marginBottom="0"
                     paddingLeft={theme.spacing(2)}
                     paddingRight={theme.spacing(2)}
-                    onClick={e => {
-                      if (e.button === 0) {
-                        scrollToSection(section);
-                        e.preventDefault();
-                      }
-                    }}
                   >
                     {section.icon} {section.title}
                   </AnchorHeader>
@@ -610,12 +594,6 @@ export function WalletPage({ walletName }: { walletName: WalletName }): React.JS
                           sx={{ scrollMarginTop }}
                           variant="h3"
                           marginBottom="0rem"
-                          onClick={e => {
-                            if (e.button === 0) {
-                              scrollToSection(subsection);
-                              e.preventDefault();
-                            }
-                          }}
                         >
                           {subsection.icon} {subsection.title}
                         </AnchorHeader>
