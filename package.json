@@ -7,7 +7,7 @@
     "build": "pnpm run astro build",
     "preview": "pnpm run astro preview",
     "check": "pnpm run astro check",
-    "check:all": "pnpm run astro check --minimumSeverity=hint --minimumFailingSeverity=hint",
+    "check:all": "pnpm run astro check --minimumSeverity=hint --minimumFailingSeverity=hint && pnpm run lint",
     "lint": "eslint src --fix",
     "astro": "ASTRO_TELEMETRY_DISABLED=1 astro"
   },
