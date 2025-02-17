@@ -7,7 +7,7 @@ import {
   exampleRating,
 } from '@/schema/attributes';
 import { pickWorstRating, unrated } from '../common';
-import { markdown, mdSentence, paragraph, sentence } from '@/types/content';
+import { markdown, mdParagraph, mdSentence, sentence } from '@/types/content';
 import type { WalletMetadata } from '@/schema/wallet';
 import { eipMarkdownLink, eipMarkdownLinkAndTitle } from '../../eips';
 import {
@@ -109,7 +109,7 @@ const supportsEoaAndMpc: Evaluation<AccountAbstractionValue> = {
       no Account Abstraction support.
     `
   ),
-  impact: paragraph(`
+  impact: mdParagraph(`
     Users cannot use Account Abstraction features. However, EOA
     created in this wallet can be imported in other wallets that
     do support ${eipMarkdownLink(eip7702)}.
@@ -142,7 +142,7 @@ const supportsMpcOnly: Evaluation<AccountAbstractionValue> = {
       no Account Abstraction support.
     `
   ),
-  impact: paragraph(`
+  impact: mdParagraph(`
     Users cannot use Account Abstraction features. However, accounts
     created in this wallet can be imported in other wallets that
     do support ${eipMarkdownLink(eip7702)}.
@@ -175,7 +175,7 @@ const supportsRawEoaOnly: Evaluation<AccountAbstractionValue> = {
       Account Abstraction support.
     `
   ),
-  impact: paragraph(`
+  impact: mdParagraph(`
     Users cannot use Account Abstraction features. However, accounts
     created in this wallet can be imported in other wallets that
     do support ${eipMarkdownLink(eip7702)}.
