@@ -140,13 +140,7 @@ interface NavigationItemProps {
  * A single navigation list item.
  */
 const NavigationItem = memo(
-  function NavigationItem({
-    item,
-    active,
-    depth,
-    sx,
-    onContentItemClick,
-  }: NavigationItemProps): React.JSX.Element {
+  function NavigationItem({ item, active, depth, sx }: NavigationItemProps): React.JSX.Element {
     const ButtonComponent = ({
       children,
     }: {
@@ -155,8 +149,8 @@ const NavigationItem = memo(
       if (isNavigationContentItem(item)) {
         return (
           <ListItemButton
-		  	component="a"
-			href={`#${item.contentId}`}
+            component="a"
+            href={`#${item.contentId}`}
             disableRipple={true}
             selected={active}
             sx={{ borderRadius: `${navigationListItemRadius}px` }}
