@@ -87,6 +87,9 @@ importers:
       prettier:
         specifier: ^3.5.1
         version: 3.5.1
+      prettier-plugin-curly:
+        specifier: ^0.3.1
+        version: 0.3.1(prettier@3.5.1)
       typescript:
         specifier: ^5.7.3
         version: 5.7.3
@@ -3634,6 +3637,12 @@ packages:
   press-any-key@0.1.1:
     resolution: {integrity: sha512-TR722R9UpZjvOtyVcmS7hx2/1KzKIyeizIqHJ7sRcfXvCDzeSknS3UNLhmQMN7075Jd9gGUBdq98sHw2eqb86Q==}
     hasBin: true
+
+  prettier-plugin-curly@0.3.1:
+    resolution: {integrity: sha512-GU3JJ4DB+j2gNA+8SxiyuAOuqalFu+JrX9JMNChTEwvgLCs+XXu2WJ1NbP1uK57Cbz04E2OhrkDpQFLMH5MsXg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      prettier: ^2 || ^3
 
   prettier@2.8.7:
     resolution: {integrity: sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==}
@@ -9000,6 +9009,15 @@ snapshots:
   press-any-key@0.1.1:
     dependencies:
       single-line-log: 1.1.2
+
+  prettier-plugin-curly@0.3.1(prettier@3.5.1):
+    dependencies:
+      '@babel/generator': 7.26.5
+      '@babel/parser': 7.26.7
+      '@babel/traverse': 7.26.7
+      prettier: 3.5.1
+    transitivePeerDependencies:
+      - supports-color
 
   prettier@2.8.7:
     optional: true

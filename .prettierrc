@@ -8,5 +8,6 @@
   "bracketSameLine": false,
   "arrowParens": "avoid",
   "endOfLine": "auto",
-  "useTabs": false
+  "useTabs": false,
+  "plugins": ["prettier-plugin-curly"]
 }

@@ -81,14 +81,18 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout({
   };
 
   useEffect(() => {
-    if (activeItemId !== '') scrollNavigationTo(activeItemId);
+    if (activeItemId !== '') {
+      scrollNavigationTo(activeItemId);
+    }
   }, [activeItemId]);
 
   const isPageSmoothScrolling = useRef(false);
 
   const onHashChange = useCallback((e: HashChangeEvent) => {
     const newUrl = new URL(e.newURL);
-    if (newUrl.hash !== '') setActiveItemId(newUrl.hash.slice(1));
+    if (newUrl.hash !== '') {
+      setActiveItemId(newUrl.hash.slice(1));
+    }
 
     isPageSmoothScrolling.current = true;
 
@@ -114,7 +118,9 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout({
 
   const onScroll = useCallback(
     (_: Event) => {
-      if (isPageSmoothScrolling.current) return;
+      if (isPageSmoothScrolling.current) {
+        return;
+      }
 
       const stickyHeaderElement =
         stickyHeaderId !== undefined ? document.getElementById(stickyHeaderId) : undefined;
@@ -129,7 +135,9 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout({
         .filter(isNavigationContentItem);
 
       const activeItem = items.find((item, i, { length }) => {
-        if (i === length - 1) return true;
+        if (i === length - 1) {
+          return true;
+        }
 
         const headingElement = document.getElementById(item.contentId);
         return headingElement !== null && headingElement.getBoundingClientRect().bottom > topBound;
