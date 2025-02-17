@@ -84,7 +84,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
           </IconButton>
         </Box>
         <Link
-          href={`${betaSiteRoot}/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}`}
+          href={`${betaSiteRoot}/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}`}
           color="text.primary"
           underline="hover"
           display="flex"
@@ -145,7 +145,7 @@ export function WalletNameCell({ row }: { row: WalletRowStateHandle }): React.JS
             paddingBottom="10px"
           >
             <IconLink
-              href={`${betaSiteRoot}/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}`}
+              href={`${betaSiteRoot}/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}`}
               IconComponent={InfoOutlinedIcon}
             >
               Learn more

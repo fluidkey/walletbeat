@@ -239,7 +239,7 @@ export function WalletRatingCell<Vs extends ValueSet>({
               />
               <Box display="flex" flexDirection="row" justifyContent="center">
                 <IconLink
-                  href={`${betaSiteRoot}/wallet/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}#${slugifyCamelCase(highlightedEvalAttr.attribute.id)}`}
+                  href={`${betaSiteRoot}/${row.wallet.metadata.id}/${variantUrlQuery(row.wallet.variants, row.table.variantSelected)}#${slugifyCamelCase(highlightedEvalAttr.attribute.id)}`}
                   IconComponent={InfoOutlinedIcon}
                 >
                   Learn more

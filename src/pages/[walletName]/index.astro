@@ -32,6 +32,10 @@ const walletMetadata = ratedWallets[walletName].metadata;
 
 // Layouts
 import Layout from '@/layouts/Layout.astro';
+
+
+// Components
+import { WalletPage } from './_WalletPage.tsx';
 ---
 
 
@@ -61,10 +65,7 @@ import Layout from '@/layouts/Layout.astro';
         ],
       }}
     >
-      {/* Hacky redirect to `/{walletName}`, maybe there' a better way to do this? */}
-      {/* Probably OK to delete after a few weeks so it's OK if it is hacky. */}
-      <span id="walletName" style="display: none;">{walletName}</span>
-      <script>document.location.href = `/${document.getElementById('walletName')?.innerText}`;</script>
+      <WalletPage {walletName} client:load />
     </Layout>
   :
     <Layout
