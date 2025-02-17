@@ -5,7 +5,7 @@ export const erc4337: Eip = {
   number: '4337',
   // Yes this is not exactly what this ERC is implementing, but it is
   // roughly what it unlocks.
-  friendlyName: 'Account Abstraction via smart contract wallets',
+  friendlyName: 'Account Abstraction for smart contract wallets',
   formalTitle: 'Account Abstraction Using Alt Mempool',
   status: EipStatus.DRAFT,
   summaryMarkdown: `
