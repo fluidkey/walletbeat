@@ -47,7 +47,7 @@ export function NavigationPageLayout({
    * `groups` is already implicitly included in this.
    */
   contentDependencies?: React.DependencyList;
-}) {
+}): React.JSX.Element {
   const [activeItemId, setActiveItemId] = useState<string>('');
 
   const scrollNavigationTo = (itemId: string): void => {
