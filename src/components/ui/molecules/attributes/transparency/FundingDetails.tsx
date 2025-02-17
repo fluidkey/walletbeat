@@ -2,10 +2,7 @@ import { Box } from '@mui/material';
 import type React from 'react';
 import { subsectionWeight } from '@/components/constants';
 import { ReferenceList } from '../../../atoms/ReferenceList';
-import {
-  monetizationStrategies,
-  monetizationStrategyName,
-} from '@/schema/features/monetization';
+import { monetizationStrategies, monetizationStrategyName } from '@/schema/features/monetization';
 import { JoinedList } from '../../../atoms/JoinedList';
 import { refs } from '@/schema/reference';
 import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon';

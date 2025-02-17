@@ -4,7 +4,10 @@ import type { RatedWallet } from '@/schema/wallet';
 import { Box, type SxProps } from '@mui/material';
 import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import type React from 'react';
-import { WalletRatingCell, walletRatingColumnProps } from '@/components/ui/molecules/WalletRatingCell';
+import {
+  WalletRatingCell,
+  walletRatingColumnProps,
+} from '@/components/ui/molecules/WalletRatingCell';
 import {
   ecosystemAttributeGroup,
   type EvaluationTree,

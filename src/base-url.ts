@@ -7,11 +7,17 @@ export function getBaseUrl(): string {
     return `${window.location.protocol}//${window.location.host}`;
   }
 
-  if (import.meta.env.WALLETBEAT_URL_ROOT !== undefined && import.meta.env.WALLETBEAT_URL_ROOT !== '') {
+  if (
+    import.meta.env.WALLETBEAT_URL_ROOT !== undefined &&
+    import.meta.env.WALLETBEAT_URL_ROOT !== ''
+  ) {
     return `$${import.meta.env.WALLETBEAT_URL_ROOT}`;
   }
 
-  if (import.meta.env.NEXT_PUBLIC_SITE_URL !== undefined && import.meta.env.NEXT_PUBLIC_SITE_URL !== '') {
+  if (
+    import.meta.env.NEXT_PUBLIC_SITE_URL !== undefined &&
+    import.meta.env.NEXT_PUBLIC_SITE_URL !== ''
+  ) {
     return `${import.meta.env.NEXT_PUBLIC_SITE_URL}`;
   }
 

@@ -34,8 +34,12 @@ export function ExternalLink({
         gap="2px"
         alignItems="baseline"
         underline="none"
-        onMouseEnter={() => { setHovered(true); }}
-        onMouseLeave={() => { setHovered(false); }}
+        onMouseEnter={() => {
+          setHovered(true);
+        }}
+        onMouseLeave={() => {
+          setHovered(false);
+        }}
       >
         <Box
           component="span"
