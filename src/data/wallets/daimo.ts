@@ -36,12 +36,23 @@ export const daimo: Wallet = {
   },
   features: {
     profile: WalletProfile.PAYMENTS,
-    multiAddress: true,
     chainConfigurability: {
       l1RpcEndpoint: RpcEndpointConfiguration.NEVER_USED,
       otherRpcEndpoints: RpcEndpointConfiguration.NO,
       customChains: false,
     },
+    accountSupport: {
+      eoa: { support: 'NOT_SUPPORTED' },
+      mpc: { support: 'NOT_SUPPORTED' },
+      eip7702: { support: 'NOT_SUPPORTED' },
+      rawErc4337: {
+        support: 'SUPPORTED',
+        keyRotationTransactionCanBeGeneratedWithoutThirdParty: true,
+        singleThirdPartyCanRug: 'NO',
+        tokenTransferTransactionCanBeGeneratedWithoutThirdParty: true,
+      },
+    },
+    multiAddress: true,
     addressResolution: {
       nonChainSpecificEnsResolution: {
         support: 'SUPPORTED',

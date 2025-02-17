@@ -29,12 +29,27 @@ export const rabby: Wallet = {
   },
   features: {
     profile: WalletProfile.GENERIC,
-    multiAddress: true,
     chainConfigurability: {
       l1RpcEndpoint: RpcEndpointConfiguration.YES_AFTER_OTHER_REQUESTS,
       otherRpcEndpoints: RpcEndpointConfiguration.YES_AFTER_OTHER_REQUESTS,
       customChains: true,
     },
+    accountSupport: {
+      eoa: {
+        support: 'SUPPORTED',
+        canExportPrivateKey: true,
+        keyDerivation: {
+          derivationPath: 'BIP44',
+          seedPhrase: 'BIP39',
+          type: 'BIP32',
+          canExportSeedPhrase: true,
+        },
+      },
+      eip7702: { support: 'NOT_SUPPORTED' },
+      mpc: { support: 'NOT_SUPPORTED' },
+      rawErc4337: { support: 'NOT_SUPPORTED' },
+    },
+    multiAddress: true,
     addressResolution: {
       nonChainSpecificEnsResolution: {
         support: 'NOT_SUPPORTED',

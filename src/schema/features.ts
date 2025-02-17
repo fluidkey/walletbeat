@@ -15,6 +15,7 @@ import type { WalletIntegration } from './features/integration';
 import type { AddressResolution } from './features/address-resolution';
 import type { SecurityAudit } from './features/security/security-audits';
 import type { TransactionSubmission } from './features/self-sovereignty/transaction-submission';
+import type { AccountSupport } from './features/account-support';
 
 /**
  * A set of features about a wallet, each of which may or may not depend on
@@ -65,14 +66,14 @@ export interface WalletFeatures {
   /** Level of configurability for chains. */
   chainConfigurability: VariantFeature<ChainConfigurability>;
 
+  /** Which types of accounts the wallet supports. */
+  accountSupport: VariantFeature<WithRef<AccountSupport>>;
+
+  /** Does the wallet support more than one Ethereum address? */
+  multiAddress: VariantFeature<boolean>;
+
   /** Integration inside browsers, mobile phones, etc. */
   integration: WalletIntegration;
-
-  /**
-   * Whether the wallet supports multiple addresses.
-   * A single seed phrase still counts as multiple addresses.
-   */
-  multiAddress: VariantFeature<boolean>;
 
   /** How the wallet resolves Ethereum addresses. */
   addressResolution: VariantFeature<WithRef<AddressResolution>>;
@@ -109,8 +110,9 @@ export interface ResolvedFeatures {
     transactionSubmission: ResolvedFeature<TransactionSubmission>;
   };
   chainConfigurability: ResolvedFeature<ChainConfigurability>;
-  integration: WalletIntegration;
+  accountSupport: ResolvedFeature<AccountSupport>;
   multiAddress: ResolvedFeature<boolean>;
+  integration: WalletIntegration;
   addressResolution: ResolvedFeature<WithRef<AddressResolution>>;
   license: ResolvedFeature<WithRef<License>>;
   monetization: ResolvedFeature<Monetization>;
@@ -143,8 +145,9 @@ export function resolveFeatures(features: WalletFeatures, variant: Variant): Res
       transactionSubmission: feat(features.selfSovereignty.transactionSubmission),
     },
     chainConfigurability: feat(features.chainConfigurability),
-    integration: features.integration,
+    accountSupport: feat(features.accountSupport),
     multiAddress: feat(features.multiAddress),
+    integration: features.integration,
     addressResolution: feat(features.addressResolution),
     license: feat(features.license),
     monetization: feat(features.monetization),

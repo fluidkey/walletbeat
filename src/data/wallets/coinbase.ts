@@ -22,8 +22,9 @@ export const coinbase: Wallet = {
   },
   features: {
     profile: WalletProfile.GENERIC,
-    multiAddress: true,
     chainConfigurability: null,
+    accountSupport: null,
+    multiAddress: null,
     addressResolution: {
       nonChainSpecificEnsResolution: null,
       chainSpecificAddressing: {

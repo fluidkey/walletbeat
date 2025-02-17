@@ -57,6 +57,10 @@ import {
   transactionInclusion,
   type TransactionInclusionValue,
 } from './attributes/self-sovereignty/transaction-inclusion';
+import {
+  accountAbstraction,
+  type AccountAbstractionValue,
+} from './attributes/ecosystem/account-abstraction';
 
 /** A ValueSet for security Values. */
 type SecurityValues = Dict<{
@@ -162,6 +166,7 @@ export const transparencyAttributeGroup: AttributeGroup<TransparencyValues> = {
 
 /** A ValueSet for ecosystem Values. */
 type EcosystemValues = Dict<{
+  accountAbstraction: AccountAbstractionValue;
   addressResolution: AddressResolutionValue;
   browserIntegration: BrowserIntegrationValue;
 }>;
@@ -176,10 +181,12 @@ export const ecosystemAttributeGroup: AttributeGroup<EcosystemValues> = {
       `Does ${walletMetadata.displayName} follow the Ethereum ecosystem's standards and direction?`
   ),
   attributes: {
+    accountAbstraction,
     addressResolution,
     browserIntegration,
   },
   score: scoreGroup<EcosystemValues>({
+    accountAbstraction: 1.0,
     addressResolution: 1.0,
     browserIntegration: 1.0,
   }),
@@ -221,6 +228,7 @@ export interface TransparencyEvaluations extends EvaluatedGroup<TransparencyValu
 
 /** Evaluated ecosystem attributes for a single wallet. */
 export interface EcosystemEvaluations extends EvaluatedGroup<EcosystemValues> {
+  accountAbstraction: EvaluatedAttribute<AccountAbstractionValue>;
   addressResolution: EvaluatedAttribute<AddressResolutionValue>;
   browserIntegration: EvaluatedAttribute<BrowserIntegrationValue>;
 }
@@ -265,6 +273,7 @@ export function evaluateAttributes(features: ResolvedFeatures): EvaluationTree {
       funding: evalAttr(funding),
     },
     ecosystem: {
+      accountAbstraction: evalAttr(accountAbstraction),
       addressResolution: evalAttr(addressResolution),
       browserIntegration: evalAttr(browserIntegration),
     },
@@ -310,6 +319,7 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
       funding: attr(tree => tree.transparency.funding),
     },
     ecosystem: {
+      accountAbstraction: attr(tree => tree.ecosystem.accountAbstraction),
       addressResolution: attr(tree => tree.ecosystem.addressResolution),
       browserIntegration: attr(tree => tree.ecosystem.browserIntegration),
     },
