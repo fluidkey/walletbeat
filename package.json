@@ -3,13 +3,16 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "pnpm run astro dev",
+    "astro": "ASTRO_TELEMETRY_DISABLED=1 astro",
     "build": "pnpm run astro build",
-    "preview": "pnpm run astro preview",
     "check": "pnpm run astro check",
-    "check:all": "pnpm run astro check --minimumSeverity=hint --minimumFailingSeverity=hint && pnpm run lint",
+    "check:all": "pnpm run check:hint && pnpm run check:lint && pnpm run check:syntax",
+    "check:hint": "pnpm run astro check --minimumSeverity=hint --minimumFailingSeverity=hint",
+    "check:lint": "eslint src",
+    "check:syntax": "prettier --check src",
+    "dev": "pnpm run astro dev",
     "lint": "prettier --check --write src && eslint src --fix",
-    "astro": "ASTRO_TELEMETRY_DISABLED=1 astro"
+    "preview": "pnpm run astro preview"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",
