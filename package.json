@@ -6,12 +6,13 @@
     "astro": "ASTRO_TELEMETRY_DISABLED=1 astro",
     "build": "pnpm run astro build",
     "check": "pnpm run astro check",
-    "check:all": "pnpm run check:hint && pnpm run check:lint && pnpm run check:syntax",
+    "check:all": "pnpm run check:hint && pnpm run check:lint && pnpm run check:syntax && pnpm run check:spelling",
     "check:hint": "pnpm run astro check --minimumSeverity=hint --minimumFailingSeverity=hint",
     "check:lint": "eslint src",
+    "check:spelling": "cspell lint .",
     "check:syntax": "prettier --check src",
     "dev": "pnpm run astro dev",
-    "lint": "prettier --check --write src && eslint src --fix",
+    "lint": "prettier --check --write src && eslint src --fix && cspell lint .",
     "preview": "pnpm run astro preview"
   },
   "dependencies": {
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
     "@fleek-platform/cli": "^3.8.2",
+    "cspell": "^8.17.3",
     "eslint": "^9.19.0",
     "eslint-config-love": "^118.0.0",
     "eslint-config-prettier": "^10.0.1",
