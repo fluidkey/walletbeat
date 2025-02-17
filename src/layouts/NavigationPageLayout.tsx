@@ -1,7 +1,7 @@
 import theme from '@/components/ThemeRegistry/theme';
 import { Box, ThemeProvider } from '@mui/material';
 import type React from 'react';
-import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Navigation,
   type NavigationGroup,
@@ -12,7 +12,7 @@ import type { NonEmptyArray } from '@/types/utils/non-empty';
 
 const scrollNavigationMargin = 8;
 
-export const NavigationPageLayout = forwardRef(function NavigationPageLayout({
+export function NavigationPageLayout({
   groups,
   children,
   contentDependencies = [],
@@ -174,4 +174,4 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout({
       </Box>
     </ThemeProvider>
   );
-});
+}
