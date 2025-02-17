@@ -48,7 +48,7 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout({
    */
   contentDependencies?: React.DependencyList;
 }) {
-  const [activeItemId, setActiveItemId] = useState<string>();
+  const [activeItemId, setActiveItemId] = useState<string>('');
 
   const scrollNavigationTo = (itemId: string): void => {
     const listItem = document.getElementById(`listItem-${itemId}`);
@@ -81,14 +81,14 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout({
   };
 
   useEffect(() => {
-    if (activeItemId) scrollNavigationTo(activeItemId);
+    if (activeItemId !== '') scrollNavigationTo(activeItemId);
   }, [activeItemId]);
 
   const isPageSmoothScrolling = useRef(false);
 
   const onHashChange = useCallback((e: HashChangeEvent) => {
     const newUrl = new URL(e.newURL);
-    if (newUrl.hash) setActiveItemId(newUrl.hash.slice(1));
+    if (newUrl.hash !== '') setActiveItemId(newUrl.hash.slice(1));
 
     isPageSmoothScrolling.current = true;
 
@@ -116,9 +116,8 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout({
     (_: Event) => {
       if (isPageSmoothScrolling.current) return;
 
-      const stickyHeaderElement = stickyHeaderId
-        ? document.getElementById(stickyHeaderId)
-        : undefined;
+      const stickyHeaderElement =
+        stickyHeaderId !== undefined ? document.getElementById(stickyHeaderId) : undefined;
 
       const topBound =
         (stickyHeaderElement?.getBoundingClientRect().bottom ?? 0) + (stickyHeaderMargin ?? 0);
@@ -133,10 +132,10 @@ export const NavigationPageLayout = forwardRef(function NavigationPageLayout({
         if (i === length - 1) return true;
 
         const headingElement = document.getElementById(item.contentId);
-        return headingElement && headingElement.getBoundingClientRect().bottom > topBound;
-      })!;
+        return headingElement !== null && headingElement.getBoundingClientRect().bottom > topBound;
+      });
 
-      setActiveItemId(activeItem.id);
+      setActiveItemId(activeItem === undefined ? '' : activeItem.id);
     },
     [groups]
   );
