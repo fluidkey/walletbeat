@@ -245,7 +245,7 @@ export const accountAbstraction: Attribute<AccountAbstractionValue> = {
 		capabilities. However, it is expected that a future version of this
 		attribute would look at such improvements; for example, to verify that
 		users are able to update the signing authority of their wallets to a
-		quantum-safe encryption scheme.
+		quantum-safe signature scheme.
 	`),
 	ratingScale: {
 		display: 'pass-fail',
