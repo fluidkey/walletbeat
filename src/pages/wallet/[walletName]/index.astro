@@ -1,77 +1,67 @@
 ---
 // Astro settings
-export const prerender = true;
-
+export const prerender = true
 
 // Data
-import { IsValidWalletName, ratedWallets, wallets } from '@/data/wallets';
-
+import { IsValidWalletName, ratedWallets, wallets } from '@/data/wallets'
 
 // Utils
-import { nonEmptyKeys, nonEmptyMap } from '@/types/utils/non-empty';
-
+import { nonEmptyKeys, nonEmptyMap } from '@/types/utils/non-empty'
 
 // Params
-export const getStaticPaths = () => (
-  nonEmptyMap(
-    nonEmptyKeys(wallets),
-      (walletName) => ({
-      params: {
-        walletName,
-      },
-    })
-  )
-);
+export const getStaticPaths = () =>
+	nonEmptyMap(nonEmptyKeys(wallets), walletName => ({
+		params: {
+			walletName,
+		},
+	}))
 
-const { walletName } = Astro.params;
-
+const { walletName } = Astro.params
 
 // Derived
-const walletMetadata = ratedWallets[walletName].metadata;
-
+const walletMetadata = ratedWallets[walletName].metadata
 
 // Layouts
-import Layout from '@/layouts/Layout.astro';
+import Layout from '@/layouts/Layout.astro'
 ---
 
-
 {
-  walletName && IsValidWalletName(walletName) ?
-    <Layout
-      metadata={{
-        title: `${walletMetadata.displayName} - Walletbeat`,
-        description: `How does ${walletMetadata.displayName} stack up as an Ethereum wallet?`,
-        icons: [
-          {
-            url: `/images/wallets/${walletMetadata.id}.${walletMetadata.iconExtension}`
-          },
-        ],
-        keywordsBefore: [
-          walletName,
-          walletMetadata.displayName,
-          `${walletMetadata.id} wallet`,
-          `${walletMetadata.displayName} wallet`,
-          'wallet',
-        ],
-        keywordsAfter: [
-          'ranking',
-          'reviews',
-          'security',
-          'privacy',
-        ],
-      }}
-    >
-      {/* Hacky redirect to `/{walletName}`, maybe there' a better way to do this? */}
-      {/* Probably OK to delete after a few weeks so it's OK if it is hacky. */}
-      <span id="walletName" style="display: none;">{walletName}</span>
-      <script>document.location.href = `/${document.getElementById('walletName')?.innerText}`;</script>
-    </Layout>
-  :
-    <Layout
-      metadata={{
-        title: '404',
-      }}
-    >
-      <div>Invalid wallet name!</div>
-    </Layout>
+	walletName && IsValidWalletName(walletName) ? (
+		<Layout
+			metadata={{
+				title: `${walletMetadata.displayName} - Walletbeat`,
+				description: `How does ${walletMetadata.displayName} stack up as an Ethereum wallet?`,
+				icons: [
+					{
+						url: `/images/wallets/${walletMetadata.id}.${walletMetadata.iconExtension}`,
+					},
+				],
+				keywordsBefore: [
+					walletName,
+					walletMetadata.displayName,
+					`${walletMetadata.id} wallet`,
+					`${walletMetadata.displayName} wallet`,
+					'wallet',
+				],
+				keywordsAfter: ['ranking', 'reviews', 'security', 'privacy'],
+			}}
+		>
+			{/* Hacky redirect to `/{walletName}`, maybe there' a better way to do this? */}
+			{/* Probably OK to delete after a few weeks so it's OK if it is hacky. */}
+			<span id="walletName" style="display: none;">
+				{walletName}
+			</span>
+			<script>
+				document.location.href = `/${document.getElementById('walletName')?.innerText}`;
+			</script>
+		</Layout>
+	) : (
+		<Layout
+			metadata={{
+				title: '404',
+			}}
+		>
+			<div>Invalid wallet name!</div>
+		</Layout>
+	)
 }

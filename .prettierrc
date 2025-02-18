@@ -1,13 +1,13 @@
 {
-  "singleQuote": true,
-  "trailingComma": "es5",
-  "printWidth": 100,
-  "tabWidth": 2,
-  "semi": true,
-  "jsxSingleQuote": false,
-  "bracketSameLine": false,
-  "arrowParens": "avoid",
-  "endOfLine": "auto",
-  "useTabs": false,
-  "plugins": ["prettier-plugin-curly"]
+	"singleQuote": true,
+	"trailingComma": "all",
+	"printWidth": 100,
+	"tabWidth": 2,
+	"semi": false,
+	"jsxSingleQuote": false,
+	"bracketSameLine": false,
+	"arrowParens": "avoid",
+	"endOfLine": "auto",
+	"useTabs": true,
+	"plugins": ["prettier-plugin-astro", "prettier-plugin-curly"]
 }

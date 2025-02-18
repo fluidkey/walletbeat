@@ -1,283 +1,283 @@
 import {
-  isNonEmptyArray,
-  nonEmptyGet,
-  type NonEmptyRecord,
-  nonEmptyRemap,
-  nonEmptyValues,
-} from '@/types/utils/non-empty';
+	isNonEmptyArray,
+	nonEmptyGet,
+	type NonEmptyRecord,
+	nonEmptyRemap,
+	nonEmptyValues,
+} from '@/types/utils/non-empty'
 import {
-  type Attribute,
-  type AttributeGroup,
-  defaultRatingScore,
-  type EvaluatedAttribute,
-  evaluatedAttributes,
-  type EvaluatedGroup,
-  Rating,
-  type Value,
-  type ValueSet,
-} from './attributes';
+	type Attribute,
+	type AttributeGroup,
+	defaultRatingScore,
+	type EvaluatedAttribute,
+	evaluatedAttributes,
+	type EvaluatedGroup,
+	Rating,
+	type Value,
+	type ValueSet,
+} from './attributes'
 import {
-  addressCorrelation,
-  type AddressCorrelationValue,
-} from './attributes/privacy/address-correlation';
-import { openSource, type OpenSourceValue } from './attributes/transparency/open-source';
+	addressCorrelation,
+	type AddressCorrelationValue,
+} from './attributes/privacy/address-correlation'
+import { openSource, type OpenSourceValue } from './attributes/transparency/open-source'
 import {
-  sourceVisibility,
-  type SourceVisibilityValue,
-} from './attributes/transparency/source-visibility';
-import type { ResolvedFeatures } from './features';
-import type { AtLeastOneVariant, Variant } from './variants';
-import type { Dict } from '@/types/utils/dict';
-import { funding, type FundingValue } from './attributes/transparency/funding';
+	sourceVisibility,
+	type SourceVisibilityValue,
+} from './attributes/transparency/source-visibility'
+import type { ResolvedFeatures } from './features'
+import type { AtLeastOneVariant, Variant } from './variants'
+import type { Dict } from '@/types/utils/dict'
+import { funding, type FundingValue } from './attributes/transparency/funding'
 import {
-  multiAddressCorrelation,
-  type MultiAddressCorrelationValue,
-} from './attributes/privacy/multi-address-correlation';
-import { type MaybeUnratedScore, type WeightedScore, weightedScore } from './score';
-import { sentence } from '@/types/content';
-import type { WalletMetadata } from './wallet';
+	multiAddressCorrelation,
+	type MultiAddressCorrelationValue,
+} from './attributes/privacy/multi-address-correlation'
+import { type MaybeUnratedScore, type WeightedScore, weightedScore } from './score'
+import { sentence } from '@/types/content'
+import type { WalletMetadata } from './wallet'
 import {
-  chainVerification,
-  type ChainVerificationValue,
-} from './attributes/security/chain-verification';
+	chainVerification,
+	type ChainVerificationValue,
+} from './attributes/security/chain-verification'
 import {
-  selfHostedNode,
-  type SelfHostedNodeValue,
-} from './attributes/self-sovereignty/self-hosted-node';
+	selfHostedNode,
+	type SelfHostedNodeValue,
+} from './attributes/self-sovereignty/self-hosted-node'
 import {
-  browserIntegration,
-  type BrowserIntegrationValue,
-} from './attributes/ecosystem/browser-integration';
+	browserIntegration,
+	type BrowserIntegrationValue,
+} from './attributes/ecosystem/browser-integration'
 import {
-  addressResolution,
-  type AddressResolutionValue,
-} from './attributes/ecosystem/address-resolution';
-import { securityAudits, type SecurityAuditsValue } from './attributes/security/security-audits';
+	addressResolution,
+	type AddressResolutionValue,
+} from './attributes/ecosystem/address-resolution'
+import { securityAudits, type SecurityAuditsValue } from './attributes/security/security-audits'
 import {
-  transactionInclusion,
-  type TransactionInclusionValue,
-} from './attributes/self-sovereignty/transaction-inclusion';
+	transactionInclusion,
+	type TransactionInclusionValue,
+} from './attributes/self-sovereignty/transaction-inclusion'
 import {
-  accountAbstraction,
-  type AccountAbstractionValue,
-} from './attributes/ecosystem/account-abstraction';
+	accountAbstraction,
+	type AccountAbstractionValue,
+} from './attributes/ecosystem/account-abstraction'
 
 /** A ValueSet for security Values. */
 type SecurityValues = Dict<{
-  securityAudits: SecurityAuditsValue;
-  chainVerification: ChainVerificationValue;
-}>;
+	securityAudits: SecurityAuditsValue
+	chainVerification: ChainVerificationValue
+}>
 
 /** Security attributes. */
 export const securityAttributeGroup: AttributeGroup<SecurityValues> = {
-  id: 'security',
-  icon: '\u{1f512}', // Lock
-  displayName: 'Security',
-  perWalletQuestion: sentence<WalletMetadata>(
-    (walletMetadata: WalletMetadata): string => `How secure is ${walletMetadata.displayName}?`
-  ),
-  attributes: {
-    securityAudits,
-    chainVerification,
-  },
-  score: scoreGroup<SecurityValues>({
-    securityAudits: 1.0,
-    chainVerification: 1.0,
-  }),
-};
+	id: 'security',
+	icon: '\u{1f512}', // Lock
+	displayName: 'Security',
+	perWalletQuestion: sentence<WalletMetadata>(
+		(walletMetadata: WalletMetadata): string => `How secure is ${walletMetadata.displayName}?`,
+	),
+	attributes: {
+		securityAudits,
+		chainVerification,
+	},
+	score: scoreGroup<SecurityValues>({
+		securityAudits: 1.0,
+		chainVerification: 1.0,
+	}),
+}
 
 /** A ValueSet for privacy Values. */
 type PrivacyValues = Dict<{
-  addressCorrelation: AddressCorrelationValue;
-  multiAddressCorrelation: MultiAddressCorrelationValue;
-}>;
+	addressCorrelation: AddressCorrelationValue
+	multiAddressCorrelation: MultiAddressCorrelationValue
+}>
 
 /** Privacy attributes. */
 export const privacyAttributeGroup: AttributeGroup<PrivacyValues> = {
-  id: 'privacy',
-  icon: '\u{1f575}', // Detective
-  displayName: 'Privacy',
-  perWalletQuestion: sentence<WalletMetadata>(
-    (walletMetadata: WalletMetadata): string =>
-      `How well does ${walletMetadata.displayName} protect your privacy?`
-  ),
-  attributes: {
-    addressCorrelation,
-    multiAddressCorrelation,
-  },
-  score: scoreGroup<PrivacyValues>({
-    addressCorrelation: 1.0,
-    multiAddressCorrelation: 1.0,
-  }),
-};
+	id: 'privacy',
+	icon: '\u{1f575}', // Detective
+	displayName: 'Privacy',
+	perWalletQuestion: sentence<WalletMetadata>(
+		(walletMetadata: WalletMetadata): string =>
+			`How well does ${walletMetadata.displayName} protect your privacy?`,
+	),
+	attributes: {
+		addressCorrelation,
+		multiAddressCorrelation,
+	},
+	score: scoreGroup<PrivacyValues>({
+		addressCorrelation: 1.0,
+		multiAddressCorrelation: 1.0,
+	}),
+}
 
 /** A ValueSet for self-sovereignty Values. */
 type SelfSovereigntyValues = Dict<{
-  selfHostedNode: SelfHostedNodeValue;
-  transactionInclusion: TransactionInclusionValue;
-}>;
+	selfHostedNode: SelfHostedNodeValue
+	transactionInclusion: TransactionInclusionValue
+}>
 
 /** Self-sovereignty attributes. */
 export const selfSovereigntyAttributeGroup: AttributeGroup<SelfSovereigntyValues> = {
-  id: 'selfSovereignty',
-  icon: '\u{1f3f0}', // Castle
-  displayName: 'Self-sovereignty',
-  perWalletQuestion: sentence<WalletMetadata>(
-    (walletMetadata: WalletMetadata): string =>
-      `How much control and ownership over your wallet does ${walletMetadata.displayName} give you?`
-  ),
-  attributes: {
-    selfHostedNode,
-    transactionInclusion,
-  },
-  score: scoreGroup<SelfSovereigntyValues>({
-    selfHostedNode: 1.0,
-    transactionInclusion: 1.0,
-  }),
-};
+	id: 'selfSovereignty',
+	icon: '\u{1f3f0}', // Castle
+	displayName: 'Self-sovereignty',
+	perWalletQuestion: sentence<WalletMetadata>(
+		(walletMetadata: WalletMetadata): string =>
+			`How much control and ownership over your wallet does ${walletMetadata.displayName} give you?`,
+	),
+	attributes: {
+		selfHostedNode,
+		transactionInclusion,
+	},
+	score: scoreGroup<SelfSovereigntyValues>({
+		selfHostedNode: 1.0,
+		transactionInclusion: 1.0,
+	}),
+}
 
 /** A ValueSet for transparency Values. */
 type TransparencyValues = Dict<{
-  openSource: OpenSourceValue;
-  sourceVisibility: SourceVisibilityValue;
-  funding: FundingValue;
-}>;
+	openSource: OpenSourceValue
+	sourceVisibility: SourceVisibilityValue
+	funding: FundingValue
+}>
 
 /** Transparency attributes. */
 export const transparencyAttributeGroup: AttributeGroup<TransparencyValues> = {
-  id: 'transparency',
-  icon: '\u{1f50d}', // Looking glass
-  displayName: 'Transparency',
-  perWalletQuestion: sentence<WalletMetadata>(
-    (walletMetadata: WalletMetadata): string =>
-      `How transparent and sustainable is ${walletMetadata.displayName}'s development model?`
-  ),
-  attributes: {
-    openSource,
-    sourceVisibility,
-    funding,
-  },
-  score: scoreGroup<TransparencyValues>({
-    openSource: 1.0,
-    sourceVisibility: 1.0,
-    funding: 1.0,
-  }),
-};
+	id: 'transparency',
+	icon: '\u{1f50d}', // Looking glass
+	displayName: 'Transparency',
+	perWalletQuestion: sentence<WalletMetadata>(
+		(walletMetadata: WalletMetadata): string =>
+			`How transparent and sustainable is ${walletMetadata.displayName}'s development model?`,
+	),
+	attributes: {
+		openSource,
+		sourceVisibility,
+		funding,
+	},
+	score: scoreGroup<TransparencyValues>({
+		openSource: 1.0,
+		sourceVisibility: 1.0,
+		funding: 1.0,
+	}),
+}
 
 /** A ValueSet for ecosystem Values. */
 type EcosystemValues = Dict<{
-  accountAbstraction: AccountAbstractionValue;
-  addressResolution: AddressResolutionValue;
-  browserIntegration: BrowserIntegrationValue;
-}>;
+	accountAbstraction: AccountAbstractionValue
+	addressResolution: AddressResolutionValue
+	browserIntegration: BrowserIntegrationValue
+}>
 
 /** Ecosystem attributes. */
 export const ecosystemAttributeGroup: AttributeGroup<EcosystemValues> = {
-  id: 'ecosystem',
-  icon: '\u{1f331}', // Seedling
-  displayName: 'Ecosystem',
-  perWalletQuestion: sentence<WalletMetadata>(
-    (walletMetadata: WalletMetadata): string =>
-      `Does ${walletMetadata.displayName} follow the Ethereum ecosystem's standards and direction?`
-  ),
-  attributes: {
-    accountAbstraction,
-    addressResolution,
-    browserIntegration,
-  },
-  score: scoreGroup<EcosystemValues>({
-    accountAbstraction: 1.0,
-    addressResolution: 1.0,
-    browserIntegration: 1.0,
-  }),
-};
+	id: 'ecosystem',
+	icon: '\u{1f331}', // Seedling
+	displayName: 'Ecosystem',
+	perWalletQuestion: sentence<WalletMetadata>(
+		(walletMetadata: WalletMetadata): string =>
+			`Does ${walletMetadata.displayName} follow the Ethereum ecosystem's standards and direction?`,
+	),
+	attributes: {
+		accountAbstraction,
+		addressResolution,
+		browserIntegration,
+	},
+	score: scoreGroup<EcosystemValues>({
+		accountAbstraction: 1.0,
+		addressResolution: 1.0,
+		browserIntegration: 1.0,
+	}),
+}
 
 /** The set of attribute groups that make up wallet attributes. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Necessary to allow any Attribute implementation.
 export const attributeTree: NonEmptyRecord<string, AttributeGroup<any>> = {
-  security: securityAttributeGroup,
-  privacy: privacyAttributeGroup,
-  selfSovereignty: selfSovereigntyAttributeGroup,
-  transparency: transparencyAttributeGroup,
-  ecosystem: ecosystemAttributeGroup,
-};
+	security: securityAttributeGroup,
+	privacy: privacyAttributeGroup,
+	selfSovereignty: selfSovereigntyAttributeGroup,
+	transparency: transparencyAttributeGroup,
+	ecosystem: ecosystemAttributeGroup,
+}
 
 /** Evaluated security attributes for a single wallet. */
 export interface SecurityEvaluations extends EvaluatedGroup<SecurityValues> {
-  securityAudits: EvaluatedAttribute<SecurityAuditsValue>;
-  chainVerification: EvaluatedAttribute<ChainVerificationValue>;
+	securityAudits: EvaluatedAttribute<SecurityAuditsValue>
+	chainVerification: EvaluatedAttribute<ChainVerificationValue>
 }
 
 /** Evaluated privacy attributes for a single wallet. */
 export interface PrivacyEvaluations extends EvaluatedGroup<PrivacyValues> {
-  addressCorrelation: EvaluatedAttribute<AddressCorrelationValue>;
-  multiAddressCorrelation: EvaluatedAttribute<MultiAddressCorrelationValue>;
+	addressCorrelation: EvaluatedAttribute<AddressCorrelationValue>
+	multiAddressCorrelation: EvaluatedAttribute<MultiAddressCorrelationValue>
 }
 
 /** Evaluated self-sovereignty attributes for a single wallet. */
 export interface SelfSovereigntyEvaluations extends EvaluatedGroup<SelfSovereigntyValues> {
-  selfHostedNode: EvaluatedAttribute<SelfHostedNodeValue>;
-  transactionInclusion: EvaluatedAttribute<TransactionInclusionValue>;
+	selfHostedNode: EvaluatedAttribute<SelfHostedNodeValue>
+	transactionInclusion: EvaluatedAttribute<TransactionInclusionValue>
 }
 
 /** Evaluated transparency attributes for a single wallet. */
 export interface TransparencyEvaluations extends EvaluatedGroup<TransparencyValues> {
-  openSource: EvaluatedAttribute<OpenSourceValue>;
-  sourceVisibility: EvaluatedAttribute<SourceVisibilityValue>;
+	openSource: EvaluatedAttribute<OpenSourceValue>
+	sourceVisibility: EvaluatedAttribute<SourceVisibilityValue>
 }
 
 /** Evaluated ecosystem attributes for a single wallet. */
 export interface EcosystemEvaluations extends EvaluatedGroup<EcosystemValues> {
-  accountAbstraction: EvaluatedAttribute<AccountAbstractionValue>;
-  addressResolution: EvaluatedAttribute<AddressResolutionValue>;
-  browserIntegration: EvaluatedAttribute<BrowserIntegrationValue>;
+	accountAbstraction: EvaluatedAttribute<AccountAbstractionValue>
+	addressResolution: EvaluatedAttribute<AddressResolutionValue>
+	browserIntegration: EvaluatedAttribute<BrowserIntegrationValue>
 }
 
 /** Evaluated attributes for a single wallet. */
 export interface EvaluationTree
-  extends NonEmptyRecord<
-    string,
-    EvaluatedGroup<
-      SecurityValues | PrivacyValues | SelfSovereigntyValues | TransparencyValues | EcosystemValues
-    >
-  > {
-  security: SecurityEvaluations;
-  privacy: PrivacyEvaluations;
-  selfSovereignty: SelfSovereigntyEvaluations;
-  transparency: TransparencyEvaluations;
-  ecosystem: EcosystemEvaluations;
+	extends NonEmptyRecord<
+		string,
+		EvaluatedGroup<
+			SecurityValues | PrivacyValues | SelfSovereigntyValues | TransparencyValues | EcosystemValues
+		>
+	> {
+	security: SecurityEvaluations
+	privacy: PrivacyEvaluations
+	selfSovereignty: SelfSovereigntyEvaluations
+	transparency: TransparencyEvaluations
+	ecosystem: EcosystemEvaluations
 }
 
 /** Rate a wallet's attributes based on its features. */
 export function evaluateAttributes(features: ResolvedFeatures): EvaluationTree {
-  const evalAttr = <V extends Value>(attr: Attribute<V>): EvaluatedAttribute<V> => ({
-    attribute: attr,
-    evaluation: attr.evaluate(features),
-  });
-  return {
-    security: {
-      securityAudits: evalAttr(securityAudits),
-      chainVerification: evalAttr(chainVerification),
-    },
-    privacy: {
-      addressCorrelation: evalAttr(addressCorrelation),
-      multiAddressCorrelation: evalAttr(multiAddressCorrelation),
-    },
-    selfSovereignty: {
-      selfHostedNode: evalAttr(selfHostedNode),
-      transactionInclusion: evalAttr(transactionInclusion),
-    },
-    transparency: {
-      openSource: evalAttr(openSource),
-      sourceVisibility: evalAttr(sourceVisibility),
-      funding: evalAttr(funding),
-    },
-    ecosystem: {
-      accountAbstraction: evalAttr(accountAbstraction),
-      addressResolution: evalAttr(addressResolution),
-      browserIntegration: evalAttr(browserIntegration),
-    },
-  };
+	const evalAttr = <V extends Value>(attr: Attribute<V>): EvaluatedAttribute<V> => ({
+		attribute: attr,
+		evaluation: attr.evaluate(features),
+	})
+	return {
+		security: {
+			securityAudits: evalAttr(securityAudits),
+			chainVerification: evalAttr(chainVerification),
+		},
+		privacy: {
+			addressCorrelation: evalAttr(addressCorrelation),
+			multiAddressCorrelation: evalAttr(multiAddressCorrelation),
+		},
+		selfSovereignty: {
+			selfHostedNode: evalAttr(selfHostedNode),
+			transactionInclusion: evalAttr(transactionInclusion),
+		},
+		transparency: {
+			openSource: evalAttr(openSource),
+			sourceVisibility: evalAttr(sourceVisibility),
+			funding: evalAttr(funding),
+		},
+		ecosystem: {
+			accountAbstraction: evalAttr(accountAbstraction),
+			addressResolution: evalAttr(addressResolution),
+			browserIntegration: evalAttr(browserIntegration),
+		},
+	}
 }
 
 /**
@@ -285,57 +285,57 @@ export function evaluateAttributes(features: ResolvedFeatures): EvaluationTree {
  * a single non-per-variant tree of evaluated attributes.
  */
 export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree>): EvaluationTree {
-  const attr = <V extends Value>(
-    getter: (tree: EvaluationTree) => EvaluatedAttribute<V>
-  ): EvaluatedAttribute<V> => {
-    const attribute = getter(
-      nonEmptyGet(nonEmptyValues<Variant, EvaluationTree>(perVariant))
-    ).attribute;
-    const evaluations = nonEmptyRemap(
-      perVariant,
-      (_: Variant, tree: EvaluationTree) => getter(tree).evaluation
-    );
-    return {
-      attribute,
-      evaluation: attribute.aggregate(evaluations),
-    };
-  };
-  return {
-    security: {
-      securityAudits: attr(tree => tree.security.securityAudits),
-      chainVerification: attr(tree => tree.security.chainVerification),
-    },
-    privacy: {
-      addressCorrelation: attr(tree => tree.privacy.addressCorrelation),
-      multiAddressCorrelation: attr(tree => tree.privacy.multiAddressCorrelation),
-    },
-    selfSovereignty: {
-      selfHostedNode: attr(tree => tree.selfSovereignty.selfHostedNode),
-      transactionInclusion: attr(tree => tree.selfSovereignty.transactionInclusion),
-    },
-    transparency: {
-      openSource: attr(tree => tree.transparency.openSource),
-      sourceVisibility: attr(tree => tree.transparency.sourceVisibility),
-      funding: attr(tree => tree.transparency.funding),
-    },
-    ecosystem: {
-      accountAbstraction: attr(tree => tree.ecosystem.accountAbstraction),
-      addressResolution: attr(tree => tree.ecosystem.addressResolution),
-      browserIntegration: attr(tree => tree.ecosystem.browserIntegration),
-    },
-  };
+	const attr = <V extends Value>(
+		getter: (tree: EvaluationTree) => EvaluatedAttribute<V>,
+	): EvaluatedAttribute<V> => {
+		const attribute = getter(
+			nonEmptyGet(nonEmptyValues<Variant, EvaluationTree>(perVariant)),
+		).attribute
+		const evaluations = nonEmptyRemap(
+			perVariant,
+			(_: Variant, tree: EvaluationTree) => getter(tree).evaluation,
+		)
+		return {
+			attribute,
+			evaluation: attribute.aggregate(evaluations),
+		}
+	}
+	return {
+		security: {
+			securityAudits: attr(tree => tree.security.securityAudits),
+			chainVerification: attr(tree => tree.security.chainVerification),
+		},
+		privacy: {
+			addressCorrelation: attr(tree => tree.privacy.addressCorrelation),
+			multiAddressCorrelation: attr(tree => tree.privacy.multiAddressCorrelation),
+		},
+		selfSovereignty: {
+			selfHostedNode: attr(tree => tree.selfSovereignty.selfHostedNode),
+			transactionInclusion: attr(tree => tree.selfSovereignty.transactionInclusion),
+		},
+		transparency: {
+			openSource: attr(tree => tree.transparency.openSource),
+			sourceVisibility: attr(tree => tree.transparency.sourceVisibility),
+			funding: attr(tree => tree.transparency.funding),
+		},
+		ecosystem: {
+			accountAbstraction: attr(tree => tree.ecosystem.accountAbstraction),
+			addressResolution: attr(tree => tree.ecosystem.addressResolution),
+			browserIntegration: attr(tree => tree.ecosystem.browserIntegration),
+		},
+	}
 }
 
 /**
  * Iterate over all attribute groups in a tree, calling `fn` with each group.
  */
 export function mapAttributeGroups<T>(
-  tree: EvaluationTree,
-  fn: <Vs extends ValueSet>(attrGroup: AttributeGroup<Vs>, evalGroup: EvaluatedGroup<Vs>) => T
+	tree: EvaluationTree,
+	fn: <Vs extends ValueSet>(attrGroup: AttributeGroup<Vs>, evalGroup: EvaluatedGroup<Vs>) => T,
 ): T[] {
-  return Object.entries(attributeTree).map(([groupName, attrGroup]) =>
-    fn(attrGroup, tree[groupName])
-  );
+	return Object.entries(attributeTree).map(([groupName, attrGroup]) =>
+		fn(attrGroup, tree[groupName]),
+	)
 }
 
 /**
@@ -343,10 +343,10 @@ export function mapAttributeGroups<T>(
  * attribute.
  */
 export function mapGroupAttributes<T, Vs extends ValueSet>(
-  evalGroup: EvaluatedGroup<Vs>,
-  fn: <V extends Value>(evalAttr: EvaluatedAttribute<V>) => T
+	evalGroup: EvaluatedGroup<Vs>,
+	fn: <V extends Value>(evalAttr: EvaluatedAttribute<V>) => T,
 ): T[] {
-  return Object.values(evalGroup).map(fn);
+	return Object.values(evalGroup).map(fn)
 }
 
 /**
@@ -356,20 +356,20 @@ export function mapGroupAttributes<T, Vs extends ValueSet>(
  * various trees.
  */
 export function mapAttributesGetter(
-  templateTree: EvaluationTree,
-  fn: <V extends Value>(
-    getter: (evalTree: EvaluationTree) => EvaluatedAttribute<V> | undefined
-  ) => void
+	templateTree: EvaluationTree,
+	fn: <V extends Value>(
+		getter: (evalTree: EvaluationTree) => EvaluatedAttribute<V> | undefined,
+	) => void,
 ): void {
-  for (const groupName of Object.keys(templateTree)) {
-    for (const attrName of Object.keys(templateTree[groupName])) {
-      fn(
-        <V extends Value>(evalTree: EvaluationTree): EvaluatedAttribute<V> | undefined =>
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- We know that `evalTree[groupName]` has `attrName` as property, due to how we iterated to get here.
-          (evalTree[groupName] as any)[attrName] as EvaluatedAttribute<V>
-      );
-    }
-  }
+	for (const groupName of Object.keys(templateTree)) {
+		for (const attrName of Object.keys(templateTree[groupName])) {
+			fn(
+				<V extends Value>(evalTree: EvaluationTree): EvaluatedAttribute<V> | undefined =>
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- We know that `evalTree[groupName]` has `attrName` as property, due to how we iterated to get here.
+					(evalTree[groupName] as any)[attrName] as EvaluatedAttribute<V>,
+			)
+		}
+	}
 }
 
 /**
@@ -379,25 +379,25 @@ export function mapAttributesGetter(
  * such as from a different Variant.
  */
 export function getEvaluationFromOtherTree<V extends Value>(
-  evalAttr: EvaluatedAttribute<V>,
-  otherTree: EvaluationTree
+	evalAttr: EvaluatedAttribute<V>,
+	otherTree: EvaluationTree,
 ): EvaluatedAttribute<V> {
-  const otherEvalAttr = mapAttributeGroups(
-    otherTree,
-    (_, evalGroup): EvaluatedAttribute<V> | undefined => {
-      if (Object.hasOwn(evalGroup, evalAttr.attribute.id)) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Evaluated attributes with the same ID have the same Value type.
-        return evalGroup[evalAttr.attribute.id] as unknown as EvaluatedAttribute<V>;
-      }
-      return undefined;
-    }
-  ).find(v => v !== undefined);
-  if (otherEvalAttr === undefined) {
-    throw new Error(
-      `Incomplete evaluation tree; did not found evaluation for attribute ${evalAttr.attribute.id}`
-    );
-  }
-  return otherEvalAttr;
+	const otherEvalAttr = mapAttributeGroups(
+		otherTree,
+		(_, evalGroup): EvaluatedAttribute<V> | undefined => {
+			if (Object.hasOwn(evalGroup, evalAttr.attribute.id)) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Evaluated attributes with the same ID have the same Value type.
+				return evalGroup[evalAttr.attribute.id] as unknown as EvaluatedAttribute<V>
+			}
+			return undefined
+		},
+	).find(v => v !== undefined)
+	if (otherEvalAttr === undefined) {
+		throw new Error(
+			`Incomplete evaluation tree; did not found evaluation for attribute ${evalAttr.attribute.id}`,
+		)
+	}
+	return otherEvalAttr
 }
 
 /**
@@ -406,28 +406,28 @@ export function getEvaluationFromOtherTree<V extends Value>(
  * @returns A function to score the group of evaluations.
  */
 function scoreGroup<Vs extends ValueSet>(weights: { [k in keyof Vs]: number }): (
-  evaluations: EvaluatedGroup<Vs>
+	evaluations: EvaluatedGroup<Vs>,
 ) => MaybeUnratedScore {
-  return (evaluations: EvaluatedGroup<Vs>): MaybeUnratedScore => {
-    const subScores: WeightedScore[] = nonEmptyValues<keyof Vs, WeightedScore | null>(
-      nonEmptyRemap(weights, (key: keyof Vs, weight: number): WeightedScore | null => {
-        const value = evaluations[key].evaluation.value;
-        const score = value.score ?? defaultRatingScore(value.rating);
-        return score === null
-          ? null
-          : {
-              score,
-              weight,
-            };
-      })
-    ).filter(score => score !== null);
-    if (isNonEmptyArray(subScores)) {
-      let hasUnratedComponent = false;
-      for (const evalAttr of evaluatedAttributes(evaluations)) {
-        hasUnratedComponent ||= evalAttr.evaluation.value.rating === Rating.UNRATED;
-      }
-      return { score: weightedScore(subScores), hasUnratedComponent };
-    }
-    return null;
-  };
+	return (evaluations: EvaluatedGroup<Vs>): MaybeUnratedScore => {
+		const subScores: WeightedScore[] = nonEmptyValues<keyof Vs, WeightedScore | null>(
+			nonEmptyRemap(weights, (key: keyof Vs, weight: number): WeightedScore | null => {
+				const value = evaluations[key].evaluation.value
+				const score = value.score ?? defaultRatingScore(value.rating)
+				return score === null
+					? null
+					: {
+							score,
+							weight,
+						}
+			}),
+		).filter(score => score !== null)
+		if (isNonEmptyArray(subScores)) {
+			let hasUnratedComponent = false
+			for (const evalAttr of evaluatedAttributes(evaluations)) {
+				hasUnratedComponent ||= evalAttr.evaluation.value.rating === Rating.UNRATED
+			}
+			return { score: weightedScore(subScores), hasUnratedComponent }
+		}
+		return null
+	}
 }

@@ -1,53 +1,58 @@
 ---
 // Global CSS
-import './global.css';
-import '@fontsource/work-sans';
-
+import './global.css'
+import '@fontsource/work-sans'
 
 // Props
 import type { ComponentProps } from 'astro/types'
 
 type Props = {
-  metadata: ComponentProps<typeof Metadata>['metadata']
-};
+	metadata: ComponentProps<typeof Metadata>['metadata']
+}
 
-const {
-  metadata,
-} = Astro.props;
-
+const { metadata } = Astro.props
 
 // Components
-import Metadata from '@/components/Metadata.astro';
-import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry.tsx';
+import Metadata from '@/components/Metadata.astro'
+import ThemeRegistry from '@/components/ThemeRegistry/ThemeRegistry.tsx'
 ---
-
 
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <Metadata {metadata} />
-  </head>
-  <body>
-    <ThemeRegistry>
-      <slot />
-    </ThemeRegistry>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<Metadata {metadata} />
+	</head>
+	<body>
+		<ThemeRegistry>
+			<slot />
+		</ThemeRegistry>
 
-    <!-- Plausible -->
-    <script is:inline src="https://plausible.io/js/script.js" async defer data-domain="walletbeat.fyi"></script>
-    <script is:inline id="plausible-init">window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
-  </body>
+		<!-- Plausible -->
+		<script
+			is:inline
+			src="https://plausible.io/js/script.js"
+			async
+			defer
+			data-domain="walletbeat.fyi"></script>
+		<script is:inline id="plausible-init">
+			window.plausible =
+				window.plausible ||
+				function () {
+					;(window.plausible.q = window.plausible.q || []).push(arguments)
+				}
+		</script>
+	</body>
 </html>
 
-
 <style>
-  html,
-  body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-  }
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
 </style>

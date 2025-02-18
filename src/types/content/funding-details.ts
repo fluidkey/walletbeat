@@ -1,19 +1,19 @@
-import type { EvaluationData } from '@/schema/attributes';
-import { component, type Renderable } from '../content';
-import type { FundingValue } from '@/schema/attributes/transparency/funding';
-import type { Monetization } from '@/schema/features/monetization';
+import type { EvaluationData } from '@/schema/attributes'
+import { component, type Renderable } from '../content'
+import type { FundingValue } from '@/schema/attributes/transparency/funding'
+import type { Monetization } from '@/schema/features/monetization'
 
 export interface FundingDetailsProps extends EvaluationData<FundingValue> {
-  monetization: Monetization;
+	monetization: Monetization
 }
 
 export interface FundingDetailsContent {
-  component: 'FundingDetails';
-  componentProps: FundingDetailsProps;
+	component: 'FundingDetails'
+	componentProps: FundingDetailsProps
 }
 
 export function fundingDetailsContent(
-  bakedProps: Omit<FundingDetailsProps, keyof EvaluationData<FundingValue>>
+	bakedProps: Omit<FundingDetailsProps, keyof EvaluationData<FundingValue>>,
 ): Renderable<EvaluationData<FundingValue>> {
-  return component<FundingDetailsContent, keyof typeof bakedProps>('FundingDetails', bakedProps);
+	return component<FundingDetailsContent, keyof typeof bakedProps>('FundingDetails', bakedProps)
 }

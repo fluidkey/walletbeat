@@ -1,5 +1,5 @@
-import type { Contributor } from '@/schema/wallet';
+import type { Contributor } from '@/schema/wallet'
 
 export const exampleContributor: Contributor = {
-  name: 'example-contributor',
-};
+	name: 'example-contributor',
+}

@@ -5,17 +5,17 @@
  * not matter for users of this type of wallet.
  */
 export enum WalletProfile {
-  /**
-   * A generic, one-size fits all wallet that aims to fulfill the needs of
-   * all regular Ethereum users.
-   */
-  GENERIC = 'GENERIC',
+	/**
+	 * A generic, one-size fits all wallet that aims to fulfill the needs of
+	 * all regular Ethereum users.
+	 */
+	GENERIC = 'GENERIC',
 
-  /**
-   * A wallet that focuses on peer-to-peer payments only.
-   * Such wallets are exempt from features such as browser integration
-   * standards, because they do not aim to integrate in browsers to begin
-   * with.
-   */
-  PAYMENTS = 'PAYMENTS',
+	/**
+	 * A wallet that focuses on peer-to-peer payments only.
+	 * Such wallets are exempt from features such as browser integration
+	 * standards, because they do not aim to integrate in browsers to begin
+	 * with.
+	 */
+	PAYMENTS = 'PAYMENTS',
 }
