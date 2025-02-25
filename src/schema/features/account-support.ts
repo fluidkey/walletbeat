@@ -30,6 +30,27 @@ export enum AccountType {
 	rawErc4337 = 'rawErc4337',
 }
 
+/** The ability (or lack thereof) to generate a transaction of a specific type. */
+export enum TransactionGenerationCapability {
+	/** The process to generate such a transaction relies on a third-party API. */
+	RELYING_ON_THIRD_PARTY_API = 'RELYING_ON_THIRD_PARTY_API',
+
+	/** The process to generate such a transaction requires the use of a standalone proprietary application. */
+	USING_PROPRIETARY_STANDALONE_APP = 'USING_PROPRIETARY_STANDALONE_APP',
+
+	/** The process to generate such a transaction requires the use of an open-source standalone application. */
+	USING_OPEN_SOURCE_STANDALONE_APP = 'USING_OPEN_SOURCE_STANDALONE_APP',
+
+	/** It is not possible to generate such a transaction. */
+	IMPOSSIBLE = 'IMPOSSIBLE',
+}
+
+/** The ability to generate a transaction of a specific type. */
+export type PossibleTransactionGenerationCapability = Exclude<
+	TransactionGenerationCapability,
+	TransactionGenerationCapability.IMPOSSIBLE
+>
+
 /** Account support features. */
 export type AccountSupport = Exclude<
 	{
@@ -56,8 +77,7 @@ export type AccountSupport = Exclude<
 	},
 	// At least one account type must be supported.
 	Record<AccountType, AccountTypeNotSupported>
-> &
-	(
+> & { defaultAccountType: AccountType } & (
 		| {
 				// Either EIP-7702 is not supported...
 				eip7702: AccountTypeNotSupported
@@ -95,20 +115,21 @@ export interface AccountTypeEoa {
 
 interface AccountTypeMultifactor {
 	/**
-	 * Can a single third-party unilaterally take over the account or withdraw
-	 * any asset?
+	 * When setting up the wallet, does the user own enough shares in their
+	 * own self-custody to control the wallet?
+	 * "Control" here means the ability to sign arbitrary transactions.
 	 */
-	singleThirdPartyCanRug: 'NO' | 'ALWAYS' | 'IF_EXPLICITLY_PREAPPROVED'
+	controllingSharesInSelfCustodyByDefault: 'YES' | 'NO' | 'USER_MAKES_EXPLICIT_CHOICE'
 
 	/**
 	 * Is it possible to create and broadcast an Ethereum transaction that
 	 * withdraws any type of asset from the account to transfer it out to
 	 * another address, without the help of a third-party?
 	 *
-	 * This implies that the code to create such a transaction is open-source
+	 * This implies that the code to create such a transaction already exists
 	 * and does not rely on any network request to a proprietary API or service.
 	 */
-	tokenTransferTransactionCanBeGeneratedWithoutThirdParty: boolean
+	tokenTransferTransactionGeneration: PossibleTransactionGenerationCapability
 }
 
 /**
@@ -117,7 +138,7 @@ interface AccountTypeMultifactor {
  */
 export type AccountTypeMpc = AccountTypeMultifactor & {
 	/** How is the underlying key generation performed before shares are distributed? */
-	initialKeyGeneration: 'ON_USER_DEVICE' | 'BY_THIRD_PARTY_IN_THE_CLEAR' | 'BY_THIRD_PARTY_IN_TEE'
+	initialKeyGeneration: 'ON_USER_DEVICE' | 'BY_THIRD_PARTY_IN_TEE' | 'BY_THIRD_PARTY_IN_THE_CLEAR'
 }
 
 /**
@@ -133,7 +154,7 @@ export type AccountTypeMutableMultifactor = AccountTypeMultifactor & {
 	 * This implies that the code to create such a transaction is open-source
 	 * and does not rely on any network request to a proprietary API or service.
 	 */
-	keyRotationTransactionCanBeGeneratedWithoutThirdParty: boolean
+	keyRotationTransactionGeneration: TransactionGenerationCapability
 }
 
 /**

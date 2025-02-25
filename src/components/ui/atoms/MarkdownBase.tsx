@@ -33,7 +33,7 @@ export function deriveMarkdownPropsFromTypography(
 		pFontWeight: markdownProps?.pFontWeight ?? typographyProps?.fontWeight,
 		pVariant: markdownProps?.pVariant ?? typographyProps?.variant,
 		pSpacing: markdownProps?.pSpacing ?? marginTop,
-		liSpacing: markdownProps?.liSpacing ?? marginTop,
+		liSpacing: markdownProps?.liSpacing ?? markdownProps?.pSpacing ?? marginTop,
 	}
 }
 
@@ -56,8 +56,11 @@ const StyledMarkdown = styled(Box, {
 	${
 		liSpacing === undefined
 			? ''
-			: `li + li {
+			: `li + li:not(li li), li li:not(li li + li) {
 		margin-top: ${pSpacing};
+	}
+	li li + li {
+		margin-top: calc(${pSpacing} / 2);
 	}`
 	}
 `,
@@ -74,7 +77,7 @@ export function MarkdownBase({
 	pVariant = undefined,
 	pFontWeight = undefined,
 	pSpacing = '1rem',
-	liSpacing = '0.5rem',
+	liSpacing = '0.25rem',
 	textColor = 'inherit',
 }: {
 	markdown: string

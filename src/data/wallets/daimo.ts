@@ -13,6 +13,7 @@ import { WalletProfile } from '@/schema/features/profile'
 import { RpcEndpointConfiguration } from '@/schema/features/chain-configurability'
 import { veridise } from '../entities/veridise'
 import { TransactionSubmissionL2Support } from '@/schema/features/self-sovereignty/transaction-submission'
+import { AccountType, TransactionGenerationCapability } from '@/schema/features/account-support'
 
 export const daimo: Wallet = {
 	metadata: {
@@ -42,14 +43,22 @@ export const daimo: Wallet = {
 			customChains: false,
 		},
 		accountSupport: {
+			defaultAccountType: AccountType.rawErc4337,
 			eoa: { support: 'NOT_SUPPORTED' },
 			mpc: { support: 'NOT_SUPPORTED' },
 			eip7702: { support: 'NOT_SUPPORTED' },
 			rawErc4337: {
 				support: 'SUPPORTED',
-				keyRotationTransactionCanBeGeneratedWithoutThirdParty: true,
-				singleThirdPartyCanRug: 'NO',
-				tokenTransferTransactionCanBeGeneratedWithoutThirdParty: true,
+				controllingSharesInSelfCustodyByDefault: 'YES',
+				keyRotationTransactionGeneration:
+					TransactionGenerationCapability.USING_OPEN_SOURCE_STANDALONE_APP,
+				tokenTransferTransactionGeneration:
+					TransactionGenerationCapability.USING_OPEN_SOURCE_STANDALONE_APP,
+				ref: {
+					url: 'https://github.com/daimo-eth/daimo/blob/master/apps/daimo-mobile/src/view/screen/keyRotation/AddKeySlotButton.tsx',
+					explanation:
+						'Key rotation changes are supported in the UI and result in onchain transactions with a well-known structure',
+				},
 			},
 		},
 		multiAddress: true,

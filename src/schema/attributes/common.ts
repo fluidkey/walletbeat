@@ -1,4 +1,4 @@
-import { nonEmptyValues } from '@/types/utils/non-empty'
+import { isNonEmptyArray, nonEmptyValues, type NonEmptyArray } from '@/types/utils/non-empty'
 import { type Attribute, type Evaluation, Rating, type Value } from '../attributes'
 import type { AtLeastOneVariant, Variant } from '../variants'
 import { type Sentence, sentence } from '@/types/content'
@@ -72,10 +72,14 @@ export function exempt<V extends Value>(
  * @returns The evaluation with the lowest rating.
  */
 export function pickWorstRating<V extends Value>(
-	perVariant: AtLeastOneVariant<Evaluation<V>>,
+	evaluations: AtLeastOneVariant<Evaluation<V>> | NonEmptyArray<Evaluation<V>>,
 ): Evaluation<V> {
 	let worst: Evaluation<V> | null = null
-	for (const evaluation of nonEmptyValues<Variant, Evaluation<V>>(perVariant)) {
+	const evaluationsArray =
+		Array.isArray(evaluations) && isNonEmptyArray(evaluations)
+			? evaluations
+			: nonEmptyValues<Variant, Evaluation<V>>(evaluations)
+	for (const evaluation of evaluationsArray) {
 		if (evaluation.value.rating === Rating.UNRATED) {
 			// If any evaluation is UNRATED, then the aggregated rating also is.
 			// So return it immediately.
@@ -106,5 +110,5 @@ export function pickWorstRating<V extends Value>(
 			continue
 		}
 	}
-	return worst! // eslint-disable-line @typescript-eslint/no-non-null-assertion -- Safe because perVariant must contain at least one variant.
+	return worst! // eslint-disable-line @typescript-eslint/no-non-null-assertion -- Safe because we've just iterated over a NonEmptyArray and the first iteration would have set `worst` away from `null`.
 }

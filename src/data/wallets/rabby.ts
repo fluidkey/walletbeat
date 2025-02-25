@@ -11,6 +11,7 @@ import { slowMist } from '../entities/slowmist'
 import { SecurityFlawSeverity } from '@/schema/features/security/security-audits'
 import { cure53 } from '../entities/cure53'
 import { TransactionSubmissionL2Support } from '@/schema/features/self-sovereignty/transaction-submission'
+import { AccountType } from '@/schema/features/account-support'
 
 export const rabby: Wallet = {
 	metadata: {
@@ -35,6 +36,7 @@ export const rabby: Wallet = {
 			customChains: true,
 		},
 		accountSupport: {
+			defaultAccountType: AccountType.eoa,
 			eoa: {
 				support: 'SUPPORTED',
 				canExportPrivateKey: true,

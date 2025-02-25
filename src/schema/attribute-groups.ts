@@ -61,6 +61,10 @@ import {
 	accountAbstraction,
 	type AccountAbstractionValue,
 } from './attributes/ecosystem/account-abstraction'
+import {
+	accountPortability,
+	type AccountPortabilityValue,
+} from './attributes/self-sovereignty/account-portability'
 
 /** A ValueSet for security Values. */
 type SecurityValues = Dict<{
@@ -114,6 +118,7 @@ export const privacyAttributeGroup: AttributeGroup<PrivacyValues> = {
 /** A ValueSet for self-sovereignty Values. */
 type SelfSovereigntyValues = Dict<{
 	selfHostedNode: SelfHostedNodeValue
+	accountPortability: AccountPortabilityValue
 	transactionInclusion: TransactionInclusionValue
 }>
 
@@ -128,10 +133,12 @@ export const selfSovereigntyAttributeGroup: AttributeGroup<SelfSovereigntyValues
 	),
 	attributes: {
 		selfHostedNode,
+		accountPortability,
 		transactionInclusion,
 	},
 	score: scoreGroup<SelfSovereigntyValues>({
 		selfHostedNode: 1.0,
+		accountPortability: 1.0,
 		transactionInclusion: 1.0,
 	}),
 }
@@ -217,6 +224,7 @@ export interface PrivacyEvaluations extends EvaluatedGroup<PrivacyValues> {
 /** Evaluated self-sovereignty attributes for a single wallet. */
 export interface SelfSovereigntyEvaluations extends EvaluatedGroup<SelfSovereigntyValues> {
 	selfHostedNode: EvaluatedAttribute<SelfHostedNodeValue>
+	accountPortability: EvaluatedAttribute<AccountPortabilityValue>
 	transactionInclusion: EvaluatedAttribute<TransactionInclusionValue>
 }
 
@@ -265,6 +273,7 @@ export function evaluateAttributes(features: ResolvedFeatures): EvaluationTree {
 		},
 		selfSovereignty: {
 			selfHostedNode: evalAttr(selfHostedNode),
+			accountPortability: evalAttr(accountPortability),
 			transactionInclusion: evalAttr(transactionInclusion),
 		},
 		transparency: {
@@ -311,6 +320,7 @@ export function aggregateAttributes(perVariant: AtLeastOneVariant<EvaluationTree
 		},
 		selfSovereignty: {
 			selfHostedNode: attr(tree => tree.selfSovereignty.selfHostedNode),
+			accountPortability: attr(tree => tree.selfSovereignty.accountPortability),
 			transactionInclusion: attr(tree => tree.selfSovereignty.transactionInclusion),
 		},
 		transparency: {
