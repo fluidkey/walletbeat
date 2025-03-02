@@ -12,6 +12,7 @@ import type { SecurityAudit } from './features/security/security-audits'
 import type { TransactionSubmission } from './features/self-sovereignty/transaction-submission'
 import type { AccountSupport } from './features/account-support'
 import type { Support } from './features/support'
+import type { ScamAlerts } from './features/security/scam-alerts'
 
 /**
  * A set of features about a wallet, each of which may or may not depend on
@@ -30,6 +31,9 @@ export interface WalletFeatures {
 
 	/** Security features. */
 	security: {
+		/** Support for alerting the user about potential scams. */
+		scamAlerts: VariantFeature<ScamAlerts>
+
 		/**
 		 * Public security audits the wallet has gone through.
 		 * If never audited, this should be an empty array, as 'null' represents
@@ -93,7 +97,8 @@ export interface ResolvedFeatures {
 	profile: WalletProfile
 
 	security: {
-		publicSecurityAudits: null | SecurityAudit[]
+		scamAlerts: ResolvedFeature<ScamAlerts> | null
+		publicSecurityAudits: SecurityAudit[] | null
 		lightClient: {
 			ethereumL1: ResolvedFeature<Support<WithRef<EthereumL1LightClientSupport>>>
 		}
@@ -122,6 +127,7 @@ export function resolveFeatures(features: WalletFeatures, variant: Variant): Res
 		variant,
 		profile: features.profile,
 		security: {
+			scamAlerts: feat(features.security.scamAlerts),
 			publicSecurityAudits:
 				features.security.publicSecurityAudits === null
 					? null

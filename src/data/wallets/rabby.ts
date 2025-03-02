@@ -81,6 +81,43 @@ export const rabby: Wallet = {
 			},
 		},
 		security: {
+			scamAlerts: {
+				scamUrlWarning: supported({
+					leaksVisitedUrl: 'FULL_URL',
+					leaksIp: true,
+					ref: [
+						{
+							url: 'https://www.npmjs.com/package/@rabby-wallet/rabby-api?activeTab=code',
+							label: 'Rabby API code on npmjs.com',
+							explanation:
+								'Rabby checks whether the URL you are visiting is on a scam list. It sends the URL along with Ethereum address in non-proxied HTTP requests for API methods `getOriginIsScam`, `getOriginPopularityLevel`, `getRecommendChains`, and others.',
+						},
+					],
+				}),
+				contractTransactionWarning: supported({
+					previousContractInteractionWarning: true,
+					recentContractWarning: true,
+					contractRegistry: true,
+					leaksContractAddress: true,
+					leaksUserAddress: true,
+					leaksUserIp: true,
+					ref: [
+						{
+							url: 'https://www.npmjs.com/package/@rabby-wallet/rabby-api?activeTab=code',
+							label: 'Rabby API code on npmjs.com',
+							explanation:
+								'Rabby checks whether the contract you are visiting is on a scam list. It sends the contract along with Ethereum address in non-proxied HTTP requests for API method `unexpectedAddrList`.',
+						},
+					],
+				}),
+				sendTransactionWarning: supported({
+					userWhitelist: true,
+					newRecipientWarning: false,
+					leaksRecipient: false,
+					leaksUserAddress: false,
+					leaksUserIp: false,
+				}),
+			},
 			publicSecurityAudits: [
 				{
 					auditor: slowMist,

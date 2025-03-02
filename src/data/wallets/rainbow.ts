@@ -41,6 +41,7 @@ export const rainbow: Wallet = {
 			},
 		},
 		security: {
+			scamAlerts: null,
 			publicSecurityAudits: null,
 			lightClient: {
 				ethereumL1: null,

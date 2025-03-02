@@ -41,6 +41,7 @@ export const metamask: Wallet = {
 			},
 		},
 		security: {
+			scamAlerts: null,
 			publicSecurityAudits: null,
 			lightClient: {
 				ethereumL1: null,

@@ -82,6 +82,24 @@ export const daimo: Wallet = {
 			browser: 'NOT_A_BROWSER_WALLET',
 		},
 		security: {
+			scamAlerts: {
+				scamUrlWarning: notSupported,
+				contractTransactionWarning: notSupported,
+				sendTransactionWarning: supported({
+					newRecipientWarning: true,
+					userWhitelist: false,
+					leaksRecipient: false,
+					leaksUserAddress: false,
+					leaksUserIp: false,
+					ref: [
+						{
+							url: 'https://github.com/daimo-eth/daimo/blob/a960ddbbc0cb486f21b8460d22cebefc6376aac9/apps/daimo-mobile/src/view/screen/send/SendTransferScreen.tsx#L234-L238',
+							explanation:
+								'Daimo shows a warning when sending funds to a user that you have not sent funds to in the past.',
+						},
+					],
+				}),
+			},
 			// Note: Daimo has had their p256 verifier contract audited:
 			// https://github.com/daimo-eth/p256-verifier/blob/master/audits/2023-10-veridise.pdf
 			// However while the wallet relies on it, it is not the wallet software itself,
