@@ -23,6 +23,7 @@ import {
 	notSupported,
 	type Support,
 } from '@/schema/features/support'
+import { popRefs, type WithRef } from '@/schema/reference'
 
 type ResolvedSupport = Record<BrowserIntegrationEip, Support>
 
@@ -32,14 +33,17 @@ export type BrowserIntegrationValue = Value & {
 	__brand: 'attributes.ecosystem.browser_integration'
 }
 
-function browserIntegrationSupport(support: ResolvedSupport): Evaluation<BrowserIntegrationValue> {
+function browserIntegrationSupport(
+	support: WithRef<ResolvedSupport>,
+): Evaluation<BrowserIntegrationValue> {
+	const { withoutRefs } = popRefs<ResolvedSupport>(support)
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Keys are already of type BrowserIntegrationEip, and remain so after being mapped.
-	const supported: BrowserIntegrationEip[] = Object.entries<Support>(support)
+	const supported: BrowserIntegrationEip[] = Object.entries<Support>(withoutRefs)
 		.filter(([_, v]) => isSupported(v))
 		.map(([k, _]) => k) as BrowserIntegrationEip[]
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Keys are already of type BrowserIntegrationEip, and remain so after being mapped.
-	const unsupported: BrowserIntegrationEip[] = Object.entries<Support>(support)
+	const unsupported: BrowserIntegrationEip[] = Object.entries<Support>(withoutRefs)
 		.filter(([_, v]) => !isSupported(v))
 		.map(([k, _]) => k) as BrowserIntegrationEip[]
 
@@ -198,7 +202,7 @@ export const browserIntegration: Attribute<BrowserIntegrationValue> = {
 			return unrated(browserIntegration, brand, {})
 		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- We just verified that none of the values are null.
-		const browserIntegrationEips = features.integration.browser as ResolvedSupport
+		const browserIntegrationEips = features.integration.browser as WithRef<ResolvedSupport>
 		return browserIntegrationSupport(browserIntegrationEips)
 	},
 	aggregate: pickWorstRating<BrowserIntegrationValue>,
