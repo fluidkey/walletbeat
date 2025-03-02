@@ -10,13 +10,17 @@ import { pickWorstRating, unrated } from '../common'
 import { markdown, mdParagraph, paragraph, sentence } from '@/types/content'
 import type { WalletMetadata } from '@/schema/wallet'
 import { isNonEmptyArray, type NonEmptyArray, nonEmptyEntries } from '@/types/utils/non-empty'
-import { EthereumL1LightClient } from '../../features/security/light-client'
+import {
+	EthereumL1LightClient,
+	type EthereumL1LightClientSupport,
+} from '../../features/security/light-client'
 import {
 	RpcEndpointConfiguration,
 	type ChainConfigurability,
 } from '../../features/chain-configurability'
 import { type FullyQualifiedReference, popRefs } from '../../reference'
 import { chainVerificationDetailsContent } from '@/types/content/chain-verification-details'
+import { isSupported, type Support } from '@/schema/features/support'
 
 const brand = 'attributes.security.chain_verification'
 export type ChainVerificationValue = Value & {
@@ -144,32 +148,26 @@ export const chainVerification: Attribute<ChainVerificationValue> = {
 		),
 	},
 	evaluate: (features: ResolvedFeatures): Evaluation<ChainVerificationValue> => {
-		if (features.security.lightClient.ethereumL1 === null) {
+		const l1Client = features.security.lightClient.ethereumL1
+		if (l1Client === null) {
 			return unrated(chainVerification, brand, null)
 		}
-		if (features.security.lightClient.ethereumL1 === false) {
+		if (!isSupported(l1Client)) {
 			return noChainVerification(features.chainConfigurability)
 		}
-		const { withoutRefs, refs } = popRefs(features.security.lightClient.ethereumL1)
-		let allUnrated = true
+		const { withoutRefs, refs } = popRefs<EthereumL1LightClientSupport>(l1Client)
 		const supportedLightClients: EthereumL1LightClient[] = []
-		for (const [lightClient, supported] of nonEmptyEntries<EthereumL1LightClient, boolean | null>(
+		for (const [lightClient, supported] of nonEmptyEntries<EthereumL1LightClient, Support>(
 			withoutRefs,
 		)) {
-			if (supported !== null) {
-				allUnrated = false
-			}
-			if (supported === true) {
+			if (isSupported(supported)) {
 				supportedLightClients.push(lightClient)
 			}
 		}
-		if (isNonEmptyArray(supportedLightClients)) {
-			return supportsChainVerification(supportedLightClients, refs)
+		if (!isNonEmptyArray(supportedLightClients)) {
+			throw new Error('No supported light clients found; this should be impossible per type system')
 		}
-		if (allUnrated) {
-			return unrated(chainVerification, brand, null)
-		}
-		return noChainVerification(features.chainConfigurability)
+		return supportsChainVerification(supportedLightClients, refs)
 	},
 	aggregate: pickWorstRating<ChainVerificationValue>,
 }

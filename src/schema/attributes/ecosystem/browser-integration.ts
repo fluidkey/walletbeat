@@ -17,8 +17,14 @@ import { eip2700 } from '@/data/eips/eip-2700'
 import type { BrowserIntegrationEip } from '../../features/integration'
 import { getEip } from '@/data/eips'
 import { commaListFormat } from '@/types/utils/text'
+import {
+	featureSupported,
+	isSupported,
+	notSupported,
+	type Support,
+} from '@/schema/features/support'
 
-type ResolvedSupport = Record<BrowserIntegrationEip, boolean>
+type ResolvedSupport = Record<BrowserIntegrationEip, Support>
 
 const brand = 'attributes.ecosystem.browser_integration'
 export type BrowserIntegrationValue = Value & {
@@ -28,13 +34,13 @@ export type BrowserIntegrationValue = Value & {
 
 function browserIntegrationSupport(support: ResolvedSupport): Evaluation<BrowserIntegrationValue> {
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Keys are already of type BrowserIntegrationEip, and remain so after being mapped.
-	const supported: BrowserIntegrationEip[] = Object.entries<boolean>(support)
-		.filter(([_, v]) => v)
+	const supported: BrowserIntegrationEip[] = Object.entries<Support>(support)
+		.filter(([_, v]) => isSupported(v))
 		.map(([k, _]) => k) as BrowserIntegrationEip[]
 
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Keys are already of type BrowserIntegrationEip, and remain so after being mapped.
-	const unsupported: BrowserIntegrationEip[] = Object.entries<boolean>(support)
-		.filter(([_, v]) => !v)
+	const unsupported: BrowserIntegrationEip[] = Object.entries<Support>(support)
+		.filter(([_, v]) => !isSupported(v))
 		.map(([k, _]) => k) as BrowserIntegrationEip[]
 
 	if (supported.length === 0) {
@@ -91,9 +97,9 @@ function browserIntegrationSupport(support: ResolvedSupport): Evaluation<Browser
 				${unsupported.length === 0 ? 'all' : 'a subset of'} the prominent standards for
 				web browser integration:
 
-				${support['1193'] ? `* ${eipMarkdownLinkAndTitle(eip1193)}` : ''}
-				${support['2700'] ? `* ${eipMarkdownLinkAndTitle(eip2700)}` : ''}
-				${support['6963'] ? `* ${eipMarkdownLinkAndTitle(eip6963)}` : ''}
+				${isSupported(support['1193']) ? `* ${eipMarkdownLinkAndTitle(eip1193)}` : ''}
+				${isSupported(support['2700']) ? `* ${eipMarkdownLinkAndTitle(eip2700)}` : ''}
+				${isSupported(support['6963']) ? `* ${eipMarkdownLinkAndTitle(eip6963)}` : ''}
 			`,
 		),
 		howToImprove:
@@ -148,9 +154,9 @@ export const browserIntegration: Attribute<BrowserIntegrationValue> = {
 				The wallet implements all listed web browser integration standards.
 			`),
 			browserIntegrationSupport({
-				'1193': true,
-				'2700': true,
-				'6963': true,
+				'1193': featureSupported,
+				'2700': featureSupported,
+				'6963': featureSupported,
 			}).value,
 		),
 		partial: exampleRating(
@@ -158,9 +164,9 @@ export const browserIntegration: Attribute<BrowserIntegrationValue> = {
 				The wallet implements some but not all listed web browser integration standards.
 			`),
 			browserIntegrationSupport({
-				'1193': true,
-				'2700': true,
-				'6963': false,
+				'1193': featureSupported,
+				'2700': featureSupported,
+				'6963': notSupported,
 			}).value,
 		),
 		fail: exampleRating(
@@ -168,9 +174,9 @@ export const browserIntegration: Attribute<BrowserIntegrationValue> = {
 				The wallet implements none of the listed web browser integration standards.
 			`),
 			browserIntegrationSupport({
-				'1193': false,
-				'2700': false,
-				'6963': false,
+				'1193': notSupported,
+				'2700': notSupported,
+				'6963': notSupported,
 			}).value,
 		),
 	},

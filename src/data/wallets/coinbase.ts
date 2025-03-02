@@ -1,8 +1,6 @@
 import { paragraph } from '@/types/content'
 import type { Wallet } from '@/schema/wallet'
 import { WalletProfile } from '@/schema/features/profile'
-import type { WithRef } from '@/schema/reference'
-import type { EthereumL1LightClient } from '@/schema/features/security/light-client'
 import { polymutex } from '../contributors/polymutex'
 
 export const coinbase: Wallet = {
@@ -44,11 +42,7 @@ export const coinbase: Wallet = {
 		security: {
 			publicSecurityAudits: null,
 			lightClient: {
-				ethereumL1: {
-					helios: null,
-					heliosMobi: null,
-					ref: null,
-				} satisfies WithRef<Record<EthereumL1LightClient, boolean | null>>,
+				ethereumL1: null,
 			},
 		},
 		privacy: {

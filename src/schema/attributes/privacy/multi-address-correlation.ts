@@ -17,6 +17,7 @@ import {
 } from '@/schema/features/privacy/data-collection'
 import { markdown, paragraph, sentence } from '@/types/content'
 import type { WalletMetadata } from '@/schema/wallet'
+import { isSupported } from '@/schema/features/support'
 
 const brand = 'attributes.privacy.multi_address_correlation'
 export type MultiAddressCorrelationValue = Value & {
@@ -429,7 +430,7 @@ export const multiAddressCorrelation: Attribute<MultiAddressCorrelationValue> = 
 		if (features.multiAddress === null) {
 			return unrated(multiAddressCorrelation, brand, null)
 		}
-		if (!features.multiAddress) {
+		if (!isSupported(features.multiAddress)) {
 			return unsupported
 		}
 		if (features.privacy.dataCollection === null) {

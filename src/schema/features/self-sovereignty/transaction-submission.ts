@@ -1,3 +1,5 @@
+import type { Support } from '../support'
+
 /** L2 types considered for transaction submission. */
 export type TransactionSubmissionL2Type =
 	| 'opStack' // https://docs.optimism.io/stack/transactions/forced-transaction
@@ -46,7 +48,7 @@ export interface TransactionSubmission {
 		 * Whether the wallet is able to self-broadcast by acting as its own
 		 * gossipping node in the Ethereum L1.
 		 */
-		selfBroadcastViaDirectGossip: boolean | null
+		selfBroadcastViaDirectGossip: Support | null
 
 		/**
 		 * Whether the wallet is able to self-broadcast when configured to use
@@ -56,7 +58,7 @@ export interface TransactionSubmission {
 		 * otherwise use a user's self-hosted node, so this needs explicit
 		 * verification.
 		 */
-		selfBroadcastViaSelfHostedNode: boolean | null
+		selfBroadcastViaSelfHostedNode: Support | null
 	}
 
 	/** Options for broadcasting transactions to L2 chains. */

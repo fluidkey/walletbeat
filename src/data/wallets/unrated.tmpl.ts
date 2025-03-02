@@ -2,8 +2,6 @@ import { paragraph } from '@/types/content'
 import type { Wallet } from '@/schema/wallet'
 import { WalletProfile } from '@/schema/features/profile'
 import { exampleContributor } from '../contributors/example'
-import type { WithRef } from '@/schema/reference'
-import type { EthereumL1LightClient } from '@/schema/features/security/light-client'
 
 export const unratedTemplate: Wallet = {
 	metadata: {
@@ -45,11 +43,7 @@ export const unratedTemplate: Wallet = {
 		security: {
 			publicSecurityAudits: null,
 			lightClient: {
-				ethereumL1: {
-					helios: null,
-					heliosMobi: null,
-					ref: null,
-				} satisfies WithRef<Record<EthereumL1LightClient, boolean | null>>,
+				ethereumL1: null,
 			},
 		},
 		privacy: {

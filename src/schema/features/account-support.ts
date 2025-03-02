@@ -1,7 +1,8 @@
 import type { WithRef } from '../reference'
+import { isSupported, type NotSupported, type Supported } from './support'
 
-export type AccountTypeSupported<T> = WithRef<{ support: 'SUPPORTED' } & T>
-export type AccountTypeNotSupported = WithRef<{ support: 'NOT_SUPPORTED' }>
+export type AccountTypeSupported<T> = WithRef<Supported<T>>
+export type AccountTypeNotSupported = WithRef<NotSupported>
 
 export type AccountTypeSupport<T> = AccountTypeSupported<T> | AccountTypeNotSupported
 
@@ -9,7 +10,7 @@ export type AccountTypeSupport<T> = AccountTypeSupported<T> | AccountTypeNotSupp
 export function isAccountTypeSupported<T>(
 	accountTypeSupport: AccountTypeSupport<T>,
 ): accountTypeSupport is AccountTypeSupported<T> {
-	return accountTypeSupport.support === 'SUPPORTED'
+	return isSupported<T>(accountTypeSupport)
 }
 
 /** Set of possible account types. */

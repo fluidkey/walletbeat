@@ -1,5 +1,5 @@
-import type { NonEmptyRecord } from '@/types/utils/non-empty'
 import type { LabeledUrl } from '../../url'
+import type { AtLeastOneSupported } from '../support'
 
 /** Enum of known Ethereum L1 light clients. */
 export enum EthereumL1LightClient {
@@ -40,5 +40,8 @@ export function ethereumL1LightClientUrl(l1LightClient: EthereumL1LightClient): 
 	}
 }
 
-/** A set of Ethereum L1 light clients that a wallet may use. */
-export type EthereumL1LightClientSupport = NonEmptyRecord<EthereumL1LightClient, boolean | null>
+/**
+ * A set of Ethereum L1 light clients that a wallet may use.
+ * At least one must be supported.
+ */
+export type EthereumL1LightClientSupport = AtLeastOneSupported<EthereumL1LightClient>

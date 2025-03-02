@@ -12,6 +12,7 @@ import { SecurityFlawSeverity } from '@/schema/features/security/security-audits
 import { cure53 } from '../entities/cure53'
 import { TransactionSubmissionL2Support } from '@/schema/features/self-sovereignty/transaction-submission'
 import { AccountType } from '@/schema/features/account-support'
+import { featureSupported, notSupported, supported } from '@/schema/features/support'
 
 export const rabby: Wallet = {
 	metadata: {
@@ -37,8 +38,7 @@ export const rabby: Wallet = {
 		},
 		accountSupport: {
 			defaultAccountType: AccountType.eoa,
-			eoa: {
-				support: 'SUPPORTED',
+			eoa: supported({
 				canExportPrivateKey: true,
 				keyDerivation: {
 					derivationPath: 'BIP44',
@@ -46,19 +46,17 @@ export const rabby: Wallet = {
 					type: 'BIP32',
 					canExportSeedPhrase: true,
 				},
-			},
-			eip7702: { support: 'NOT_SUPPORTED' },
-			mpc: { support: 'NOT_SUPPORTED' },
-			rawErc4337: { support: 'NOT_SUPPORTED' },
+			}),
+			eip7702: notSupported,
+			mpc: notSupported,
+			rawErc4337: notSupported,
 		},
-		multiAddress: true,
+		multiAddress: featureSupported,
 		addressResolution: {
-			nonChainSpecificEnsResolution: {
-				support: 'NOT_SUPPORTED',
-			},
+			nonChainSpecificEnsResolution: notSupported,
 			chainSpecificAddressing: {
-				erc7828: { support: 'NOT_SUPPORTED' },
-				erc7831: { support: 'NOT_SUPPORTED' },
+				erc7828: notSupported,
+				erc7831: notSupported,
 			},
 			ref: [
 				{
@@ -70,9 +68,9 @@ export const rabby: Wallet = {
 		},
 		integration: {
 			browser: {
-				'1193': true,
-				'2700': true,
-				'6963': true,
+				'1193': featureSupported,
+				'2700': featureSupported,
+				'6963': featureSupported,
 				ref: [
 					{
 						url: 'https://github.com/RabbyHub/Rabby/blob/develop/src/background/utils/buildinProvider.ts',
@@ -229,9 +227,7 @@ export const rabby: Wallet = {
 				},
 			],
 			lightClient: {
-				ethereumL1: {
-					helios: false,
-				},
+				ethereumL1: notSupported,
 			},
 		},
 		privacy: {
@@ -275,8 +271,8 @@ export const rabby: Wallet = {
 		selfSovereignty: {
 			transactionSubmission: {
 				l1: {
-					selfBroadcastViaDirectGossip: false,
-					selfBroadcastViaSelfHostedNode: true,
+					selfBroadcastViaDirectGossip: notSupported,
+					selfBroadcastViaSelfHostedNode: featureSupported,
 				},
 				l2: {
 					arbitrum: TransactionSubmissionL2Support.SUPPORTED_BUT_NO_FORCE_INCLUSION,

@@ -1,4 +1,5 @@
 import type { WithRef } from '../reference'
+import type { Support } from './support'
 
 /**
  * EIPs related to web browser integration standards.
@@ -19,5 +20,5 @@ export interface WalletIntegration {
 	 *   - EIP-2700: Type `window.ethereum.on` and `window.ethereum.removeListener` in the console.
 	 *   - EIP-6963: Check https://eip6963.org/
 	 */
-	browser: 'NOT_A_BROWSER_WALLET' | WithRef<Record<BrowserIntegrationEip, boolean | null>>
+	browser: 'NOT_A_BROWSER_WALLET' | WithRef<Record<BrowserIntegrationEip, Support | null>>
 }

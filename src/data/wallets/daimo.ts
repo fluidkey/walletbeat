@@ -14,6 +14,7 @@ import { RpcEndpointConfiguration } from '@/schema/features/chain-configurabilit
 import { veridise } from '../entities/veridise'
 import { TransactionSubmissionL2Support } from '@/schema/features/self-sovereignty/transaction-submission'
 import { AccountType, TransactionGenerationCapability } from '@/schema/features/account-support'
+import { featureSupported, notSupported, supported } from '@/schema/features/support'
 
 export const daimo: Wallet = {
 	metadata: {
@@ -44,11 +45,10 @@ export const daimo: Wallet = {
 		},
 		accountSupport: {
 			defaultAccountType: AccountType.rawErc4337,
-			eoa: { support: 'NOT_SUPPORTED' },
-			mpc: { support: 'NOT_SUPPORTED' },
-			eip7702: { support: 'NOT_SUPPORTED' },
-			rawErc4337: {
-				support: 'SUPPORTED',
+			eoa: notSupported,
+			mpc: notSupported,
+			eip7702: notSupported,
+			rawErc4337: supported({
 				controllingSharesInSelfCustodyByDefault: 'YES',
 				keyRotationTransactionGeneration:
 					TransactionGenerationCapability.USING_OPEN_SOURCE_STANDALONE_APP,
@@ -59,17 +59,16 @@ export const daimo: Wallet = {
 					explanation:
 						'Key rotation changes are supported in the UI and result in onchain transactions with a well-known structure',
 				},
-			},
+			}),
 		},
-		multiAddress: true,
+		multiAddress: featureSupported,
 		addressResolution: {
-			nonChainSpecificEnsResolution: {
-				support: 'SUPPORTED',
+			nonChainSpecificEnsResolution: supported({
 				medium: 'CHAIN_CLIENT',
-			},
+			}),
 			chainSpecificAddressing: {
-				erc7828: { support: 'NOT_SUPPORTED' },
-				erc7831: { support: 'NOT_SUPPORTED' },
+				erc7828: notSupported,
+				erc7831: notSupported,
 			},
 			ref: [
 				{
@@ -101,7 +100,7 @@ export const daimo: Wallet = {
 				},
 			],
 			lightClient: {
-				ethereumL1: false,
+				ethereumL1: notSupported,
 			},
 		},
 		privacy: {
@@ -235,8 +234,8 @@ export const daimo: Wallet = {
 		selfSovereignty: {
 			transactionSubmission: {
 				l1: {
-					selfBroadcastViaDirectGossip: false,
-					selfBroadcastViaSelfHostedNode: false,
+					selfBroadcastViaDirectGossip: notSupported,
+					selfBroadcastViaSelfHostedNode: notSupported,
 				},
 				l2: {
 					arbitrum: TransactionSubmissionL2Support.NOT_SUPPORTED_BY_WALLET_BY_DEFAULT,

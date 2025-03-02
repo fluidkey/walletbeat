@@ -11,6 +11,7 @@ import type { AddressResolution } from './features/address-resolution'
 import type { SecurityAudit } from './features/security/security-audits'
 import type { TransactionSubmission } from './features/self-sovereignty/transaction-submission'
 import type { AccountSupport } from './features/account-support'
+import type { Support } from './features/support'
 
 /**
  * A set of features about a wallet, each of which may or may not depend on
@@ -34,12 +35,12 @@ export interface WalletFeatures {
 		 * If never audited, this should be an empty array, as 'null' represents
 		 * the fact that we haven't checked whether there have been any audit.
 		 */
-		publicSecurityAudits: null | SecurityAudit[]
+		publicSecurityAudits: SecurityAudit[] | null
 
 		/** Light clients. */
 		lightClient: {
-			/** Light client used for Ethereum L1. False means no light client support. */
-			ethereumL1: VariantFeature<WithRef<EthereumL1LightClientSupport> | false>
+			/** Light client used for Ethereum L1. */
+			ethereumL1: VariantFeature<Support<WithRef<EthereumL1LightClientSupport>>>
 		}
 	}
 
@@ -65,7 +66,7 @@ export interface WalletFeatures {
 	accountSupport: VariantFeature<WithRef<AccountSupport>>
 
 	/** Does the wallet support more than one Ethereum address? */
-	multiAddress: VariantFeature<boolean>
+	multiAddress: VariantFeature<Support>
 
 	/** Integration inside browsers, mobile phones, etc. */
 	integration: WalletIntegration
@@ -94,7 +95,7 @@ export interface ResolvedFeatures {
 	security: {
 		publicSecurityAudits: null | SecurityAudit[]
 		lightClient: {
-			ethereumL1: ResolvedFeature<WithRef<EthereumL1LightClientSupport> | false>
+			ethereumL1: ResolvedFeature<Support<WithRef<EthereumL1LightClientSupport>>>
 		}
 	}
 	privacy: {
@@ -106,7 +107,7 @@ export interface ResolvedFeatures {
 	}
 	chainConfigurability: ResolvedFeature<ChainConfigurability>
 	accountSupport: ResolvedFeature<AccountSupport>
-	multiAddress: ResolvedFeature<boolean>
+	multiAddress: ResolvedFeature<Support>
 	integration: WalletIntegration
 	addressResolution: ResolvedFeature<WithRef<AddressResolution>>
 	license: ResolvedFeature<WithRef<License>>

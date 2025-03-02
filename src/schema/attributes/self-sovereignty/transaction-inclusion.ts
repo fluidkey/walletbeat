@@ -15,6 +15,7 @@ import {
 } from '@/schema/features/self-sovereignty/transaction-submission'
 import { isNonEmptyArray } from '@/types/utils/non-empty'
 import { transactionInclusionDetailsContent } from '@/types/content/transaction-inclusion-details'
+import { isSupported } from '@/schema/features/support'
 
 const brand = 'attributes.self_sovereignty.transaction_inclusion'
 export type TransactionInclusionValue = Value & {
@@ -252,10 +253,13 @@ export const transactionInclusion: Attribute<TransactionInclusionValue> = {
 		) {
 			return unrated(transactionInclusion, brand, null)
 		}
-		const supportsL1Broadcast: L1BroadcastSupport = features.selfSovereignty.transactionSubmission
-			.l1.selfBroadcastViaDirectGossip
+		const supportsL1Broadcast: L1BroadcastSupport = isSupported(
+			features.selfSovereignty.transactionSubmission.l1.selfBroadcastViaDirectGossip,
+		)
 			? 'SELF_GOSSIP'
-			: features.selfSovereignty.transactionSubmission.l1.selfBroadcastViaSelfHostedNode
+			: isSupported(
+						features.selfSovereignty.transactionSubmission.l1.selfBroadcastViaSelfHostedNode,
+				  )
 				? 'OWN_NODE'
 				: 'NO'
 		const supportAnyL2Transactions: TransactionSubmissionL2Type[] = []

@@ -1,3 +1,5 @@
+import type { Support } from './support'
+
 /** Which methods of address resolution a wallet supports. */
 export interface AddressResolution<ARS = AddressResolutionSupport | null> {
 	/**
@@ -17,15 +19,8 @@ export interface AddressResolution<ARS = AddressResolutionSupport | null> {
 }
 
 /** How a wallet resolves addresses. */
-export type AddressResolutionSupport =
+export type AddressResolutionSupport = Support<
 	| {
-			/** The wallet does not support resolving such addresses. */
-			support: 'NOT_SUPPORTED'
-	  }
-	| {
-			/** The wallet supports resolving such addresses. */
-			support: 'SUPPORTED'
-
 			/**
 			 * The wallet reuses its own chain client provider to look up the
 			 * necessary data, inheriting its privacy and verifiability properties.
@@ -33,9 +28,6 @@ export type AddressResolutionSupport =
 			medium: 'CHAIN_CLIENT'
 	  }
 	| {
-			/** The wallet supports resolving such addresses. */
-			support: 'SUPPORTED'
-
 			/**
 			 * The wallet uses a third-party offchain provider to look up the necessary
 			 * data.
@@ -55,3 +47,4 @@ export type AddressResolutionSupport =
 			 */
 			offchainProviderConnection: 'DIRECT_CONNECTION' | 'UNIQUE_PROXY_CIRCUIT'
 	  }
+>
