@@ -16,6 +16,13 @@
 }
 
 :root {
+	--transition-easeOutExpo: cubic-bezier(0.16, 1, 0.3, 1);
+
+	--active-transitionInDuration: 0.125s;
+	--active-transitionOutDuration: 0.2s;
+	--active-scale: 0.99;
+	--active-opacity: 0.8;
+
 	scroll-behavior: smooth;
 }
 
