@@ -7,7 +7,6 @@
 >
 	// Types
 	import { DataTable, type ColumnDef } from '@careswitch/svelte-data-table'
-	import type { Snippet } from 'svelte'
 
 
 	// Inputs
@@ -15,18 +14,10 @@
 		rows,
 		getId,
 		columns,
-		cellSnippet,
 	}: {
 		rows: Datum[]
 		getId?: (row: Datum, index: number) => any
 		columns: ColumnDef<Datum, CellValue>[]
-		cellSnippet: Snippet<[
-			{
-				row: Datum
-				column: ColumnDef<Datum, CellValue>
-				value: CellValue
-			}
-		]>
 	} = $props()
 
 
@@ -38,7 +29,21 @@
 </script>
 
 
-{#snippet columnCellSnippet(column: ColumnDef<Datum, CellValue>)}
+{#snippet cellSnippet({
+	row,
+	column,
+	value,
+}: {
+	row: Datum
+	column: ColumnDef<Datum, CellValue>
+	value: CellValue
+})}
+	{value}
+{/snippet}
+
+{#snippet columnCellSnippet(
+	column: ColumnDef<Datum, CellValue>,
+)}
 	{column.name}
 {/snippet}
 
