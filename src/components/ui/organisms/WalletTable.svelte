@@ -30,6 +30,18 @@
 	// Components
 	import WalletRatingCell from '@/components/ui/molecules/WalletRatingCell.svelte'
 	import Table from '@/components/ui/atoms/Table.svelte'
+
+	import PhoneAndroidIcon from '@material-icons/svg/svg/phone_android/baseline.svg?raw'
+	import LanguageIcon from '@material-icons/svg/svg/language/baseline.svg?raw'
+	import MonitorIcon from '@material-icons/svg/svg/monitor/baseline.svg?raw'
+	import SettingsEthernetIcon from '@material-icons/svg/svg/settings_ethernet/baseline.svg?raw'
+
+	const variantIcons = {
+		[Variant.BROWSER]: LanguageIcon,
+		[Variant.DESKTOP]: MonitorIcon,
+		[Variant.MOBILE]: PhoneAndroidIcon,
+		[Variant.EMBEDDED]: SettingsEthernetIcon,
+	}
 </script>
 
 
@@ -66,13 +78,29 @@
 		{#if column.key === 'displayName'}
 			{@const displayName = value}
 
-			<img
-				alt={displayName}
-				src={`/images/wallets/${wallet.metadata.id}.${wallet.metadata.iconExtension}`}
-				width="16"
-				height="16"
-			/>
-			{displayName}
+			<div class="row">
+				<div class="row">
+					<img
+						alt={displayName}
+						src={`/images/wallets/${wallet.metadata.id}.${wallet.metadata.iconExtension}`}
+						width="16"
+						height="16"
+					/>
+					{displayName}
+				</div>
+
+				<div class="variants row inline">
+					{#each (
+						Object.entries(wallet.variants)
+							.filter(([, hasVariant]) => hasVariant)
+							.map(([variant]) => variant)
+					) as variant}
+						<span title={variant}>
+							{@html variantIcons[variant]}
+						</span>
+					{/each}
+				</div>
+			</div>
 		{:else}
 			{@const attrGroup = attributeGroups[column.id]}
 			{@const evalGroup = value}
@@ -99,5 +127,11 @@
 		width: auto;
 		height: 1.66rem;
 		vertical-align: middle;
+	}
+
+	.variants {
+		:global(svg) {
+			fill: currentColor;
+		}
 	}
 </style>
