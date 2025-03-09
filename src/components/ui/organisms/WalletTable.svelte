@@ -1,6 +1,14 @@
+<script module lang="ts">
+	export type WalletTableState = {
+		variantSelected: Variant | undefined
+		expandedRowIds: Set<string>
+	}
+</script>
+
+
 <script lang="ts">
 	// Types/constants
-	import type { Variant } from '@/schema/variants'
+	import { Variant } from '@/schema/variants'
 	import {
 		ecosystemAttributeGroup,
 		privacyAttributeGroup,
@@ -20,10 +28,9 @@
 
 
 	// State
-	let tableState: {
-		selectedVariant: Variant | undefined
-	} = $state({
-		selectedVariant: undefined,
+	let tableState = $state<WalletTableState>({
+		variantSelected: undefined,
+		expandedRowIds: new Set<string>()
 	})
 
 
@@ -68,6 +75,12 @@
 				}))
 		),
 	]}
+	onRowClick={({ id }) => {
+		if(tableState.expandedRowIds.has(id))
+			tableState.expandedRowIds.delete(id)
+		else
+			tableState.expandedRowIds.add(id)
+	}}
 	class="wallet-table"
 >
 	{#snippet cellSnippet({
@@ -106,14 +119,14 @@
 			{@const evalGroup = wallet.overall[attrGroup.id]}
 			{@const groupScore = value}
 
-			<!-- <WalletRatingCell
+			<WalletRatingCell
 				{wallet}
 				{attrGroup}
 				{evalGroup}
 				{groupScore}
 				bind:tableState
 				rowId={wallet.metadata.id}
-			/> -->
+			/>
 		{/if}
 	{/snippet}
 </Table>
