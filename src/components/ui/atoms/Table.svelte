@@ -9,7 +9,6 @@
 	import { DataTable, type ColumnDef } from '@careswitch/svelte-data-table'
 	import type { Snippet } from 'svelte'
 
-
 	// Inputs
 	let {
 		rows,
@@ -20,19 +19,31 @@
 	}: {
 		rows: Datum[]
 		getId?: (row: Datum, index: number) => any
-		cellSnippet?: Snippet<[{
-			row: Datum
-			column: ColumnDef<Datum, CellValue>
-			value: CellValue
-		}]>
+		cellSnippet?: Snippet<
+			[
+				{
+					row: Datum
+					column: ColumnDef<Datum, CellValue>
+					value: CellValue
+				},
+			]
+		>
 		columns: ColumnDef<Datum, CellValue>[]
 	} = $props()
 
-
 	// State
-	const table = new DataTable<Datum>({
-		data: rows,
-		columns,
+	let table = $state(
+		new DataTable<Datum>({
+			data: rows,
+			columns,
+		}),
+	)
+
+	$effect(() => {
+		table = new DataTable<Datum>({
+			data: rows,
+			columns,
+		})
 	})
 </script>
 
@@ -48,13 +59,11 @@
 	{value}
 {/snippet} -->
 
-{#snippet columnCellSnippet(
-	column: ColumnDef<Datum, CellValue>,
-)}
+{#snippet columnCellSnippet(column: ColumnDef<Datum, CellValue>)}
 	{column.name}
 {/snippet}
 
-
+<!-- {#key columns} -->
 <div {...restProps}>
 	<table>
 		<thead>
@@ -84,7 +93,6 @@
 	</table>
 </div>
 
-
 <style>
 	div {
 		--table-backgroundColor: #22242b;
@@ -101,11 +109,9 @@
 		border-radius: var(--table-cornerRadius);
 
 		clip-path: inset(
-			calc(-1 * var(--table-borderWidth))
-			calc(-1 * var(--table-borderWidth))
-			calc(-1 * var(--table-borderWidth))
-			calc(-1 * var(--table-borderWidth))
-			round var(--table-cornerRadius)
+			calc(-1 * var(--table-borderWidth)) calc(-1 * var(--table-borderWidth))
+				calc(-1 * var(--table-borderWidth)) calc(-1 * var(--table-borderWidth)) round
+				var(--table-cornerRadius)
 		);
 	}
 

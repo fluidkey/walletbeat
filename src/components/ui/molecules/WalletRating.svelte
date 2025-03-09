@@ -51,14 +51,16 @@
 	>(null)
 
 	let evalEntries = $derived(
-		evaluatedAttributesEntries(evalGroup)
-			.filter(([_, evalAttr]) => (
-				evalAttr?.evaluation?.value?.rating !== Rating.EXEMPT
-			))
+		evalGroup ? 
+			evaluatedAttributesEntries(evalGroup)
+				.filter(([_, evalAttr]) => (
+					evalAttr?.evaluation?.value?.rating !== Rating.EXEMPT
+				))
+			: []
 	)
 
 	let highlightedEvalAttr = $derived(
-		highlightedSlice !== null ?
+		highlightedSlice !== null && evalGroup ?
 			evalGroup[highlightedSlice.evalAttrId]
 		:
 			null 
