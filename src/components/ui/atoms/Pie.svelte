@@ -274,8 +274,8 @@
 	class="container"
 	data-arc-type={layout}
 	style:--radius={radius}
-	style:--outerRadiusFraction={outerRadiusFraction}
-	style:--innerRadiusFraction={innerRadiusFraction}
+	style:--outer-radius={outerRadiusFraction}
+	style:--inner-radius={innerRadiusFraction}
 	style:--gap={gap}
 >
 	<svg {width} {height} viewBox={viewBoxParams}>
@@ -283,7 +283,9 @@
 			{#each slices as slice, i}
 				<g
 					class="slice"
-					style:--rotationAngle={sliceParams.sliceAngles[i].midAngle}
+					style:--slice-color={slice.color}
+					style:--mid-angle={sliceParams.sliceAngles[i].midAngle}
+					style:--label-distance={(sliceParams.outerRadius + sliceParams.innerRadius) / 2}
 					class:highlighted={highlightedSliceId === slice.id}
 					data-slice-id={slice.id}
 					role="button"
@@ -293,16 +295,12 @@
 					onclick={() => onSliceClick?.(slice.id)}
 					onkeydown={e => e.key === 'Enter' && onSliceClick?.(slice.id)}
 				>
-					<path d={slicePaths[i]} fill={slice.color}>
+					<path d={slicePaths[i]} class="slice-path">
 						<title>{slice.tooltip}: {slice.tooltipValue}</title>
 					</path>
 
-					<line x1="0" y1="0" x2="0" y2={-sliceParams.innerRadius} class="label-line" />
-					<text
-						class="slice-label"
-						aria-hidden="true"
-						transform={`rotate(${-sliceParams.sliceAngles[i].midAngle}) translate(0, ${-((sliceParams.outerRadius + sliceParams.innerRadius) / 2)})`}
-					>
+					<line class="label-line" x1="0" y1="0" x2="0" y2={-sliceParams.innerRadius} />
+					<text class="slice-label" aria-hidden="true">
 						{slice.arcLabel}
 					</text>
 				</g>
@@ -312,6 +310,9 @@
 				{#each nestedSlicesData as nestedData, i}
 					<g
 						class="slice nested-slice"
+						style:--slice-color={nestedData.slice.color}
+						style:--mid-angle={nestedData.angleInfo.midAngle}
+						style:--label-distance={(sliceParams.outerRadius * 0.9 + sliceParams.innerRadius * 1.1) / 2}
 						class:highlighted={highlightedSliceId === nestedData.slice.id}
 						data-slice-id={nestedData.slice.id}
 						data-parent-id={nestedData.slice.parentId}
@@ -322,15 +323,11 @@
 						onclick={() => onSliceClick?.(nestedData.slice.id)}
 						onkeydown={e => e.key === 'Enter' && onSliceClick?.(nestedData.slice.id)}
 					>
-						<path d={nestedData.path} fill={nestedData.slice.color}>
+						<path d={nestedData.path} class="slice-path">
 							<title>{nestedData.slice.tooltip}: {nestedData.slice.tooltipValue}</title>
 						</path>
 
-						<text
-							class="nested-slice-label"
-							aria-hidden="true"
-							transform={`rotate(${nestedData.angleInfo.midAngle}) translate(0, ${-((sliceParams.outerRadius * 0.9 + sliceParams.innerRadius * 1.1) / 2)})`}
-						>
+						<text class="nested-slice-label" aria-hidden="true">
 							{nestedData.slice.arcLabel}
 						</text>
 					</g>
@@ -348,17 +345,18 @@
 
 <style>
 	.container {
-		--sliceLabel-radius: calc(
-			var(--radius) * (var(--outerRadiusFraction) + var(--innerRadiusFraction)) / 2
-		);
+		--highlight-color: rgba(255, 255, 255, 1);
+		--highlight-stroke-width: 2;
+		--hover-brightness: 1.1;
+		--hover-scale: 1.05;
 
 		&[data-arc-type='TopHalf'] {
-			--centerLabel-dominantBaseline: text-after-edge;
+			--center-label-baseline: text-after-edge;
 		}
 
 		&[data-arc-type='Full'],
 		&[data-arc-type='Custom'] {
-			--centerLabel-dominantBaseline: central;
+			--center-label-baseline: central;
 		}
 
 		transform: translateZ(0);
@@ -373,33 +371,38 @@
 
 				transform-origin: 0 0;
 				cursor: pointer;
-				will-change: transform, scale;
-				transition-property: transform, scale, filter;
-				transition-duration: 0.2s;
-				transition-timing-function: ease-out;
+				will-change: transform;
+				transform: scale(var(--slice-scale));
+				transition: all 0.2s ease-out;
 
 				&:hover,
 				&:focus {
-					filter: brightness(1.1);
-					--slice-scale: 1.05;
+					filter: brightness(var(--hover-brightness));
+					--slice-scale: var(--hover-scale);
 				}
 
 				&:focus {
-					stroke: rgba(255, 255, 255, 0.8);
-					stroke-width: 2px;
+					stroke: var(--highlight-color);
+					stroke-width: calc(var(--highlight-stroke-width) * 1px);
 					z-index: 2;
 					outline: none;
 				}
 
 				&.highlighted {
-					stroke: rgba(255, 255, 255, 1);
-					stroke-width: 2px;
+					stroke: var(--highlight-color);
+					stroke-width: calc(var(--highlight-stroke-width) * 1px);
 					z-index: 2;
 				}
 
 				.label-line {
-					stroke: none;
+					--line-opacity: 0;
+					stroke: currentColor;
+					opacity: var(--line-opacity);
 					pointer-events: none;
+				}
+
+				.slice-path {
+					fill: var(--slice-color);
 				}
 
 				.slice-label,
@@ -409,14 +412,26 @@
 					fill: currentColor;
 					font-size: 10px;
 					pointer-events: none;
-					will-change: transform;
+					transform: 
+						rotate(calc(var(--mid-angle) * 1deg)) 
+						translate(0, calc(var(--label-distance) * -1px)) 
+						rotate(calc(var(--mid-angle) * -1deg));
 				}
 
 				&.nested-slice {
-					opacity: 0.9;
+					--nested-opacity: 0.9;
+					opacity: var(--nested-opacity);
+					transform-origin: 0 0;
+					transition: inherit;
 
 					.nested-slice-label {
 						font-size: 8px;
+					}
+					
+					&:hover,
+					&:focus {
+						filter: brightness(var(--hover-brightness));
+						--slice-scale: var(--hover-scale);
 					}
 				}
 			}
@@ -424,7 +439,7 @@
 
 		.center-label {
 			text-anchor: middle;
-			dominant-baseline: var(--centerLabel-dominantBaseline);
+			dominant-baseline: var(--center-label-baseline);
 			font-size: 14px;
 			fill: currentColor;
 			pointer-events: none;
