@@ -103,14 +103,16 @@
 			</div>
 		{:else}
 			{@const attrGroup = attributeGroups[column.id]}
-			{@const evalGroup = value}
-			{@const { score, unratedComponent } = evalGroup}
+			{@const evalGroup = wallet.overall[attrGroup.id]}
+			{@const groupScore = value}
 
-			{score ? (score * 100).toFixed(0) : '❓'}
 			<!-- <WalletRatingCell
 				{wallet}
 				{attrGroup}
 				{evalGroup}
+				{groupScore}
+				bind:tableState
+				rowId={wallet.metadata.id}
 			/> -->
 		{/if}
 	{/snippet}
