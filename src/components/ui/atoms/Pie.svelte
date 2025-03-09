@@ -36,9 +36,9 @@
 		highlightedSliceId = $bindable(null),
 
 		// Events
-		onSliceClick = (id: string) => {},
-		onSliceMouseEnter = (id: string) => {},
-		onSliceMouseLeave = (id: string) => {},
+		onSliceClick,
+		onSliceMouseEnter,
+		onSliceMouseLeave,
 	}: {
 		// Content
 		slices: PieSlice[]
@@ -190,10 +190,10 @@
 					data-slice-id={slice.id}
 					role="button"
 					tabindex="0"
-					onmouseenter={() => onSliceMouseEnter(slice.id)}
-					onmouseleave={() => onSliceMouseLeave(slice.id)}
-					onclick={() => onSliceClick(slice.id)}
-					onkeydown={e => e.key === 'Enter' && onSliceClick(slice.id)}
+					onmouseenter={() => onSliceMouseEnter?.(slice.id)}
+					onmouseleave={() => onSliceMouseLeave?.(slice.id)}
+					onclick={() => onSliceClick?.(slice.id)}
+					onkeydown={e => e.key === 'Enter' && onSliceClick?.(slice.id)}
 				>
 					<path d={sliceParams.path} fill={slice.color}>
 						<title>{slice.tooltip}: {slice.tooltipValue}</title>
