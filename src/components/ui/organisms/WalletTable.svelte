@@ -35,7 +35,7 @@
 
 
 	// Components
-	import WalletRatingCell from '@/components/ui/molecules/WalletRatingCell.svelte'
+	import WalletRating from '@/components/ui/molecules/WalletRating.svelte'
 	import Table from '@/components/ui/atoms/Table.svelte'
 
 	import PhoneAndroidIcon from '@material-icons/svg/svg/phone_android/baseline.svg?raw'
