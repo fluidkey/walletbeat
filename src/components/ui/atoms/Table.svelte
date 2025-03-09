@@ -7,16 +7,24 @@
 >
 	// Types
 	import { DataTable, type ColumnDef } from '@careswitch/svelte-data-table'
+	import type { Snippet } from 'svelte'
 
 
 	// Inputs
 	let {
 		rows,
 		getId,
+		cellSnippet,
 		columns,
+		...restProps
 	}: {
 		rows: Datum[]
 		getId?: (row: Datum, index: number) => any
+		cellSnippet?: Snippet<[{
+			row: Datum
+			column: ColumnDef<Datum, CellValue>
+			value: CellValue
+		}]>
 		columns: ColumnDef<Datum, CellValue>[]
 	} = $props()
 
@@ -28,8 +36,7 @@
 	})
 </script>
 
-
-{#snippet cellSnippet({
+<!-- {#snippet cellSnippet({
 	row,
 	column,
 	value,
@@ -39,7 +46,7 @@
 	value: CellValue
 })}
 	{value}
-{/snippet}
+{/snippet} -->
 
 {#snippet columnCellSnippet(
 	column: ColumnDef<Datum, CellValue>,
@@ -48,7 +55,7 @@
 {/snippet}
 
 
-<div>
+<div {...restProps}>
 	<table>
 		<thead>
 			<tr>
@@ -111,7 +118,7 @@
 		border-spacing: var(--table-borderWidth);
 
 		thead {
-			font-size: 0.85em;
+			font-size: 0.75em;
 			text-wrap: nowrap;
 
 			tr {
@@ -120,6 +127,10 @@
 				position: sticky;
 				top: 0;
 				z-index: 1;
+
+				th {
+					/* color: color-mix(in oklch, currentColor 50%, transparent); */
+				}
 			}
 		}
 
@@ -144,6 +155,11 @@
 
 					transition: var(--active-transitionOutDuration) var(--transition-easeOutExpo);
 
+					& td.sticky {
+						transition: var(--active-transitionOutDuration) var(--active-transitionOutDuration)
+							var(--transition-easeOutExpo);
+					}
+
 					&:hover {
 						--table-row-backgroundColor: light-dark(rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05));
 					}
@@ -158,6 +174,15 @@
 						}
 
 						box-shadow: none;
+
+						& td.sticky {
+							backdrop-filter: none;
+							transition:
+								all var(--active-transitionInDuration),
+								backdrop-filter none;
+							opacity: 0;
+							scale: 0.9;
+						}
 					}
 				}
 			}
@@ -166,6 +191,30 @@
 		th,
 		td {
 			padding: var(--table-cell-padding);
+
+			&[data-align='start'] {
+				text-align: start;
+				align-items: start;
+				transform-origin: left;
+			}
+			&[data-align='end'] {
+				text-align: end;
+				align-items: end;
+				transform-origin: right;
+			}
+
+			&.sticky {
+				position: sticky;
+				backdrop-filter: blur(20px);
+
+				&:is(th:not(:has(> :not([hidden])))) {
+					opacity: 0;
+				}
+
+				&:last-child {
+					inset-inline-end: 0;
+				}
+			}
 		}
 	}
 </style>
