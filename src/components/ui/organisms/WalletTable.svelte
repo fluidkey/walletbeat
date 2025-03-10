@@ -35,8 +35,8 @@
 	import LanguageIcon from '@material-icons/svg/svg/language/baseline.svg?raw'
 	import MonitorIcon from '@material-icons/svg/svg/monitor/baseline.svg?raw'
 	import SettingsEthernetIcon from '@material-icons/svg/svg/settings_ethernet/baseline.svg?raw'
-	import ViewModuleIcon from '@material-icons/svg/svg/view_module/baseline.svg?raw'
-	import ViewCompactIcon from '@material-icons/svg/svg/view_compact/baseline.svg?raw'
+	import DefaultViewIcon from '@material-icons/svg/svg/looks/baseline.svg?raw'
+	import CombinedViewIcon from '@material-icons/svg/svg/filter_vintage/baseline.svg?raw'
 
 	const variantIcons = {
 		[Variant.BROWSER]: LanguageIcon,
@@ -91,16 +91,16 @@
 	<div class="table-controls">
 		<button
 			class="display-toggle"
-			on:click={toggleDisplayMode}
+			onclick={toggleDisplayMode}
 			title={tableState.displayMode === 'separated'
 				? 'Switch to combined view'
 				: 'Switch to separated view'}
 		>
 			{#if tableState.displayMode === 'separated'}
-				<span class="icon">{@html ViewCompactIcon}</span>
+				<span class="icon">{@html CombinedViewIcon}</span>
 				<span class="label">Combined View</span>
 			{:else}
-				<span class="icon">{@html ViewModuleIcon}</span>
+				<span class="icon">{@html DefaultViewIcon}</span>
 				<span class="label">Detailed View</span>
 			{/if}
 		</button>
@@ -144,12 +144,10 @@
 				</div>
 			{:else if column.key === 'combined'}
 				<CombinedWalletRating
-					data={{
-						wallet,
-						attributeGroups: Object.values(attributeGroups),
-						tableState,
-						rowId: wallet.metadata.id,
-					}}
+					{wallet}
+					attributeGroups={Object.values(attributeGroups)}
+					bind:tableState
+					rowId={wallet.metadata.id}
 				/>
 			{:else}
 				{@const attrGroup = attributeGroups[column.id]}
@@ -187,6 +185,7 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.5rem 1rem;
+		color: white;
 		border-radius: 4px;
 		border: 1px solid rgba(255, 255, 255, 0.1);
 		background: rgba(255, 255, 255, 0.05);
