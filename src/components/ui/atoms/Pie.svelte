@@ -29,7 +29,7 @@
 			outerRadius: number
 			innerRadius: number
 			labelRadius: number
-			sliceGap: number
+			gap: number
 			level: number
 		}
 		children?: ComputedSlice[]
@@ -89,6 +89,7 @@
 		onSliceMouseLeave?: (id: string) => void
 	} = $props()
 
+
 	// Functions
 	const getLevelConfig = (level: number): LevelConfig => levels[Math.min(level, levels.length - 1)]
 
@@ -126,144 +127,105 @@
 		const innerEnd = polarToCartesian(cx, cy, innerRadius, startAngle)
 		const largeArcFlag = Math.abs(endAngle - startAngle) > 180 ? 1 : 0
 
-		return [
-			`M ${start.x} ${start.y}`,
-			`A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
-			`L ${innerEnd.x} ${innerEnd.y}`,
-			`A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 1 ${innerStart.x} ${innerStart.y}`,
-			`L ${start.x} ${start.y}`,
-		].join(' ')
+		return (
+			[
+				`M ${start.x} ${start.y}`,
+				`A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`,
+				`L ${innerEnd.x} ${innerEnd.y}`,
+				`A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 1 ${innerStart.x} ${innerStart.y}`,
+				`L ${start.x} ${start.y}`,
+			]
+				.join(' ')
+		)
 	}
 
-	/**
-	 * Recursively computes slice data with all necessary information for rendering
-	 */
-	const computeSliceData = (
-		sliceArray: Slice[],
-		startAngle: number,
-		endAngle: number,
-		level = 0,
+	const computeSlices = (
+		{
+			slices,
+			startAngle,
+			endAngle,
+		}: {
+			slices: Slice[]
+			startAngle: number
+			endAngle: number
+		},
 		cy = 0,
+		level = 0,
 	): ComputedSlice[] => {
-		if (!sliceArray?.length) return []
-
 		const config = getLevelConfig(level)
-		const gapAngle = config.angleGap
+		const angleGap = config.angleGap
 
-		// Calculate slices at this level
-		const totalWeight = sliceArray.reduce((acc, slice) => acc + slice.weight, 0)
+		const totalWeight = slices.reduce((acc, slice) => acc + slice.weight, 0)
 		const totalAngle = endAngle - startAngle
-		const totalGapAngle = Math.min(gapAngle * (sliceArray.length - 1), totalAngle * 0.3)
+		const totalGapAngle = Math.min(angleGap * (slices.length - 1), totalAngle * 0.3)
 		const effectiveAngle = totalAngle - totalGapAngle
 
 		const sliceOuterRadius = radius * config.outerRadiusFraction
 		const sliceInnerRadius = radius * config.innerRadiusFraction
-		const sliceGap = config.gap
-		const labelRadius = (sliceOuterRadius + sliceInnerRadius) / 2 + sliceGap
+		const gap = config.gap
+		const labelRadius = (sliceOuterRadius + sliceInnerRadius) / 2
 
-		// Calculate angle ranges for each slice at this level
 		let currentAngle = startAngle
-		const angleRanges = sliceArray.map((slice, i) => {
-			const sliceAngle = effectiveAngle * (slice.weight / totalWeight)
-			const sliceStartAngle = currentAngle
-			const sliceEndAngle = currentAngle + sliceAngle
-			const midAngle = sliceStartAngle + sliceAngle / 2
 
-			const result = {
-				startAngle: sliceStartAngle,
-				endAngle: sliceEndAngle,
-				midAngle
-			}
+		return slices.map(({ children, ...slice }, i) => {
+			const angle = effectiveAngle * (slice.weight / totalWeight)
+			const startAngle = currentAngle
+			const endAngle = currentAngle + angle
+			const midAngle = startAngle + angle / 2
 
-			currentAngle = sliceEndAngle + (i < sliceArray.length - 1 ? gapAngle : 0)
-			return result
-		})
+			currentAngle = endAngle + (i < slices.length - 1 ? angleGap : 0)
 
-		// Create ComputedSlice objects with recursive processing of children
-		return sliceArray.map((slice, i) => {
-			const { startAngle: sliceStartAngle, endAngle: sliceEndAngle, midAngle } = angleRanges[i]
-			const sliceAngle = sliceEndAngle - sliceStartAngle
-
-			const path = getSlicePath({
-				cx: 0,
-				cy,
-				outerRadius: sliceOuterRadius,
-				innerRadius: sliceInnerRadius,
-				startAngle: -sliceAngle / 2,
-				endAngle: sliceAngle / 2,
-			})
-
-			// Destructure slice to separate children from other properties
-			const { children, ...sliceProps } = slice
-
-			// Create the ComputedSlice for this item
-			const result: ComputedSlice = {
-				...sliceProps,
-				children: undefined,
+			return {
+				...slice,
 				computed: {
-					path,
+					path: getSlicePath({
+						cx: 0,
+						cy,
+						outerRadius: sliceOuterRadius,
+						innerRadius: sliceInnerRadius,
+						startAngle: -angle / 2,
+						endAngle: angle / 2,
+					}),
 					midAngle,
 					outerRadius: sliceOuterRadius,
 					innerRadius: sliceInnerRadius,
 					level,
 					labelRadius,
-					sliceGap,
-				}
-			}
-
-			// Recursively process children if they exist
-			if (children?.length) {
-				result.children = computeSliceData(
-					children,
-					sliceStartAngle,
-					sliceEndAngle,
-					level + 1,
-					cy,
-				)
-			}
-
-			return result
+					gap,
+				},
+				...children && {
+					children: (
+						computeSlices(
+							{
+								slices: children,
+								startAngle,
+								endAngle,
+							},
+							cy,
+							level + 1,
+						)
+					),
+				},
+			} as ComputedSlice
 		})
 	}
 
 	// State
-	let sliceParams = $derived.by(() => {
-		const startAngle = layout === Layout.Full ? -90 + getLevelConfig(0).angleGap / 2 : -90
-
-		const endAngle = layout === Layout.Full ? 270 - getLevelConfig(0).angleGap / 2 : 90
-
-		const rootConfig = getLevelConfig(0)
-		const outerRadius = radius * rootConfig.outerRadiusFraction
-		const innerRadius = radius * rootConfig.innerRadiusFraction
-		const cy = layout === Layout.Full ? 0 : radius * (1 - rootConfig.outerRadiusFraction)
-
-		return {
-			outerRadius,
-			innerRadius,
-			startAngle,
-			endAngle,
-			getCy: () => cy,
-		}
-	})
-
-	let allSliceData = $derived.by(() =>
-		computeSliceData(
-			slices,
-			sliceParams.startAngle,
-			sliceParams.endAngle,
-			0,
-			sliceParams.getCy(),
+	let computedSlices = $derived(
+		computeSlices(
+			{
+				slices,
+				startAngle: layout === Layout.Full ? -90 + getLevelConfig(0).angleGap / 2 : -90,
+				endAngle: layout === Layout.Full ? 270 - getLevelConfig(0).angleGap / 2 : 90,
+			},
 		),
 	)
 
-	let parentSlices = $derived(allSliceData)
-
-	let maxRadiusMultiplier = $derived(Math.max(...levels.map(level => level.outerRadiusFraction)))
-
-	let maxGap = $derived(Math.max(...levels.map(level => level.gap)))
-
 	let svgAttributes = $derived.by(() => {
+		const maxRadiusMultiplier = Math.max(...levels.map(level => level.outerRadiusFraction))
+		const maxGap = Math.max(...levels.map(level => level.gap))
 		const maxRadius = radius * maxRadiusMultiplier + maxGap
+
 		const width = padding * 2 + maxRadius * 2
 		const height = padding * 2 + maxRadius * (layout === Layout.TopHalf ? 1 : 2)
 		const viewBoxX = -(padding + maxRadius)
@@ -277,52 +239,58 @@
 	})
 </script>
 
-{#snippet renderSlice(sliceData: ComputedSlice)}
-	{@const lineY2 = -sliceData.computed.innerRadius - sliceData.computed.sliceGap}
 
+{#snippet sliceSnippet(
+	slice: ComputedSlice,
+)}
 	<g
 		class="slice"
-		style:--slice-color={sliceData.color}
-		style:--mid-angle={sliceData.computed.midAngle}
-		style:--slice-gap={sliceData.computed.sliceGap}
-		style:--slice-inner-radius={sliceData.computed.innerRadius}
-		style:--slice-outer-radius={sliceData.computed.outerRadius}
-		style:--slice-label-y={sliceData.computed.labelRadius * -1}
-		style:--slice-level={sliceData.computed.level}
-		class:highlighted={highlightedSliceId === sliceData.id}
-		data-slice-id={sliceData.id}
-		data-level={sliceData.computed.level}
+		style:--slice-midAngle={slice.computed.midAngle}
+		style:--slice-gap={slice.computed.gap}
+		style:--slice-labelRadius={slice.computed.labelRadius}
+		style:--slice-path={`path("${slice.computed.path}")`}
+		style:--slice-fill={slice.color}
+		class:highlighted={highlightedSliceId === slice.id}
+		data-slice-id={slice.id}
 		role="button"
 		tabindex="0"
-		onmouseenter={() => onSliceMouseEnter?.(sliceData.id)}
-		onmouseleave={() => onSliceMouseLeave?.(sliceData.id)}
-		onclick={() => onSliceClick?.(sliceData.id)}
-		onkeydown={e => e.key === 'Enter' && onSliceClick?.(sliceData.id)}
+		onmouseenter={() => { onSliceMouseEnter?.(slice.id) }}
+		onmouseleave={() => { onSliceMouseLeave?.(slice.id) }}
+		onclick={() => { onSliceClick?.(slice.id) }}
+		onkeydown={e => {
+			if (e.key === 'Enter') {
+				onSliceClick?.(slice.id)
+			}
+		}}
 	>
-		<path d={sliceData.computed.path} class="slice-path">
-			<title>{sliceData.tooltip}: {sliceData.tooltipValue}</title>
+		<line class="label-line" x1="0" y1={slice.computed.gap} x2="0" y2={-slice.computed.innerRadius} />
+
+		<path class="slice-path">
+			<title>{slice.tooltip}: {slice.tooltipValue}</title>
 		</path>
 
-		<line class="label-line" x1="0" y1="0" x2="0" y2={lineY2} />
-		<text class="slice-label" aria-hidden="true">
-			{sliceData.arcLabel}
+		<text class="label" aria-hidden="true">
+			{slice.arcLabel}
 		</text>
 
-		{#if sliceData.children?.length}
-			<g class="child-slices-container">
-				{#each sliceData.children as childSlice}
-					{@render renderSlice(childSlice)}
+		{#if slice.children?.length}
+			<g class="child-slices">
+				{#each slice.children as childSlice}
+					{@render sliceSnippet(childSlice)}
 				{/each}
 			</g>
 		{/if}
 	</g>
 {/snippet}
 
-<div class="container" data-arc-type={layout} style:--radius={radius}>
-	<svg width={svgAttributes.width} height={svgAttributes.height} viewBox={svgAttributes.viewBox}>
+<div
+	class="container"
+	data-arc-type={layout}
+>
+	<svg {...svgAttributes}>
 		<g class="slices">
-			{#each parentSlices as sliceData}
-				{@render renderSlice(sliceData)}
+			{#each computedSlices as slice}
+				{@render sliceSnippet(slice)}
 			{/each}
 		</g>
 
@@ -334,6 +302,7 @@
 	</svg>
 </div>
 
+
 <style>
 	.container {
 		--highlight-color: rgba(255, 255, 255, 1);
@@ -341,11 +310,10 @@
 		--hover-brightness: 1.1;
 		--hover-scale: 1.05;
 
-		&[data-arc-type='TopHalf'] {
+		&[data-arc-type="TopHalf"] {
 			--center-label-baseline: text-after-edge;
 		}
-
-		&[data-arc-type='Full'] {
+		&[data-arc-type="Full"] {
 			--center-label-baseline: central;
 		}
 
@@ -353,8 +321,8 @@
 		will-change: transform;
 		backface-visibility: hidden;
 
-		.slices {
-			will-change: transform;
+		svg {
+			display: grid;
 
 			.slice {
 				--slice-scale: 1;
@@ -362,12 +330,13 @@
 				cursor: pointer;
 				will-change: transform;
 
-				transform: rotate(calc(var(--mid-angle) * 1deg)) scale(var(--slice-scale))
+				transform: rotate(calc(var(--slice-midAngle) * 1deg)) scale(var(--slice-scale))
 					translate(0, calc(var(--slice-gap) * -1px));
 				transition: transform 0.2s ease-out;
 
 				.slice-path {
-					fill: var(--slice-color);
+					d: var(--slice-path);
+					fill: var(--slice-fill);
 				}
 
 				&:hover,
@@ -390,36 +359,37 @@
 				}
 
 				.label-line {
+					opacity: 0;
 					stroke: currentColor;
-					opacity: 0.3;
-					pointer-events: none;
 					stroke-width: 1;
+					stroke-dasharray: 1 2;
+					pointer-events: none;
 				}
 
-				.slice-label {
+				.label {
 					text-anchor: middle;
 					dominant-baseline: central;
 					fill: currentColor;
 					font-size: 10px;
 					pointer-events: none;
-					translate: 0 calc(var(--slice-label-y) * 1px);
-					rotate: calc(var(--mid-angle) * -1deg);
+					translate: 0 calc(var(--slice-labelRadius) * -1px);
+					rotate: calc(var(--slice-midAngle) * -1deg);
 				}
 
-				.child-slices-container {
-					transform: rotate(calc(var(--mid-angle) * -1deg));
+				.child-slices {
+					transform: rotate(calc(var(--slice-midAngle) * -1deg));
 					transform-origin: 0 0;
 					will-change: transform;
 				}
 			}
-		}
 
-		.center-label {
-			text-anchor: middle;
-			dominant-baseline: var(--center-label-baseline);
-			font-size: 14px;
-			fill: currentColor;
-			pointer-events: none;
+			.center-label {
+				text-anchor: middle;
+				dominant-baseline: var(--center-label-baseline);
+				font-size: 14px;
+				fill: currentColor;
+				pointer-events: none;
+			}
 		}
 	}
 </style>
