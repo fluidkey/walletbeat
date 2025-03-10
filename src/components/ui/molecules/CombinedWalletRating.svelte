@@ -2,139 +2,106 @@
 	// Types/constants
 	import {
 		type AttributeGroup,
-		type EvaluatedGroup,
-		type ValueSet,
 		Rating,
 		ratingToIcon,
 		ratingToColor,
 		evaluatedAttributesEntries,
 	} from '@/schema/attributes'
 	import { type RatedWallet } from '@/schema/wallet'
-	import { isNonEmptyArray, nonEmptyMap } from '@/types/utils/non-empty'
-	import Pie from '../atoms/Pie.svelte'
-	import { type WalletTableState } from '../organisms/WalletTable.svelte'
-	import WalletRating from './WalletRating.svelte'
 	import { betaSiteRoot } from '@/constants'
+
+
+	// Props
+	let {
+		wallet,
+		attributeGroups,
+		tableState = $bindable(null),
+		rowId,
+	}: {
+		wallet: RatedWallet
+		attributeGroups: AttributeGroup<any>[]
+		tableState: WalletTableState | null
+		rowId: string | null
+	} = $props()
+
+
+	// Functions
+	import { isNonEmptyArray, nonEmptyMap } from '@/types/utils/non-empty'
 	import { variantUrlQuery } from '../../variants'
 	import { slugifyCamelCase } from '@/types/utils/text'
 
-	// Extend AttributeGroup type with color
-	type GroupSlice = {
-		id: string
-		icon: string
-		displayName: string
-		color: string
-		score: any
-		evalGroup: any
-	}
-
-	// Props
-	let { data } = $props<{
-		data: {
-			wallet: RatedWallet
-			attributeGroups: AttributeGroup<any>[]
-			tableState: WalletTableState | null
-			rowId: string | null
-		}
-	}>()
-
-	// Derived props for convenience
-	let wallet = $derived(data.wallet)
-	let attributeGroups = $derived(data.attributeGroups)
-	let tableState = $derived(data.tableState)
-	let rowId = $derived(data.rowId)
 
 	// State
-	let highlightedSlice = $state<{
-		groupId: string
-		attributeId?: string
-		sticky: boolean
-	} | null>(null)
-
-	// Animation state
-	let isTransitioning = $state(false)
-
-	// Computed properties
-	let groupSlicesData = $derived(
+	let slices = $derived(
 		attributeGroups.map(group => {
 			const groupScore = group.score(wallet.overall[group.id])
 			const evalGroup = wallet.overall[group.id]
-
-			// Get color based on score
-			let scoreColor = '#666'
-			if (groupScore && !groupScore.hasUnratedComponent) {
-				// Map score (0 to 1) to a color from red to green
-				const hue = Math.round(groupScore.score * 120) // 0 = red, 120 = green
-				scoreColor = `hsl(${hue}, 80%, 45%)`
-			}
-
-			// Get all evaluation attributes for this group
-			const evalEntries = evalGroup ? 
-				evaluatedAttributesEntries(evalGroup).filter(
-					([_, evalAttr]) => evalAttr?.evaluation?.value?.rating !== Rating.EXEMPT,
-				) : []
-
-			// Calculate sub-slices for this group's attributes as children
-			const children = !isNonEmptyArray(evalEntries)
-				? []
-				: evalEntries.map(([evalAttrId, evalAttr]) => {
-						return {
-							id: `${group.id}:${evalAttrId}`,
-							parentId: group.id,
-							color: ratingToColor(evalAttr.evaluation.value.rating),
-							weight: 1,
-							arcLabel: evalAttr.evaluation.value.icon ?? evalAttr.attribute.icon,
-							tooltip: `${evalAttr.attribute.displayName}`,
-							tooltipValue: ratingToIcon(evalAttr.evaluation.value.rating),
-						}
-					})
 
 			return {
 				id: group.id,
 				icon: group.icon,
 				displayName: group.displayName,
-				color: scoreColor,
-				score: groupScore,
-				evalGroup: evalGroup,
-				weight: 1, // All main groups have equal weight
-				children, // Add children for hierarchical rendering
 				arcLabel: group.icon,
+				color: (
+					groupScore && !groupScore.hasUnratedComponent ?
+						`hsl(${Math.round(groupScore.score * 120)}, 80%, 45%)`
+					:
+						'#666'
+				),
+				score: groupScore,
 				tooltip: group.displayName,
-				tooltipValue: groupScore
-					? groupScore.hasUnratedComponent
-						? 'Unrated'
-						: (groupScore.score * 100).toFixed(0) + '%'
-					: 'N/A',
+				tooltipValue: (
+					groupScore ?
+						groupScore.hasUnratedComponent ?
+							'Unrated'
+						:
+							(groupScore.score * 100).toFixed(0) + '%'
+					:
+						'N/A'
+				),
+				weight: 1,
+				...evalGroup && {
+					evalGroup,
+					children: (
+						evaluatedAttributesEntries(evalGroup)
+							.filter(([_, evalAttr]) => (
+								evalAttr?.evaluation?.value?.rating !== Rating.EXEMPT
+							))
+							.map(([evalAttrId, evalAttr]) => ({
+								id: `${group.id}:${evalAttrId}`,
+								parentId: group.id,
+								color: ratingToColor(evalAttr.evaluation.value.rating),
+								weight: 1,
+								arcLabel: evalAttr.evaluation.value.icon ?? evalAttr.attribute.icon,
+								tooltip: `${evalAttr.attribute.displayName}`,
+								tooltipValue: ratingToIcon(evalAttr.evaluation.value.rating),
+							}))
+					),
+				},
 			}
 		}),
 	)
 
-	let hierarchicalSlices = $derived(groupSlicesData)
+	let highlightedSlice: {
+		groupId: string
+		attributeId?: string
+		sticky: boolean
+	} | undefined = $state()
 
 	let highlightedGroup = $derived(
-		!highlightedSlice
-			? null
-			: groupSlicesData.find(g => g.id === highlightedSlice?.groupId) || null,
+		highlightedSlice && (
+			slices
+				.find(g => g.id === highlightedSlice?.groupId)
+		)
 	)
 
 	let highlightedAttribute = $derived(
-		!highlightedSlice || !highlightedSlice.attributeId || !highlightedGroup
-			? null
-			: highlightedGroup.evalGroup && highlightedGroup.evalGroup[highlightedSlice.attributeId] || null,
+		highlightedSlice?.attributeId && highlightedGroup?.evalGroup?.[highlightedSlice.attributeId]
 	)
 
-	// Track changes to display mode for transitions
-	$effect(() => {
-		if (tableState?.displayMode) {
-			isTransitioning = true
-			setTimeout(() => {
-				isTransitioning = false
-			}, 300)
-		}
-	})
 
-	// Event handlers
-	function onSliceClick(sliceId: string) {
+	// Events
+	const onSliceClick = (sliceId: string) => {
 		const [groupId, attrId] = sliceId.split(':')
 
 		if (!highlightedSlice) {
@@ -166,7 +133,7 @@
 		}
 	}
 
-	function onSliceMouseEnter(sliceId: string) {
+	const onSliceMouseEnter = (sliceId: string) => {
 		const [groupId, attrId] = sliceId.split(':')
 
 		if (!highlightedSlice || !highlightedSlice.sticky) {
@@ -178,21 +145,20 @@
 		}
 	}
 
-	function onSliceMouseLeave(sliceId: string) {
+	const onSliceMouseLeave = (sliceId: string) => {
 		const [groupId, attrId] = sliceId.split(':')
 
 		if (
-			highlightedSlice &&
-			!highlightedSlice.sticky &&
-			highlightedSlice.groupId === groupId &&
-			highlightedSlice.attributeId === attrId
+			highlightedSlice
+			&& !highlightedSlice.sticky
+			&& highlightedSlice.groupId === groupId
+			&& highlightedSlice.attributeId === attrId
 		) {
-			highlightedSlice = null
+			highlightedSlice = undefined
 		}
 	}
 
-	// Helper to get pie slices
-	function getAttributeSlices(groupId: string, evalGroup: any) {
+	const getAttributeSlices = (groupId: string, evalGroup: any) => {
 		if (!evalGroup) return []
 		
 		const evalEntries = evaluatedAttributesEntries(evalGroup).filter(
@@ -213,43 +179,57 @@
 			}
 		})
 	}
+
+
+	// Components
+	import { type WalletTableState } from '../organisms/WalletTable.svelte'
+	import Pie, { Layout as PieLayout } from '../atoms/Pie.svelte'
 </script>
+
 
 <div
 	class="combined-wallet-rating"
-	class:transitioning={isTransitioning}
 	role="button"
 	tabindex="0"
 >
-	<!-- Combined Pie Chart with hierarchical slices -->
-	<div class="pie-container">
-		<Pie
-			slices={hierarchicalSlices}
-			layout="Full"
-			radius={75}
-			levels={[
-				{
-					outerRadiusFraction: 0.7,
-					innerRadiusFraction: 0.3,
-					gap: 8,
-					angleGap: 0
-				},
-				{
-					outerRadiusFraction: 1,
-					innerRadiusFraction: 0.75,
-					gap: 16,
-					angleGap: 0
-				}
-			]}
-			highlightedSliceId={highlightedSlice?.attributeId
-				? `${highlightedSlice.groupId}:${highlightedSlice.attributeId}`
-				: highlightedSlice?.groupId}
-			centerLabel={wallet.metadata.displayName.substring(0, 1)}
-			{onSliceClick}
-			{onSliceMouseEnter}
-			{onSliceMouseLeave}
-		/>
-	</div>
+	<Pie
+		slices={slices}
+		layout={PieLayout.Full}
+		padding={2}
+		radius={75}
+		levels={[
+			{
+				outerRadiusFraction: 0.7,
+				innerRadiusFraction: 0.3,
+				gap: 8,
+				angleGap: 0
+			},
+			{
+				outerRadiusFraction: 1,
+				innerRadiusFraction: 0.75,
+				gap: 2,
+				angleGap: 1,
+			}
+		]}
+		highlightedSliceId={highlightedSlice?.attributeId
+			? `${highlightedSlice.groupId}:${highlightedSlice.attributeId}`
+			: highlightedSlice?.groupId}
+		{onSliceClick}
+		{onSliceMouseEnter}
+		{onSliceMouseLeave}
+	>
+		{#snippet centerContentSnippet()}
+			<image
+				href={`/images/wallets/${wallet.metadata.id}.${wallet.metadata.iconExtension}`}
+				x="-15"
+				y="-15"
+				width="30"
+				height="30"
+			>
+				<title>{wallet.metadata.displayName}</title>
+			</image>
+		{/snippet}
+	</Pie>
 
 	<!-- Expanded Details -->
 	{#if tableState?.expandedRowIds?.has(rowId ?? '') && highlightedGroup}
@@ -346,16 +326,9 @@
 
 	.pie-container {
 		position: relative;
-		width: 150px;
-		height: 150px;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.transitioning {
-		opacity: 0.5;
-		transform: scale(0.95);
 	}
 
 	.expanded-details {
