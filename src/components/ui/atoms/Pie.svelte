@@ -22,16 +22,17 @@
 		angleGap: number
 	}
 
-	export type ComputedSlice = {
-		slice: Slice
-		path: string
-		midAngle: number
-		outerRadius: number
-		innerRadius: number
-		labelRadius: number
-		sliceGap: number
-		level: number
-		childSlices?: ComputedSlice[]
+	export type ComputedSlice = Slice & {
+		computed: {
+			path: string
+			midAngle: number
+			outerRadius: number
+			innerRadius: number
+			labelRadius: number
+			sliceGap: number
+			level: number
+		}
+		children?: ComputedSlice[]
 	}
 </script>
 
@@ -134,19 +135,22 @@
 		].join(' ')
 	}
 
-	// Calculate slice angles and paths for any array of slices
-	const calculateSliceData = (
+	/**
+	 * Recursively computes slice data with all necessary information for rendering
+	 */
+	const computeSliceData = (
 		sliceArray: Slice[],
 		startAngle: number,
 		endAngle: number,
 		level = 0,
 		cy = 0,
 	): ComputedSlice[] => {
-		if (!sliceArray || sliceArray.length === 0) return []
+		if (!sliceArray?.length) return []
 
 		const config = getLevelConfig(level)
 		const gapAngle = config.angleGap
 
+		// Calculate slices at this level
 		const totalWeight = sliceArray.reduce((acc, slice) => acc + slice.weight, 0)
 		const totalAngle = endAngle - startAngle
 		const totalGapAngle = Math.min(gapAngle * (sliceArray.length - 1), totalAngle * 0.3)
@@ -157,14 +161,28 @@
 		const sliceGap = config.gap
 		const labelRadius = (sliceOuterRadius + sliceInnerRadius) / 2 + sliceGap
 
+		// Calculate angle ranges for each slice at this level
 		let currentAngle = startAngle
-		const results: ComputedSlice[] = []
-
-		sliceArray.forEach((slice, i) => {
+		const angleRanges = sliceArray.map((slice, i) => {
 			const sliceAngle = effectiveAngle * (slice.weight / totalWeight)
 			const sliceStartAngle = currentAngle
 			const sliceEndAngle = currentAngle + sliceAngle
 			const midAngle = sliceStartAngle + sliceAngle / 2
+
+			const result = {
+				startAngle: sliceStartAngle,
+				endAngle: sliceEndAngle,
+				midAngle
+			}
+
+			currentAngle = sliceEndAngle + (i < sliceArray.length - 1 ? gapAngle : 0)
+			return result
+		})
+
+		// Create ComputedSlice objects with recursive processing of children
+		return sliceArray.map((slice, i) => {
+			const { startAngle: sliceStartAngle, endAngle: sliceEndAngle, midAngle } = angleRanges[i]
+			const sliceAngle = sliceEndAngle - sliceStartAngle
 
 			const path = getSlicePath({
 				cx: 0,
@@ -175,89 +193,37 @@
 				endAngle: sliceAngle / 2,
 			})
 
-			results.push({
-				slice,
-				path,
-				midAngle,
-				outerRadius: sliceOuterRadius,
-				innerRadius: sliceInnerRadius,
-				level,
-				labelRadius,
-				sliceGap,
-			})
+			// Destructure slice to separate children from other properties
+			const { children, ...sliceProps } = slice
 
-			currentAngle = sliceEndAngle + (i < sliceArray.length - 1 ? gapAngle : 0)
+			// Create the ComputedSlice for this item
+			const result: ComputedSlice = {
+				...sliceProps,
+				children: undefined,
+				computed: {
+					path,
+					midAngle,
+					outerRadius: sliceOuterRadius,
+					innerRadius: sliceInnerRadius,
+					level,
+					labelRadius,
+					sliceGap,
+				}
+			}
+
+			// Recursively process children if they exist
+			if (children?.length) {
+				result.children = computeSliceData(
+					children,
+					sliceStartAngle,
+					sliceEndAngle,
+					level + 1,
+					cy,
+				)
+			}
+
+			return result
 		})
-
-		return results
-	}
-
-	const calculateSliceTree = (
-		sliceArray: Slice[],
-		startAngle: number,
-		endAngle: number,
-		level = 0,
-		cy = 0,
-	): ComputedSlice[] => {
-		if (!sliceArray?.length) return []
-
-		const sliceData = calculateSliceData(sliceArray, startAngle, endAngle, level, cy)
-
-		const sliceAngles = calculateAngleRanges(
-			sliceData.length,
-			startAngle,
-			endAngle,
-			getLevelConfig(level).angleGap,
-		)
-
-		sliceData.forEach((parentData, index) => {
-			if (!parentData.slice.children?.length) return
-
-			const parentAngleInfo = sliceAngles[index]
-
-			parentData.childSlices = calculateSliceTree(
-				parentData.slice.children,
-				parentAngleInfo.startAngle,
-				parentAngleInfo.endAngle,
-				level + 1,
-				cy,
-			)
-		})
-
-		return sliceData
-	}
-
-	const calculateAngleRanges = (
-		numSlices: number,
-		startAngle: number,
-		endAngle: number,
-		gapAngle: number,
-	) => {
-		if (numSlices <= 0) return []
-
-		const totalAngle = endAngle - startAngle
-		const totalGapAngle = Math.min(gapAngle * (numSlices - 1), totalAngle * 0.3)
-		const sliceAngle = (totalAngle - totalGapAngle) / numSlices
-		const actualGap = numSlices > 1 ? totalGapAngle / (numSlices - 1) : 0
-
-		const results = []
-		let currentAngle = startAngle
-
-		for (let i = 0; i < numSlices; i++) {
-			const sliceStartAngle = currentAngle
-			const sliceEndAngle = currentAngle + sliceAngle
-			const midAngle = sliceStartAngle + sliceAngle / 2
-
-			results.push({
-				startAngle: sliceStartAngle,
-				endAngle: sliceEndAngle,
-				midAngle,
-			})
-
-			currentAngle = sliceEndAngle + (i < numSlices - 1 ? actualGap : 0)
-		}
-
-		return results
 	}
 
 	// State
@@ -281,7 +247,7 @@
 	})
 
 	let allSliceData = $derived.by(() =>
-		calculateSliceTree(
+		computeSliceData(
 			slices,
 			sliceParams.startAngle,
 			sliceParams.endAngle,
@@ -312,39 +278,39 @@
 </script>
 
 {#snippet renderSlice(sliceData: ComputedSlice)}
-	{@const lineY2 = -sliceData.innerRadius - sliceData.sliceGap}
+	{@const lineY2 = -sliceData.computed.innerRadius - sliceData.computed.sliceGap}
 
 	<g
 		class="slice"
-		style:--slice-color={sliceData.slice.color}
-		style:--mid-angle={sliceData.midAngle}
-		style:--slice-gap={sliceData.sliceGap}
-		style:--slice-inner-radius={sliceData.innerRadius}
-		style:--slice-outer-radius={sliceData.outerRadius}
-		style:--slice-label-y={sliceData.labelRadius * -1}
-		style:--slice-level={sliceData.level}
-		class:highlighted={highlightedSliceId === sliceData.slice.id}
-		data-slice-id={sliceData.slice.id}
-		data-level={sliceData.level}
+		style:--slice-color={sliceData.color}
+		style:--mid-angle={sliceData.computed.midAngle}
+		style:--slice-gap={sliceData.computed.sliceGap}
+		style:--slice-inner-radius={sliceData.computed.innerRadius}
+		style:--slice-outer-radius={sliceData.computed.outerRadius}
+		style:--slice-label-y={sliceData.computed.labelRadius * -1}
+		style:--slice-level={sliceData.computed.level}
+		class:highlighted={highlightedSliceId === sliceData.id}
+		data-slice-id={sliceData.id}
+		data-level={sliceData.computed.level}
 		role="button"
 		tabindex="0"
-		onmouseenter={() => onSliceMouseEnter?.(sliceData.slice.id)}
-		onmouseleave={() => onSliceMouseLeave?.(sliceData.slice.id)}
-		onclick={() => onSliceClick?.(sliceData.slice.id)}
-		onkeydown={e => e.key === 'Enter' && onSliceClick?.(sliceData.slice.id)}
+		onmouseenter={() => onSliceMouseEnter?.(sliceData.id)}
+		onmouseleave={() => onSliceMouseLeave?.(sliceData.id)}
+		onclick={() => onSliceClick?.(sliceData.id)}
+		onkeydown={e => e.key === 'Enter' && onSliceClick?.(sliceData.id)}
 	>
-		<path d={sliceData.path} class="slice-path">
-			<title>{sliceData.slice.tooltip}: {sliceData.slice.tooltipValue}</title>
+		<path d={sliceData.computed.path} class="slice-path">
+			<title>{sliceData.tooltip}: {sliceData.tooltipValue}</title>
 		</path>
 
 		<line class="label-line" x1="0" y1="0" x2="0" y2={lineY2} />
 		<text class="slice-label" aria-hidden="true">
-			{sliceData.slice.arcLabel}
+			{sliceData.arcLabel}
 		</text>
 
-		{#if sliceData.childSlices?.length}
+		{#if sliceData.children?.length}
 			<g class="child-slices-container">
-				{#each sliceData.childSlices as childSlice}
+				{#each sliceData.children as childSlice}
 					{@render renderSlice(childSlice)}
 				{/each}
 			</g>
