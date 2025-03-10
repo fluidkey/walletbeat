@@ -295,6 +295,12 @@
 	</g>
 {/snippet}
 
+{#snippet centerContentSnippet()}
+	<text>
+		{centerLabel}
+	</text>
+{/snippet}
+
 <div
 	class="container"
 	data-arc-type={layout}
@@ -306,11 +312,9 @@
 			{/each}
 		</g>
 
-		{#if centerLabel}
-			<text class="center-label">
-				{centerLabel}
-			</text>
-		{/if}
+		<g class="center">
+			{@render centerContentSnippet()}
+		</g>
 	</svg>
 </div>
 
@@ -395,12 +399,16 @@
 				}
 			}
 
-			> .center-label {
-				text-anchor: middle;
-				dominant-baseline: var(--center-label-baseline);
-				font-size: 14px;
-				fill: currentColor;
-				pointer-events: none;
+			> .center {
+				text {
+					font-size: 0.8em;
+					fill: currentColor;
+
+					text-anchor: middle;
+					dominant-baseline: var(--center-label-baseline);
+
+					pointer-events: none;
+				}
 			}
 		}
 	}
