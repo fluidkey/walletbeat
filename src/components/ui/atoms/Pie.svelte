@@ -1,25 +1,20 @@
 <script module lang="ts">
 	// Types/constants
-	export type PieSlice = {
+	export type Slice = {
 		id: string
 		color: string
 		weight: number
 		arcLabel: string
 		tooltip: string
 		tooltipValue: string
-		// For hierarchical slicing
-		parentId?: string
-		children?: PieSlice[]
+		children?: Slice[]
 	}
 
 	export const Layout = {
 		TopHalf: 'TopHalf',
 		Full: 'Full',
-		// New layout for custom angles
-		Custom: 'Custom',
 	}
 
-	// Level configuration type
 	export type LevelConfig = {
 		outerRadiusFraction: number
 		innerRadiusFraction: number
@@ -27,9 +22,8 @@
 		angleGap: number
 	}
 
-	// Common utility type for slice data
-	export type SliceData = {
-		slice: PieSlice
+	export type ComputedSlice = {
+		slice: Slice
 		path: string
 		midAngle: number
 		outerRadius: number
@@ -37,7 +31,7 @@
 		labelRadius: number
 		sliceGap: number
 		level: number
-		childSlices?: SliceData[]
+		childSlices?: ComputedSlice[]
 	}
 </script>
 
@@ -52,29 +46,21 @@
 		layout = Layout.TopHalf,
 		padding = 0,
 		radius = 47,
-		
-		// Level configurations
 		levels = [
-			// Level 0 (root slices)
 			{
 				outerRadiusFraction: 0.6,
 				innerRadiusFraction: 0.5,
 				gap: 8,
-				angleGap: 0
+				angleGap: 0,
 			},
-			// Level 1 (first nested level)
 			{
 				outerRadiusFraction: 1.1,
 				innerRadiusFraction: 1.0,
 				gap: 4,
-				angleGap: 0
-			}
+				angleGap: 0,
+			},
 		],
-		
-		// For custom layouts
-		customStartAngle,
-		customEndAngle,
-		
+
 		// State
 		highlightedSliceId = $bindable(null),
 
@@ -84,21 +70,15 @@
 		onSliceMouseLeave,
 	}: {
 		// Content
-		slices: PieSlice[]
+		slices: Slice[]
 		centerLabel?: string
 
 		// View options
 		layout?: (typeof Layout)[keyof typeof Layout]
 		radius?: number
 		padding?: number
-		
-		// Level configurations
 		levels?: LevelConfig[]
-		
-		// For custom layouts
-		customStartAngle?: number
-		customEndAngle?: number
-		
+
 		// State
 		highlightedSliceId?: string | null
 
@@ -108,11 +88,9 @@
 		onSliceMouseLeave?: (id: string) => void
 	} = $props()
 
-	// Get config for a specific level (with fallback to last defined level)
-	const getLevelConfig = (level: number): LevelConfig => 
-		levels[Math.min(level, levels.length - 1)]
-
 	// Functions
+	const getLevelConfig = (level: number): LevelConfig => levels[Math.min(level, levels.length - 1)]
+
 	const polarToCartesian = (
 		centerX: number,
 		centerY: number,
@@ -157,46 +135,46 @@
 	}
 
 	// Calculate slice angles and paths for any array of slices
-	function calculateSliceData(
-		sliceArray: PieSlice[],
+	const calculateSliceData = (
+		sliceArray: Slice[],
 		startAngle: number,
 		endAngle: number,
 		level = 0,
-		cy = 0
-	): SliceData[] {
+		cy = 0,
+	): ComputedSlice[] => {
 		if (!sliceArray || sliceArray.length === 0) return []
-		
+
 		const config = getLevelConfig(level)
 		const gapAngle = config.angleGap
-		
+
 		const totalWeight = sliceArray.reduce((acc, slice) => acc + slice.weight, 0)
 		const totalAngle = endAngle - startAngle
 		const totalGapAngle = Math.min(gapAngle * (sliceArray.length - 1), totalAngle * 0.3)
 		const effectiveAngle = totalAngle - totalGapAngle
-		
+
 		const sliceOuterRadius = radius * config.outerRadiusFraction
 		const sliceInnerRadius = radius * config.innerRadiusFraction
 		const sliceGap = config.gap
 		const labelRadius = (sliceOuterRadius + sliceInnerRadius) / 2 + sliceGap
-		
+
 		let currentAngle = startAngle
-		const results: SliceData[] = []
-		
+		const results: ComputedSlice[] = []
+
 		sliceArray.forEach((slice, i) => {
 			const sliceAngle = effectiveAngle * (slice.weight / totalWeight)
 			const sliceStartAngle = currentAngle
 			const sliceEndAngle = currentAngle + sliceAngle
 			const midAngle = sliceStartAngle + sliceAngle / 2
-			
+
 			const path = getSlicePath({
 				cx: 0,
 				cy,
-				outerRadius: sliceOuterRadius, 
+				outerRadius: sliceOuterRadius,
 				innerRadius: sliceInnerRadius,
 				startAngle: -sliceAngle / 2,
-				endAngle: sliceAngle / 2
+				endAngle: sliceAngle / 2,
 			})
-			
+
 			results.push({
 				slice,
 				path,
@@ -205,135 +183,118 @@
 				innerRadius: sliceInnerRadius,
 				level,
 				labelRadius,
-				sliceGap
+				sliceGap,
 			})
-			
+
 			currentAngle = sliceEndAngle + (i < sliceArray.length - 1 ? gapAngle : 0)
 		})
-		
+
+		return results
+	}
+
+	const calculateSliceTree = (
+		sliceArray: Slice[],
+		startAngle: number,
+		endAngle: number,
+		level = 0,
+		cy = 0,
+	): ComputedSlice[] => {
+		if (!sliceArray?.length) return []
+
+		const sliceData = calculateSliceData(sliceArray, startAngle, endAngle, level, cy)
+
+		const sliceAngles = calculateAngleRanges(
+			sliceData.length,
+			startAngle,
+			endAngle,
+			getLevelConfig(level).angleGap,
+		)
+
+		sliceData.forEach((parentData, index) => {
+			if (!parentData.slice.children?.length) return
+
+			const parentAngleInfo = sliceAngles[index]
+
+			parentData.childSlices = calculateSliceTree(
+				parentData.slice.children,
+				parentAngleInfo.startAngle,
+				parentAngleInfo.endAngle,
+				level + 1,
+				cy,
+			)
+		})
+
+		return sliceData
+	}
+
+	const calculateAngleRanges = (
+		numSlices: number,
+		startAngle: number,
+		endAngle: number,
+		gapAngle: number,
+	) => {
+		if (numSlices <= 0) return []
+
+		const totalAngle = endAngle - startAngle
+		const totalGapAngle = Math.min(gapAngle * (numSlices - 1), totalAngle * 0.3)
+		const sliceAngle = (totalAngle - totalGapAngle) / numSlices
+		const actualGap = numSlices > 1 ? totalGapAngle / (numSlices - 1) : 0
+
+		const results = []
+		let currentAngle = startAngle
+
+		for (let i = 0; i < numSlices; i++) {
+			const sliceStartAngle = currentAngle
+			const sliceEndAngle = currentAngle + sliceAngle
+			const midAngle = sliceStartAngle + sliceAngle / 2
+
+			results.push({
+				startAngle: sliceStartAngle,
+				endAngle: sliceEndAngle,
+				midAngle,
+			})
+
+			currentAngle = sliceEndAngle + (i < numSlices - 1 ? actualGap : 0)
+		}
+
 		return results
 	}
 
 	// State
 	let sliceParams = $derived.by(() => {
-		const startAngle =
-			layout === Layout.Custom
-				? customStartAngle || -90
-				: layout === Layout.Full
-					? -90 + getLevelConfig(0).angleGap / 2
-					: -90
+		const startAngle = layout === Layout.Full ? -90 + getLevelConfig(0).angleGap / 2 : -90
 
-		const endAngle =
-			layout === Layout.Custom 
-				? customEndAngle || 90 
-				: layout === Layout.Full 
-					? 270 - getLevelConfig(0).angleGap / 2 
-					: 90
+		const endAngle = layout === Layout.Full ? 270 - getLevelConfig(0).angleGap / 2 : 90
 
 		const rootConfig = getLevelConfig(0)
 		const outerRadius = radius * rootConfig.outerRadiusFraction
 		const innerRadius = radius * rootConfig.innerRadiusFraction
-		const cy = layout === Layout.Full || layout === Layout.Custom ? 0 : radius * (1 - rootConfig.outerRadiusFraction)
+		const cy = layout === Layout.Full ? 0 : radius * (1 - rootConfig.outerRadiusFraction)
 
 		return {
 			outerRadius,
 			innerRadius,
 			startAngle,
 			endAngle,
-			getCy: () => cy
+			getCy: () => cy,
 		}
 	})
 
-	let hasHierarchy = $derived(slices.some(slice => slice.children && slice.children.length > 0))
-
-	function calculateSliceTree(
-		sliceArray: PieSlice[],
-		startAngle: number,
-		endAngle: number,
-		level = 0,
-		cy = 0
-	): SliceData[] {
-		if (!sliceArray?.length) return []
-		
-		const sliceData = calculateSliceData(sliceArray, startAngle, endAngle, level, cy)
-		
-		if (hasHierarchy) {
-			const sliceAngles = calculateAngleRanges(
-				sliceData.length, 
-				startAngle, 
-				endAngle, 
-				getLevelConfig(level).angleGap
-			)
-			
-			sliceData.forEach((parentData, index) => {
-				if (!parentData.slice.children?.length) return
-				
-				const parentAngleInfo = sliceAngles[index]
-				
-				parentData.childSlices = calculateSliceTree(
-					parentData.slice.children,
-					parentAngleInfo.startAngle,
-					parentAngleInfo.endAngle,
-					level + 1,
-					cy
-				)
-			})
-		}
-		
-		return sliceData
-	}
-
-	let allSliceData = $derived.by(() => 
+	let allSliceData = $derived.by(() =>
 		calculateSliceTree(
-			slices, 
-			sliceParams.startAngle, 
-			sliceParams.endAngle, 
-			0, 
-			sliceParams.getCy()
-		)
+			slices,
+			sliceParams.startAngle,
+			sliceParams.endAngle,
+			0,
+			sliceParams.getCy(),
+		),
 	)
 
 	let parentSlices = $derived(allSliceData)
 
-	let maxRadiusMultiplier = $derived(
-		hasHierarchy 
-			? Math.max(...levels.map(level => level.outerRadiusFraction))
-			: getLevelConfig(0).outerRadiusFraction
-	)
+	let maxRadiusMultiplier = $derived(Math.max(...levels.map(level => level.outerRadiusFraction)))
 
-	let maxGap = $derived(
-		hasHierarchy 
-			? Math.max(...levels.map(level => level.gap))
-			: getLevelConfig(0).gap
-	)
-
-	const calculateAngleRanges = (numSlices: number, startAngle: number, endAngle: number, gapAngle: number) => {
-		if (numSlices <= 0) return []
-		
-		const totalAngle = endAngle - startAngle
-		const totalGapAngle = Math.min(gapAngle * (numSlices - 1), totalAngle * 0.3)
-		const sliceAngle = (totalAngle - totalGapAngle) / numSlices
-		const actualGap = numSlices > 1 ? totalGapAngle / (numSlices - 1) : 0
-		
-		const results = []
-		let currentAngle = startAngle
-		
-		for (let i = 0; i < numSlices; i++) {
-			const sliceStartAngle = currentAngle
-			const sliceEndAngle = currentAngle + sliceAngle
-			const midAngle = sliceStartAngle + sliceAngle / 2
-			
-			results.push({
-				startAngle: sliceStartAngle,
-				endAngle: sliceEndAngle,
-				midAngle
-			})
-			
-			currentAngle = sliceEndAngle + (i < numSlices - 1 ? actualGap : 0)
-		}
-		
-		return results
-	}
+	let maxGap = $derived(Math.max(...levels.map(level => level.gap)))
 
 	let svgAttributes = $derived.by(() => {
 		const maxRadius = radius * maxRadiusMultiplier + maxGap
@@ -341,18 +302,18 @@
 		const height = padding * 2 + maxRadius * (layout === Layout.TopHalf ? 1 : 2)
 		const viewBoxX = -(padding + maxRadius)
 		const viewBoxY = -(padding + maxRadius)
-		
+
 		return {
 			width,
 			height,
-			viewBox: `${viewBoxX} ${viewBoxY} ${width} ${height}`
+			viewBox: `${viewBoxX} ${viewBoxY} ${width} ${height}`,
 		}
 	})
 </script>
 
-{#snippet renderSlice(sliceData: SliceData)}
+{#snippet renderSlice(sliceData: ComputedSlice)}
 	{@const lineY2 = -sliceData.innerRadius - sliceData.sliceGap}
-	
+
 	<g
 		class="slice"
 		style:--slice-color={sliceData.slice.color}
@@ -364,7 +325,6 @@
 		style:--slice-level={sliceData.level}
 		class:highlighted={highlightedSliceId === sliceData.slice.id}
 		data-slice-id={sliceData.slice.id}
-		data-parent-id={sliceData.slice.parentId}
 		data-level={sliceData.level}
 		role="button"
 		tabindex="0"
@@ -377,20 +337,11 @@
 			<title>{sliceData.slice.tooltip}: {sliceData.slice.tooltipValue}</title>
 		</path>
 
-		<line 
-			class="label-line" 
-			x1="0" 
-			y1="0"
-			x2="0" 
-			y2={lineY2}
-		/>
-		<text 
-			class="slice-label" 
-			aria-hidden="true"
-		>
+		<line class="label-line" x1="0" y1="0" x2="0" y2={lineY2} />
+		<text class="slice-label" aria-hidden="true">
 			{sliceData.slice.arcLabel}
 		</text>
-		
+
 		{#if sliceData.childSlices?.length}
 			<g class="child-slices-container">
 				{#each sliceData.childSlices as childSlice}
@@ -401,11 +352,7 @@
 	</g>
 {/snippet}
 
-<div
-	class="container"
-	data-arc-type={layout}
-	style:--radius={radius}
->
+<div class="container" data-arc-type={layout} style:--radius={radius}>
 	<svg width={svgAttributes.width} height={svgAttributes.height} viewBox={svgAttributes.viewBox}>
 		<g class="slices">
 			{#each parentSlices as sliceData}
@@ -427,13 +374,12 @@
 		--highlight-stroke-width: 2;
 		--hover-brightness: 1.1;
 		--hover-scale: 1.05;
-		
+
 		&[data-arc-type='TopHalf'] {
 			--center-label-baseline: text-after-edge;
 		}
 
-		&[data-arc-type='Full'],
-		&[data-arc-type='Custom'] {
+		&[data-arc-type='Full'] {
 			--center-label-baseline: central;
 		}
 
@@ -449,13 +395,11 @@
 				transform-origin: 0 0;
 				cursor: pointer;
 				will-change: transform;
-				
-				transform: 
-					rotate(calc(var(--mid-angle) * 1deg)) 
-					scale(var(--slice-scale)) 
+
+				transform: rotate(calc(var(--mid-angle) * 1deg)) scale(var(--slice-scale))
 					translate(0, calc(var(--slice-gap) * -1px));
 				transition: transform 0.2s ease-out;
-				
+
 				.slice-path {
 					fill: var(--slice-color);
 				}
@@ -495,13 +439,7 @@
 					translate: 0 calc(var(--slice-label-y) * 1px);
 					rotate: calc(var(--mid-angle) * -1deg);
 				}
-				
-				/* Style for level 1+ slices */
-				&[data-level="1"] .slice-label {
-					font-size: 8px;
-					opacity: 0.9;
-				}
-				
+
 				.child-slices-container {
 					transform: rotate(calc(var(--mid-angle) * -1deg));
 					transform-origin: 0 0;
