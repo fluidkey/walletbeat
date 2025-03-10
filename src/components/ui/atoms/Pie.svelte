@@ -25,8 +25,6 @@
 		innerRadiusFraction: number
 		gap: number
 		angleGap: number
-		labelFontSize: number
-		opacity: number
 	}
 
 	// Common utility type for slice data
@@ -38,8 +36,6 @@
 		innerRadius: number
 		labelRadius: number
 		sliceGap: number
-		labelFontSize: number
-		opacity: number
 		level: number
 		childSlices?: SliceData[]
 	}
@@ -57,36 +53,28 @@
 		padding = 0,
 		radius = 47,
 		
-		// Level configurations (replaces individual level-specific props)
+		// Level configurations
 		levels = [
 			// Level 0 (root slices)
 			{
 				outerRadiusFraction: 0.6,
 				innerRadiusFraction: 0.5,
 				gap: 8,
-				angleGap: 0,
-				labelFontSize: 10,
-				opacity: 1
+				angleGap: 0
 			},
 			// Level 1 (first nested level)
 			{
 				outerRadiusFraction: 1.1,
 				innerRadiusFraction: 1.0,
 				gap: 4,
-				angleGap: 0,
-				labelFontSize: 8,
-				opacity: 0.9
+				angleGap: 0
 			}
-			// Additional levels can be added as needed
 		],
 		
 		// For custom layouts
 		customStartAngle,
 		customEndAngle,
 		
-		// Enable hierarchical rendering
-		hierarchical = false,
-
 		// State
 		highlightedSliceId = $bindable(null),
 
@@ -111,9 +99,6 @@
 		customStartAngle?: number
 		customEndAngle?: number
 		
-		// Enable hierarchical rendering
-		hierarchical?: boolean
-
 		// State
 		highlightedSliceId?: string | null
 
@@ -181,7 +166,6 @@
 	): SliceData[] {
 		if (!sliceArray || sliceArray.length === 0) return []
 		
-		// Get level-specific configuration
 		const config = getLevelConfig(level)
 		const gapAngle = config.angleGap
 		
@@ -190,7 +174,6 @@
 		const totalGapAngle = Math.min(gapAngle * (sliceArray.length - 1), totalAngle * 0.3)
 		const effectiveAngle = totalAngle - totalGapAngle
 		
-		// Calculate radii based on level configuration
 		const sliceOuterRadius = radius * config.outerRadiusFraction
 		const sliceInnerRadius = radius * config.innerRadiusFraction
 		const sliceGap = config.gap
@@ -199,14 +182,12 @@
 		let currentAngle = startAngle
 		const results: SliceData[] = []
 		
-		// Calculate angle for each slice
 		sliceArray.forEach((slice, i) => {
 			const sliceAngle = effectiveAngle * (slice.weight / totalWeight)
 			const sliceStartAngle = currentAngle
 			const sliceEndAngle = currentAngle + sliceAngle
 			const midAngle = sliceStartAngle + sliceAngle / 2
 			
-			// Create a standardized "upright" path that will be rotated via CSS
 			const path = getSlicePath({
 				cx: 0,
 				cy,
@@ -224,9 +205,7 @@
 				innerRadius: sliceInnerRadius,
 				level,
 				labelRadius,
-				sliceGap,
-				labelFontSize: config.labelFontSize,
-				opacity: config.opacity
+				sliceGap
 			})
 			
 			currentAngle = sliceEndAngle + (i < sliceArray.length - 1 ? gapAngle : 0)
@@ -237,7 +216,6 @@
 
 	// State
 	let sliceParams = $derived.by(() => {
-		// Determine start and end angles based on layout
 		const startAngle =
 			layout === Layout.Custom
 				? customStartAngle || -90
@@ -266,7 +244,8 @@
 		}
 	})
 
-	// Recursive function to calculate slice data for a tree of slices
+	let hasHierarchy = $derived(slices.some(slice => slice.children && slice.children.length > 0))
+
 	function calculateSliceTree(
 		sliceArray: PieSlice[],
 		startAngle: number,
@@ -274,15 +253,11 @@
 		level = 0,
 		cy = 0
 	): SliceData[] {
-		// Base case: empty array
 		if (!sliceArray?.length) return []
 		
-		// Calculate slice data for this level
 		const sliceData = calculateSliceData(sliceArray, startAngle, endAngle, level, cy)
 		
-		// If hierarchical mode is enabled, recursively process children
-		if (hierarchical) {
-			// Calculate angle ranges for current level slices
+		if (hasHierarchy) {
 			const sliceAngles = calculateAngleRanges(
 				sliceData.length, 
 				startAngle, 
@@ -290,14 +265,11 @@
 				getLevelConfig(level).angleGap
 			)
 			
-			// Process each slice to add its children if any
 			sliceData.forEach((parentData, index) => {
 				if (!parentData.slice.children?.length) return
 				
-				// Use the same angle range as the parent slice
 				const parentAngleInfo = sliceAngles[index]
 				
-				// Recursively calculate child slices data
 				parentData.childSlices = calculateSliceTree(
 					parentData.slice.children,
 					parentAngleInfo.startAngle,
@@ -311,7 +283,6 @@
 		return sliceData
 	}
 
-	// Calculate all slice data (parent and nested at any level)
 	let allSliceData = $derived.by(() => 
 		calculateSliceTree(
 			slices, 
@@ -322,25 +293,21 @@
 		)
 	)
 
-	// No need for separate nested slices array now
 	let parentSlices = $derived(allSliceData)
 
-	// Calculate max radius across all levels
 	let maxRadiusMultiplier = $derived(
-		hierarchical 
+		hasHierarchy 
 			? Math.max(...levels.map(level => level.outerRadiusFraction))
 			: getLevelConfig(0).outerRadiusFraction
 	)
 
-	// Calculate max gap across all levels
 	let maxGap = $derived(
-		hierarchical 
+		hasHierarchy 
 			? Math.max(...levels.map(level => level.gap))
 			: getLevelConfig(0).gap
 	)
 
-	// Helper function to calculate angle ranges for slices (used for parent-child alignment)
-	function calculateAngleRanges(numSlices: number, startAngle: number, endAngle: number, gapAngle: number) {
+	const calculateAngleRanges = (numSlices: number, startAngle: number, endAngle: number, gapAngle: number) => {
 		if (numSlices <= 0) return []
 		
 		const totalAngle = endAngle - startAngle
@@ -368,7 +335,6 @@
 		return results
 	}
 
-	// Group SVG attribute calculations in a single derived statement
 	let svgAttributes = $derived.by(() => {
 		const maxRadius = radius * maxRadiusMultiplier + maxGap
 		const width = padding * 2 + maxRadius * 2
@@ -395,8 +361,6 @@
 		style:--slice-inner-radius={sliceData.innerRadius}
 		style:--slice-outer-radius={sliceData.outerRadius}
 		style:--slice-label-y={sliceData.labelRadius * -1}
-		style:--label-font-size={sliceData.labelFontSize}
-		style:--slice-opacity={sliceData.opacity}
 		style:--slice-level={sliceData.level}
 		class:highlighted={highlightedSliceId === sliceData.slice.id}
 		data-slice-id={sliceData.slice.id}
@@ -428,7 +392,6 @@
 		</text>
 		
 		{#if sliceData.childSlices?.length}
-			<!-- Child slices container sits at same origin but doesn't rotate -->
 			<g class="child-slices-container">
 				{#each sliceData.childSlices as childSlice}
 					{@render renderSlice(childSlice)}
@@ -460,7 +423,6 @@
 
 <style>
 	.container {
-		/* Constants */
 		--highlight-color: rgba(255, 255, 255, 1);
 		--highlight-stroke-width: 2;
 		--hover-brightness: 1.1;
@@ -484,21 +446,16 @@
 
 			.slice {
 				--slice-scale: 1;
-				
-				/* Main slice transform properties */
 				transform-origin: 0 0;
 				cursor: pointer;
 				will-change: transform;
-				opacity: var(--slice-opacity);
 				
-				/* Unified transform that works for both parent and nested slices */
 				transform: 
 					rotate(calc(var(--mid-angle) * 1deg)) 
 					scale(var(--slice-scale)) 
 					translate(0, calc(var(--slice-gap) * -1px));
 				transition: transform 0.2s ease-out;
 				
-				/* Path just needs fill */
 				.slice-path {
 					fill: var(--slice-color);
 				}
@@ -533,15 +490,18 @@
 					text-anchor: middle;
 					dominant-baseline: central;
 					fill: currentColor;
-					font-size: var(--label-font-size);
+					font-size: 10px;
 					pointer-events: none;
-					
-					/* Label positioning - calculated once in CSS */
 					translate: 0 calc(var(--slice-label-y) * 1px);
 					rotate: calc(var(--mid-angle) * -1deg);
 				}
 				
-				/* Child slices container - counter-rotate to neutralize parent rotation */
+				/* Style for level 1+ slices */
+				&[data-level="1"] .slice-label {
+					font-size: 8px;
+					opacity: 0.9;
+				}
+				
 				.child-slices-container {
 					transform: rotate(calc(var(--mid-angle) * -1deg));
 					transform-origin: 0 0;

@@ -19,7 +19,7 @@
 	import { slugifyCamelCase } from '@/types/utils/text'
 	import { betaSiteRoot } from '@/constants'
 	import { variantToName, variantUrlQuery } from '../../variants'
-	import Pie, { Layout } from '../atoms/Pie.svelte'
+	import Pie, { Layout as PieLayout } from '../atoms/Pie.svelte'
 	import type { WalletTableState } from '../organisms/WalletTable.svelte'
 	import type { MaybeUnratedScore } from '@/schema/score'
 
@@ -171,9 +171,7 @@
 					outerRadiusFraction: 1,
 					innerRadiusFraction: 0.6,
 					gap: 4,
-					angleGap: 0,
-					labelFontSize: 10,
-					opacity: 1
+					angleGap: 0
 				}
 			]}
 			highlightedSliceId={highlightedSlice?.evalAttrId}

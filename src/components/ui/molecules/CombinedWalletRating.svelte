@@ -232,20 +232,15 @@
 					outerRadiusFraction: 0.7,
 					innerRadiusFraction: 0.3,
 					gap: 8,
-					angleGap: 0,
-					labelFontSize: 10,
-					opacity: 1
+					angleGap: 0
 				},
 				{
 					outerRadiusFraction: 1,
 					innerRadiusFraction: 0.75,
 					gap: 16,
-					angleGap: 0,
-					labelFontSize: 8,
-					opacity: 0.9
+					angleGap: 0
 				}
 			]}
-			hierarchical={true}
 			highlightedSliceId={highlightedSlice?.attributeId
 				? `${highlightedSlice.groupId}:${highlightedSlice.attributeId}`
 				: highlightedSlice?.groupId}
@@ -269,6 +264,14 @@
 						layout="TopHalf"
 						radius={45}
 						slices={getAttributeSlices(highlightedGroup.id, highlightedGroup.evalGroup)}
+						levels={[
+							{
+								outerRadiusFraction: 1,
+								innerRadiusFraction: 0.6,
+								gap: 4,
+								angleGap: 0
+							}
+						]}
 						highlightedSliceId={highlightedSlice?.attributeId
 							? `${highlightedGroup.id}:${highlightedSlice.attributeId}`
 							: null}
