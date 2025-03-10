@@ -227,12 +227,24 @@
 			slices={hierarchicalSlices}
 			layout="Full"
 			radius={75}
-			outerRadiusFraction={0.7}
-			innerRadiusFraction={0.3}
-			gap={8}
-			nestedOuterRadiusFraction={1}
-			nestedInnerRadiusFraction={0.75}
-			nestedGap={16}
+			levels={[
+				{
+					outerRadiusFraction: 0.7,
+					innerRadiusFraction: 0.3,
+					gap: 8,
+					angleGap: 0,
+					labelFontSize: 10,
+					opacity: 1
+				},
+				{
+					outerRadiusFraction: 1,
+					innerRadiusFraction: 0.75,
+					gap: 16,
+					angleGap: 0,
+					labelFontSize: 8,
+					opacity: 0.9
+				}
+			]}
 			hierarchical={true}
 			highlightedSliceId={highlightedSlice?.attributeId
 				? `${highlightedSlice.groupId}:${highlightedSlice.attributeId}`

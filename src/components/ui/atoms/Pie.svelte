@@ -19,6 +19,16 @@
 		Custom: 'Custom',
 	}
 
+	// Level configuration type
+	export type LevelConfig = {
+		outerRadiusFraction: number
+		innerRadiusFraction: number
+		gap: number
+		angleGap: number
+		labelFontSize: number
+		opacity: number
+	}
+
 	// Common utility type for slice data
 	export type SliceData = {
 		slice: PieSlice
@@ -30,7 +40,7 @@
 		sliceGap: number
 		labelFontSize: number
 		opacity: number
-		level: number // Use level instead of isNested (0 = parent, 1+ = nested)
+		level: number
 		childSlices?: SliceData[]
 	}
 </script>
@@ -46,19 +56,35 @@
 		layout = Layout.TopHalf,
 		padding = 0,
 		radius = 47,
-		gap = 8,
-		angleGap = 0,
-		outerRadiusFraction = 0.6,
-		innerRadiusFraction = 0.5,
+		
+		// Level configurations (replaces individual level-specific props)
+		levels = [
+			// Level 0 (root slices)
+			{
+				outerRadiusFraction: 0.6,
+				innerRadiusFraction: 0.5,
+				gap: 8,
+				angleGap: 0,
+				labelFontSize: 10,
+				opacity: 1
+			},
+			// Level 1 (first nested level)
+			{
+				outerRadiusFraction: 1.1,
+				innerRadiusFraction: 1.0,
+				gap: 4,
+				angleGap: 0,
+				labelFontSize: 8,
+				opacity: 0.9
+			}
+			// Additional levels can be added as needed
+		],
+		
 		// For custom layouts
 		customStartAngle,
 		customEndAngle,
-		// Nested slice options
-		nestedAngleGap = 0,
-		nestedOuterRadiusFraction = 1.1, // Outer radius for nested slices (as fraction of radius)
-		nestedInnerRadiusFraction = 1.0, // Inner radius for nested slices (as fraction of radius)
-		nestedGap = 4, // Pixel gap for nested slices
-		// Enable nested rendering
+		
+		// Enable hierarchical rendering
 		hierarchical = false,
 
 		// State
@@ -77,19 +103,15 @@
 		layout?: (typeof Layout)[keyof typeof Layout]
 		radius?: number
 		padding?: number
-		gap?: number
-		angleGap?: number
-		outerRadiusFraction?: number
-		innerRadiusFraction?: number
+		
+		// Level configurations
+		levels?: LevelConfig[]
+		
 		// For custom layouts
 		customStartAngle?: number
 		customEndAngle?: number
-		// Nested slice options
-		nestedAngleGap?: number
-		nestedOuterRadiusFraction?: number
-		nestedInnerRadiusFraction?: number
-		nestedGap?: number
-		// Enable nested rendering
+		
+		// Enable hierarchical rendering
 		hierarchical?: boolean
 
 		// State
@@ -100,6 +122,10 @@
 		onSliceMouseEnter?: (id: string) => void
 		onSliceMouseLeave?: (id: string) => void
 	} = $props()
+
+	// Get config for a specific level (with fallback to last defined level)
+	const getLevelConfig = (level: number): LevelConfig => 
+		levels[Math.min(level, levels.length - 1)]
 
 	// Functions
 	const polarToCartesian = (
@@ -145,35 +171,33 @@
 		].join(' ')
 	}
 
-	// Calculate slice angles and paths for any array of slices (parent or nested)
+	// Calculate slice angles and paths for any array of slices
 	function calculateSliceData(
 		sliceArray: PieSlice[],
 		startAngle: number,
 		endAngle: number,
-		gapAngle: number,
-		sliceOuterRadius: number,
-		sliceInnerRadius: number,
-		level = 0, // Use level instead of isNested
+		level = 0,
 		cy = 0
 	): SliceData[] {
 		if (!sliceArray || sliceArray.length === 0) return []
-
+		
+		// Get level-specific configuration
+		const config = getLevelConfig(level)
+		const gapAngle = config.angleGap
+		
 		const totalWeight = sliceArray.reduce((acc, slice) => acc + slice.weight, 0)
 		const totalAngle = endAngle - startAngle
 		const totalGapAngle = Math.min(gapAngle * (sliceArray.length - 1), totalAngle * 0.3)
 		const effectiveAngle = totalAngle - totalGapAngle
 		
+		// Calculate radii based on level configuration
+		const sliceOuterRadius = radius * config.outerRadiusFraction
+		const sliceInnerRadius = radius * config.innerRadiusFraction
+		const sliceGap = config.gap
+		const labelRadius = (sliceOuterRadius + sliceInnerRadius) / 2 + sliceGap
+		
 		let currentAngle = startAngle
 		const results: SliceData[] = []
-		
-		// Determine slice-specific properties based on level
-		const isChild = level > 0
-		const sliceGap = isChild ? nestedGap : gap
-		const labelFontSize = isChild ? 8 : 10
-		const labelRadius = isChild 
-			? radius * (nestedInnerRadiusFraction + nestedOuterRadiusFraction) / 2 + nestedGap
-			: radius * (innerRadiusFraction + outerRadiusFraction) / 2 + gap
-		const opacity = isChild ? 0.9 : 1
 		
 		// Calculate angle for each slice
 		sliceArray.forEach((slice, i) => {
@@ -201,8 +225,8 @@
 				level,
 				labelRadius,
 				sliceGap,
-				labelFontSize,
-				opacity
+				labelFontSize: config.labelFontSize,
+				opacity: config.opacity
 			})
 			
 			currentAngle = sliceEndAngle + (i < sliceArray.length - 1 ? gapAngle : 0)
@@ -218,15 +242,20 @@
 			layout === Layout.Custom
 				? customStartAngle || -90
 				: layout === Layout.Full
-					? -90 + angleGap / 2
+					? -90 + getLevelConfig(0).angleGap / 2
 					: -90
 
 		const endAngle =
-			layout === Layout.Custom ? customEndAngle || 90 : layout === Layout.Full ? 270 - angleGap / 2 : 90
+			layout === Layout.Custom 
+				? customEndAngle || 90 
+				: layout === Layout.Full 
+					? 270 - getLevelConfig(0).angleGap / 2 
+					: 90
 
-		const outerRadius = radius * outerRadiusFraction
-		const innerRadius = radius * innerRadiusFraction
-		const cy = layout === Layout.Full || layout === Layout.Custom ? 0 : radius * (1 - outerRadiusFraction)
+		const rootConfig = getLevelConfig(0)
+		const outerRadius = radius * rootConfig.outerRadiusFraction
+		const innerRadius = radius * rootConfig.innerRadiusFraction
+		const cy = layout === Layout.Full || layout === Layout.Custom ? 0 : radius * (1 - rootConfig.outerRadiusFraction)
 
 		return {
 			outerRadius,
@@ -237,67 +266,83 @@
 		}
 	})
 
-	// Calculate all slice data (parent and nested)
-	let allSliceData = $derived.by(() => {
-		// Calculate parent slices
-		const parentSlices = calculateSliceData(
-			slices,
-			sliceParams.startAngle,
-			sliceParams.endAngle,
-			angleGap,
-			sliceParams.outerRadius,
-			sliceParams.innerRadius,
-			0, // Level 0 = parent
+	// Recursive function to calculate slice data for a tree of slices
+	function calculateSliceTree(
+		sliceArray: PieSlice[],
+		startAngle: number,
+		endAngle: number,
+		level = 0,
+		cy = 0
+	): SliceData[] {
+		// Base case: empty array
+		if (!sliceArray?.length) return []
+		
+		// Calculate slice data for this level
+		const sliceData = calculateSliceData(sliceArray, startAngle, endAngle, level, cy)
+		
+		// If hierarchical mode is enabled, recursively process children
+		if (hierarchical) {
+			// Calculate angle ranges for current level slices
+			const sliceAngles = calculateAngleRanges(
+				sliceData.length, 
+				startAngle, 
+				endAngle, 
+				getLevelConfig(level).angleGap
+			)
+			
+			// Process each slice to add its children if any
+			sliceData.forEach((parentData, index) => {
+				if (!parentData.slice.children?.length) return
+				
+				// Use the same angle range as the parent slice
+				const parentAngleInfo = sliceAngles[index]
+				
+				// Recursively calculate child slices data
+				parentData.childSlices = calculateSliceTree(
+					parentData.slice.children,
+					parentAngleInfo.startAngle,
+					parentAngleInfo.endAngle,
+					level + 1,
+					cy
+				)
+			})
+		}
+		
+		return sliceData
+	}
+
+	// Calculate all slice data (parent and nested at any level)
+	let allSliceData = $derived.by(() => 
+		calculateSliceTree(
+			slices, 
+			sliceParams.startAngle, 
+			sliceParams.endAngle, 
+			0, 
 			sliceParams.getCy()
 		)
-		
-		// If not in hierarchical mode, return only parent slices
-		if (!hierarchical) return parentSlices
-		
-		// Calculate nested slices recursively for each parent
-		parentSlices.forEach(parentData => {
-			if (!parentData.slice.children || parentData.slice.children.length === 0) return
-			
-			// Use the EXACT same angle range as the parent slice
-			const parentSliceIndex = parentSlices.findIndex(s => s.slice.id === parentData.slice.id)
-			const sliceAngles = calculateAngleRanges(parentSlices.length, sliceParams.startAngle, sliceParams.endAngle, angleGap)
-			const parentAngleInfo = sliceAngles[parentSliceIndex]
-			
-			// Calculate nested slices data for this parent
-			parentData.childSlices = calculateSliceData(
-				parentData.slice.children,
-				parentAngleInfo.startAngle,
-				parentAngleInfo.endAngle,
-				nestedAngleGap,
-				radius * nestedOuterRadiusFraction,
-				radius * nestedInnerRadiusFraction,
-				1, // Level 1 = child
-				sliceParams.getCy()
-			)
-		})
-		
-		return parentSlices
-	})
+	)
 
 	// No need for separate nested slices array now
 	let parentSlices = $derived(allSliceData)
 
-	// Calculate max radius across all slices
+	// Calculate max radius across all levels
 	let maxRadiusMultiplier = $derived(
 		hierarchical 
-			? Math.max(outerRadiusFraction, nestedOuterRadiusFraction)
-			: outerRadiusFraction
+			? Math.max(...levels.map(level => level.outerRadiusFraction))
+			: getLevelConfig(0).outerRadiusFraction
 	)
 
-	// Calculate max gap across all slices
+	// Calculate max gap across all levels
 	let maxGap = $derived(
-		hierarchical
-			? Math.max(gap, nestedGap)
-			: gap
+		hierarchical 
+			? Math.max(...levels.map(level => level.gap))
+			: getLevelConfig(0).gap
 	)
 
 	// Helper function to calculate angle ranges for slices (used for parent-child alignment)
 	function calculateAngleRanges(numSlices: number, startAngle: number, endAngle: number, gapAngle: number) {
+		if (numSlices <= 0) return []
+		
 		const totalAngle = endAngle - startAngle
 		const totalGapAngle = Math.min(gapAngle * (numSlices - 1), totalAngle * 0.3)
 		const sliceAngle = (totalAngle - totalGapAngle) / numSlices
@@ -382,7 +427,7 @@
 			{sliceData.slice.arcLabel}
 		</text>
 		
-		{#if sliceData.level === 0 && sliceData.childSlices?.length}
+		{#if sliceData.childSlices?.length}
 			<!-- Child slices container sits at same origin but doesn't rotate -->
 			<g class="child-slices-container">
 				{#each sliceData.childSlices as childSlice}
@@ -397,16 +442,9 @@
 	class="container"
 	data-arc-type={layout}
 	style:--radius={radius}
-	style:--outer-radius={outerRadiusFraction}
-	style:--inner-radius={innerRadiusFraction}
-	style:--nested-outer-radius={nestedOuterRadiusFraction}
-	style:--nested-inner-radius={nestedInnerRadiusFraction}
-	style:--gap={gap}
-	style:--nested-gap={nestedGap}
 >
 	<svg width={svgAttributes.width} height={svgAttributes.height} viewBox={svgAttributes.viewBox}>
 		<g class="slices">
-			<!-- Parent slices with their child slices nested inside them -->
 			{#each parentSlices as sliceData}
 				{@render renderSlice(sliceData)}
 			{/each}
