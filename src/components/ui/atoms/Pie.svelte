@@ -22,7 +22,7 @@
 		angleGap: number
 	}
 
-	export type ComputedSlice = Slice & {
+	type ComputedSlice = Slice & {
 		computed: {
 			path: string
 			midAngle: number
@@ -152,28 +152,24 @@
 		cy = 0,
 		level = 0,
 	): ComputedSlice[] => {
-		const config = getLevelConfig(level)
-		const angleGap = config.angleGap
-
+		const levelConfig = getLevelConfig(level)
 		const totalWeight = slices.reduce((acc, slice) => acc + slice.weight, 0)
 		const totalAngle = endAngle - startAngle
-		const totalGapAngle = Math.min(angleGap * (slices.length - 1), totalAngle * 0.3)
-		const effectiveAngle = totalAngle - totalGapAngle
+		const totalGapAngle = Math.min(levelConfig.angleGap * (slices.length - 1), totalAngle * 0.3)
+		const totalEffectiveAngle = totalAngle - totalGapAngle
 
-		const sliceOuterRadius = radius * config.outerRadiusFraction
-		const sliceInnerRadius = radius * config.innerRadiusFraction
-		const gap = config.gap
-		const labelRadius = (sliceOuterRadius + sliceInnerRadius) / 2
+		const outerRadius = radius * levelConfig.outerRadiusFraction
+		const innerRadius = radius * levelConfig.innerRadiusFraction
 
 		let currentAngle = startAngle
 
 		return slices.map(({ children, ...slice }, i) => {
-			const angle = effectiveAngle * (slice.weight / totalWeight)
+			const totalAngle = totalEffectiveAngle * (slice.weight / totalWeight)
 			const startAngle = currentAngle
-			const endAngle = currentAngle + angle
-			const midAngle = startAngle + angle / 2
+			const endAngle = currentAngle + totalAngle
+			const midAngle = startAngle + totalAngle / 2
 
-			currentAngle = endAngle + (i < slices.length - 1 ? angleGap : 0)
+			currentAngle = endAngle + (i < slices.length - 1 ? levelConfig.angleGap : 0)
 
 			return {
 				...slice,
@@ -181,17 +177,17 @@
 					path: getSlicePath({
 						cx: 0,
 						cy,
-						outerRadius: sliceOuterRadius,
-						innerRadius: sliceInnerRadius,
-						startAngle: -angle / 2,
-						endAngle: angle / 2,
+						outerRadius,
+						innerRadius,
+						startAngle: -totalAngle / 2,
+						endAngle: totalAngle / 2,
 					}),
 					midAngle,
-					outerRadius: sliceOuterRadius,
-					innerRadius: sliceInnerRadius,
+					outerRadius,
+					innerRadius,
 					level,
-					labelRadius,
-					gap,
+					labelRadius: (radius * levelConfig.outerRadiusFraction + radius * levelConfig.innerRadiusFraction) / 2,
+					gap: levelConfig.gap,
 				},
 				...children && {
 					children: (
@@ -210,13 +206,24 @@
 		})
 	}
 
+
 	// State
 	let computedSlices = $derived(
 		computeSlices(
 			{
 				slices,
-				startAngle: layout === Layout.Full ? -90 + getLevelConfig(0).angleGap / 2 : -90,
-				endAngle: layout === Layout.Full ? 270 - getLevelConfig(0).angleGap / 2 : 90,
+				...(
+					layout === Layout.Full ?
+						{
+							startAngle: -90 + getLevelConfig(0).angleGap / 2,
+							endAngle: 270 - getLevelConfig(0).angleGap / 2,
+						}
+					:
+						{
+							startAngle: -90,
+							endAngle: 90,
+						}
+				),
 			},
 		),
 	)
@@ -258,15 +265,20 @@
 		onmouseleave={() => { onSliceMouseLeave?.(slice.id) }}
 		onclick={() => { onSliceClick?.(slice.id) }}
 		onkeydown={e => {
-			if (e.key === 'Enter') {
+			if (e.code === 'Enter' || e.code === 'Space')
 				onSliceClick?.(slice.id)
-			}
 		}}
 	>
-		<line class="label-line" x1="0" y1={slice.computed.gap} x2="0" y2={-slice.computed.innerRadius} />
+		<line
+			class="label-line"
+			x1="0"
+			y1={slice.computed.gap}
+			x2="0"
+			y2={-slice.computed.innerRadius}
+		/>
 
 		<path class="slice-path">
-			<title>{slice.tooltip}: {slice.tooltipValue}</title>
+			<title>{[slice.tooltipValue, slice.tooltip].join('\n')}</title>
 		</path>
 
 		<text class="label" aria-hidden="true">
@@ -274,7 +286,7 @@
 		</text>
 
 		{#if slice.children?.length}
-			<g class="child-slices">
+			<g class="slices">
 				{#each slice.children as childSlice}
 					{@render sliceSnippet(childSlice)}
 				{/each}
@@ -334,11 +346,6 @@
 					translate(0, calc(var(--slice-gap) * -1px));
 				transition: transform 0.2s ease-out;
 
-				.slice-path {
-					d: var(--slice-path);
-					fill: var(--slice-fill);
-				}
-
 				&:hover,
 				&:focus {
 					filter: brightness(var(--hover-brightness));
@@ -358,7 +365,7 @@
 					z-index: 2;
 				}
 
-				.label-line {
+				> .label-line {
 					opacity: 0;
 					stroke: currentColor;
 					stroke-width: 1;
@@ -366,7 +373,12 @@
 					pointer-events: none;
 				}
 
-				.label {
+				> .slice-path {
+					d: var(--slice-path);
+					fill: var(--slice-fill);
+				}
+
+				> .label {
 					text-anchor: middle;
 					dominant-baseline: central;
 					fill: currentColor;
@@ -376,14 +388,14 @@
 					rotate: calc(var(--slice-midAngle) * -1deg);
 				}
 
-				.child-slices {
+				> .slices {
 					transform: rotate(calc(var(--slice-midAngle) * -1deg));
 					transform-origin: 0 0;
 					will-change: transform;
 				}
 			}
 
-			.center-label {
+			> .center-label {
 				text-anchor: middle;
 				dominant-baseline: var(--center-label-baseline);
 				font-size: 14px;
