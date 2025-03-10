@@ -19,7 +19,7 @@
 	import { slugifyCamelCase } from '@/types/utils/text'
 	import { betaSiteRoot } from '@/constants'
 	import { variantToName, variantUrlQuery } from '../../variants'
-	import Pie from '../atoms/Pie.svelte'
+	import Pie, { Layout as PieLayout } from '../atoms/Pie.svelte'
 	import type { WalletTableState } from '../organisms/WalletTable.svelte'
 	import type { MaybeUnratedScore } from '@/schema/score'
 
@@ -164,6 +164,13 @@
 					}
 				)
 			}
+			layout={PieLayout.TopHalf}
+			padding={0}
+			radius={48}
+			outerRadiusFraction={1}
+			innerRadiusFraction={0.6}
+			gap={4}
+			angleGap={0}
 			highlightedSliceId={highlightedSlice?.evalAttrId}
 			centerLabel={groupScore ? (groupScore.hasUnratedComponent ? ratingToIcon(Rating.UNRATED) : groupScore.score <= 0.0 ? '\u{1f480}' : groupScore.score >= 1.0 ? '\u{1f4af}' : (groupScore.score * 100).toFixed(0)) : '❓'}
 			onSliceClick={onSliceClick}

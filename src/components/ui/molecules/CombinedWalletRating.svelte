@@ -224,11 +224,15 @@
 	<!-- Combined Pie Chart with hierarchical slices -->
 	<div class="pie-container">
 		<Pie
+			slices={hierarchicalSlices}
 			layout="Full"
 			radius={75}
+			outerRadiusFraction={0.7}
 			innerRadiusFraction={0.3}
-			outerRadiusFraction={0.95}
-			slices={hierarchicalSlices}
+			gap={8}
+			nestedOuterRadiusFraction={1}
+			nestedInnerRadiusFraction={0.75}
+			nestedGap={16}
 			hierarchical={true}
 			highlightedSliceId={highlightedSlice?.attributeId
 				? `${highlightedSlice.groupId}:${highlightedSlice.attributeId}`

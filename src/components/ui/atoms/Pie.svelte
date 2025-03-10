@@ -18,6 +18,21 @@
 		// New layout for custom angles
 		Custom: 'Custom',
 	}
+
+	// Common utility type for slice data
+	export type SliceData = {
+		slice: PieSlice
+		path: string
+		midAngle: number
+		outerRadius: number
+		innerRadius: number
+		labelRadius: number
+		sliceGap: number
+		labelFontSize: number
+		opacity: number
+		level: number // Use level instead of isNested (0 = parent, 1+ = nested)
+		childSlices?: SliceData[]
+	}
 </script>
 
 <script lang="ts">
@@ -33,11 +48,16 @@
 		radius = 47,
 		gap = 8,
 		angleGap = 0,
-		outerRadiusFraction = 0.95,
+		outerRadiusFraction = 0.6,
 		innerRadiusFraction = 0.5,
 		// For custom layouts
 		customStartAngle,
 		customEndAngle,
+		// Nested slice options
+		nestedAngleGap = 0,
+		nestedOuterRadiusFraction = 1.1, // Outer radius for nested slices (as fraction of radius)
+		nestedInnerRadiusFraction = 1.0, // Inner radius for nested slices (as fraction of radius)
+		nestedGap = 4, // Pixel gap for nested slices
 		// Enable nested rendering
 		hierarchical = false,
 
@@ -64,6 +84,11 @@
 		// For custom layouts
 		customStartAngle?: number
 		customEndAngle?: number
+		// Nested slice options
+		nestedAngleGap?: number
+		nestedOuterRadiusFraction?: number
+		nestedInnerRadiusFraction?: number
+		nestedGap?: number
 		// Enable nested rendering
 		hierarchical?: boolean
 
@@ -120,38 +145,70 @@
 		].join(' ')
 	}
 
-	// Calculate slice angles
-	const calculateSliceAngles = (
-		slices: PieSlice[],
+	// Calculate slice angles and paths for any array of slices (parent or nested)
+	function calculateSliceData(
+		sliceArray: PieSlice[],
 		startAngle: number,
 		endAngle: number,
 		gapAngle: number,
-	) => {
-		const totalWeight = slices.reduce((acc, slice) => acc + slice.weight, 0)
+		sliceOuterRadius: number,
+		sliceInnerRadius: number,
+		level = 0, // Use level instead of isNested
+		cy = 0
+	): SliceData[] {
+		if (!sliceArray || sliceArray.length === 0) return []
+
+		const totalWeight = sliceArray.reduce((acc, slice) => acc + slice.weight, 0)
 		const totalAngle = endAngle - startAngle
-		const totalGapAngle = Math.min(gapAngle * (slices.length - 1), totalAngle * 0.3)
+		const totalGapAngle = Math.min(gapAngle * (sliceArray.length - 1), totalAngle * 0.3)
 		const effectiveAngle = totalAngle - totalGapAngle
-
+		
 		let currentAngle = startAngle
-		const sliceAngles: { id: string; startAngle: number; endAngle: number; midAngle: number }[] = []
-
-		slices.forEach((slice, i) => {
+		const results: SliceData[] = []
+		
+		// Determine slice-specific properties based on level
+		const isChild = level > 0
+		const sliceGap = isChild ? nestedGap : gap
+		const labelFontSize = isChild ? 8 : 10
+		const labelRadius = isChild 
+			? radius * (nestedInnerRadiusFraction + nestedOuterRadiusFraction) / 2 + nestedGap
+			: radius * (innerRadiusFraction + outerRadiusFraction) / 2 + gap
+		const opacity = isChild ? 0.9 : 1
+		
+		// Calculate angle for each slice
+		sliceArray.forEach((slice, i) => {
 			const sliceAngle = effectiveAngle * (slice.weight / totalWeight)
 			const sliceStartAngle = currentAngle
 			const sliceEndAngle = currentAngle + sliceAngle
 			const midAngle = sliceStartAngle + sliceAngle / 2
-
-			sliceAngles.push({
-				id: slice.id,
-				startAngle: sliceStartAngle,
-				endAngle: sliceEndAngle,
-				midAngle,
+			
+			// Create a standardized "upright" path that will be rotated via CSS
+			const path = getSlicePath({
+				cx: 0,
+				cy,
+				outerRadius: sliceOuterRadius, 
+				innerRadius: sliceInnerRadius,
+				startAngle: -sliceAngle / 2,
+				endAngle: sliceAngle / 2
 			})
-
-			currentAngle = sliceEndAngle + (i < slices.length - 1 ? gapAngle : 0)
+			
+			results.push({
+				slice,
+				path,
+				midAngle,
+				outerRadius: sliceOuterRadius,
+				innerRadius: sliceInnerRadius,
+				level,
+				labelRadius,
+				sliceGap,
+				labelFontSize,
+				opacity
+			})
+			
+			currentAngle = sliceEndAngle + (i < sliceArray.length - 1 ? gapAngle : 0)
 		})
-
-		return sliceAngles
+		
+		return results
 	}
 
 	// State
@@ -159,116 +216,182 @@
 		// Determine start and end angles based on layout
 		const startAngle =
 			layout === Layout.Custom
-				? customStartAngle
+				? customStartAngle || -90
 				: layout === Layout.Full
 					? -90 + angleGap / 2
 					: -90
 
 		const endAngle =
-			layout === Layout.Custom ? customEndAngle : layout === Layout.Full ? 270 - angleGap / 2 : 90
+			layout === Layout.Custom ? customEndAngle || 90 : layout === Layout.Full ? 270 - angleGap / 2 : 90
 
 		const outerRadius = radius * outerRadiusFraction
 		const innerRadius = radius * innerRadiusFraction
-
-		// Calculate slice angles
-		const sliceAngles = calculateSliceAngles(slices, startAngle, endAngle, angleGap)
-
-		// Basic path for a slice at origin (to be rotated)
-		const basePath = getSlicePath({
-			cx: 0,
-			cy:
-				layout === Layout.Full || layout === Layout.Custom ? 0 : radius * (1 - outerRadiusFraction),
-			outerRadius,
-			innerRadius,
-			startAngle: -angleGap / 2,
-			endAngle: angleGap / 2,
-		})
+		const cy = layout === Layout.Full || layout === Layout.Custom ? 0 : radius * (1 - outerRadiusFraction)
 
 		return {
 			outerRadius,
 			innerRadius,
-			sliceAngles,
-			basePath,
-			getCx: () => 0,
-			getCy: () =>
-				layout === Layout.Full || layout === Layout.Custom ? 0 : radius * (1 - outerRadiusFraction),
+			startAngle,
+			endAngle,
+			getCy: () => cy
 		}
 	})
 
-	// Calculate paths for each slice directly
-	let slicePaths = $derived(
-		sliceParams.sliceAngles.map(angleInfo => {
-			const sliceWidth = angleInfo.endAngle - angleInfo.startAngle
-			return getSlicePath({
-				cx: sliceParams.getCx(),
-				cy: sliceParams.getCy(),
-				outerRadius: sliceParams.outerRadius,
-				innerRadius: sliceParams.innerRadius,
-				startAngle: angleInfo.startAngle,
-				endAngle: angleInfo.endAngle,
-			})
-		}),
-	)
-
-	let width = $derived(padding * 2 + (radius + gap) * 2)
-	let height = $derived(padding * 2 + (radius + gap) * (layout === Layout.TopHalf ? 1 : 2))
-
-	let viewBoxParams = $derived(
-		[-(padding + radius + gap), -(padding + radius + gap), width, height].join(' '),
-	)
-
-	// Render nested slices
-	function renderNestedSlices(
-		parentSlice: PieSlice,
-		parentAngleInfo: { startAngle: number; endAngle: number },
-		level: number,
-	) {
-		if (!parentSlice.children || parentSlice.children.length === 0) return null
-
-		// Calculate radius for this level
-		const levelOuterRadius = radius * (outerRadiusFraction - level * 0.1)
-		const levelInnerRadius = radius * (innerRadiusFraction + level * 0.1)
-
-		// Calculate nested slice angles
-		const nestedSliceAngles = calculateSliceAngles(
-			parentSlice.children,
-			parentAngleInfo.startAngle,
-			parentAngleInfo.endAngle,
-			angleGap / 2,
+	// Calculate all slice data (parent and nested)
+	let allSliceData = $derived.by(() => {
+		// Calculate parent slices
+		const parentSlices = calculateSliceData(
+			slices,
+			sliceParams.startAngle,
+			sliceParams.endAngle,
+			angleGap,
+			sliceParams.outerRadius,
+			sliceParams.innerRadius,
+			0, // Level 0 = parent
+			sliceParams.getCy()
 		)
-
-		return nestedSliceAngles.map((nestedAngleInfo, i) => {
-			const child = parentSlice.children[i]
-			const path = getSlicePath({
-				cx: sliceParams.getCx(),
-				cy: sliceParams.getCy(),
-				outerRadius: levelOuterRadius,
-				innerRadius: levelInnerRadius,
-				startAngle: nestedAngleInfo.startAngle,
-				endAngle: nestedAngleInfo.endAngle,
-			})
-
-			return {
-				slice: child,
-				path,
-				angleInfo: nestedAngleInfo,
-			}
+		
+		// If not in hierarchical mode, return only parent slices
+		if (!hierarchical) return parentSlices
+		
+		// Calculate nested slices recursively for each parent
+		parentSlices.forEach(parentData => {
+			if (!parentData.slice.children || parentData.slice.children.length === 0) return
+			
+			// Use the EXACT same angle range as the parent slice
+			const parentSliceIndex = parentSlices.findIndex(s => s.slice.id === parentData.slice.id)
+			const sliceAngles = calculateAngleRanges(parentSlices.length, sliceParams.startAngle, sliceParams.endAngle, angleGap)
+			const parentAngleInfo = sliceAngles[parentSliceIndex]
+			
+			// Calculate nested slices data for this parent
+			parentData.childSlices = calculateSliceData(
+				parentData.slice.children,
+				parentAngleInfo.startAngle,
+				parentAngleInfo.endAngle,
+				nestedAngleGap,
+				radius * nestedOuterRadiusFraction,
+				radius * nestedInnerRadiusFraction,
+				1, // Level 1 = child
+				sliceParams.getCy()
+			)
 		})
+		
+		return parentSlices
+	})
+
+	// No need for separate nested slices array now
+	let parentSlices = $derived(allSliceData)
+
+	// Calculate max radius across all slices
+	let maxRadiusMultiplier = $derived(
+		hierarchical 
+			? Math.max(outerRadiusFraction, nestedOuterRadiusFraction)
+			: outerRadiusFraction
+	)
+
+	// Calculate max gap across all slices
+	let maxGap = $derived(
+		hierarchical
+			? Math.max(gap, nestedGap)
+			: gap
+	)
+
+	// Helper function to calculate angle ranges for slices (used for parent-child alignment)
+	function calculateAngleRanges(numSlices: number, startAngle: number, endAngle: number, gapAngle: number) {
+		const totalAngle = endAngle - startAngle
+		const totalGapAngle = Math.min(gapAngle * (numSlices - 1), totalAngle * 0.3)
+		const sliceAngle = (totalAngle - totalGapAngle) / numSlices
+		const actualGap = numSlices > 1 ? totalGapAngle / (numSlices - 1) : 0
+		
+		const results = []
+		let currentAngle = startAngle
+		
+		for (let i = 0; i < numSlices; i++) {
+			const sliceStartAngle = currentAngle
+			const sliceEndAngle = currentAngle + sliceAngle
+			const midAngle = sliceStartAngle + sliceAngle / 2
+			
+			results.push({
+				startAngle: sliceStartAngle,
+				endAngle: sliceEndAngle,
+				midAngle
+			})
+			
+			currentAngle = sliceEndAngle + (i < numSlices - 1 ? actualGap : 0)
+		}
+		
+		return results
 	}
 
-	// If hierarchical, prepare nested slices data
-	let nestedSlicesData = $derived(
-		hierarchical && slices.some(s => s.children?.length)
-			? sliceParams.sliceAngles
-					.map((angleInfo, i) => {
-						const parentSlice = slices[i]
-						return renderNestedSlices(parentSlice, angleInfo, 1)
-					})
-					.filter(Boolean)
-					.flat()
-			: [],
-	)
+	// Group SVG attribute calculations in a single derived statement
+	let svgAttributes = $derived.by(() => {
+		const maxRadius = radius * maxRadiusMultiplier + maxGap
+		const width = padding * 2 + maxRadius * 2
+		const height = padding * 2 + maxRadius * (layout === Layout.TopHalf ? 1 : 2)
+		const viewBoxX = -(padding + maxRadius)
+		const viewBoxY = -(padding + maxRadius)
+		
+		return {
+			width,
+			height,
+			viewBox: `${viewBoxX} ${viewBoxY} ${width} ${height}`
+		}
+	})
 </script>
+
+{#snippet renderSlice(sliceData: SliceData)}
+	{@const lineY2 = -sliceData.innerRadius - sliceData.sliceGap}
+	
+	<g
+		class="slice"
+		style:--slice-color={sliceData.slice.color}
+		style:--mid-angle={sliceData.midAngle}
+		style:--slice-gap={sliceData.sliceGap}
+		style:--slice-inner-radius={sliceData.innerRadius}
+		style:--slice-outer-radius={sliceData.outerRadius}
+		style:--slice-label-y={sliceData.labelRadius * -1}
+		style:--label-font-size={sliceData.labelFontSize}
+		style:--slice-opacity={sliceData.opacity}
+		style:--slice-level={sliceData.level}
+		class:highlighted={highlightedSliceId === sliceData.slice.id}
+		data-slice-id={sliceData.slice.id}
+		data-parent-id={sliceData.slice.parentId}
+		data-level={sliceData.level}
+		role="button"
+		tabindex="0"
+		onmouseenter={() => onSliceMouseEnter?.(sliceData.slice.id)}
+		onmouseleave={() => onSliceMouseLeave?.(sliceData.slice.id)}
+		onclick={() => onSliceClick?.(sliceData.slice.id)}
+		onkeydown={e => e.key === 'Enter' && onSliceClick?.(sliceData.slice.id)}
+	>
+		<path d={sliceData.path} class="slice-path">
+			<title>{sliceData.slice.tooltip}: {sliceData.slice.tooltipValue}</title>
+		</path>
+
+		<line 
+			class="label-line" 
+			x1="0" 
+			y1="0"
+			x2="0" 
+			y2={lineY2}
+		/>
+		<text 
+			class="slice-label" 
+			aria-hidden="true"
+		>
+			{sliceData.slice.arcLabel}
+		</text>
+		
+		{#if sliceData.level === 0 && sliceData.childSlices?.length}
+			<!-- Child slices container sits at same origin but doesn't rotate -->
+			<g class="child-slices-container">
+				{#each sliceData.childSlices as childSlice}
+					{@render renderSlice(childSlice)}
+				{/each}
+			</g>
+		{/if}
+	</g>
+{/snippet}
 
 <div
 	class="container"
@@ -276,63 +399,17 @@
 	style:--radius={radius}
 	style:--outer-radius={outerRadiusFraction}
 	style:--inner-radius={innerRadiusFraction}
+	style:--nested-outer-radius={nestedOuterRadiusFraction}
+	style:--nested-inner-radius={nestedInnerRadiusFraction}
 	style:--gap={gap}
+	style:--nested-gap={nestedGap}
 >
-	<svg {width} {height} viewBox={viewBoxParams}>
+	<svg width={svgAttributes.width} height={svgAttributes.height} viewBox={svgAttributes.viewBox}>
 		<g class="slices">
-			{#each slices as slice, i}
-				<g
-					class="slice"
-					style:--slice-color={slice.color}
-					style:--mid-angle={sliceParams.sliceAngles[i].midAngle}
-					style:--label-distance={(sliceParams.outerRadius + sliceParams.innerRadius) / 2}
-					class:highlighted={highlightedSliceId === slice.id}
-					data-slice-id={slice.id}
-					role="button"
-					tabindex="0"
-					onmouseenter={() => onSliceMouseEnter?.(slice.id)}
-					onmouseleave={() => onSliceMouseLeave?.(slice.id)}
-					onclick={() => onSliceClick?.(slice.id)}
-					onkeydown={e => e.key === 'Enter' && onSliceClick?.(slice.id)}
-				>
-					<path d={slicePaths[i]} class="slice-path">
-						<title>{slice.tooltip}: {slice.tooltipValue}</title>
-					</path>
-
-					<line class="label-line" x1="0" y1="0" x2="0" y2={-sliceParams.innerRadius} />
-					<text class="slice-label" aria-hidden="true">
-						{slice.arcLabel}
-					</text>
-				</g>
+			<!-- Parent slices with their child slices nested inside them -->
+			{#each parentSlices as sliceData}
+				{@render renderSlice(sliceData)}
 			{/each}
-
-			{#if hierarchical && nestedSlicesData.length > 0}
-				{#each nestedSlicesData as nestedData, i}
-					<g
-						class="slice nested-slice"
-						style:--slice-color={nestedData.slice.color}
-						style:--mid-angle={nestedData.angleInfo.midAngle}
-						style:--label-distance={(sliceParams.outerRadius * 0.9 + sliceParams.innerRadius * 1.1) / 2}
-						class:highlighted={highlightedSliceId === nestedData.slice.id}
-						data-slice-id={nestedData.slice.id}
-						data-parent-id={nestedData.slice.parentId}
-						role="button"
-						tabindex="0"
-						onmouseenter={() => onSliceMouseEnter?.(nestedData.slice.id)}
-						onmouseleave={() => onSliceMouseLeave?.(nestedData.slice.id)}
-						onclick={() => onSliceClick?.(nestedData.slice.id)}
-						onkeydown={e => e.key === 'Enter' && onSliceClick?.(nestedData.slice.id)}
-					>
-						<path d={nestedData.path} class="slice-path">
-							<title>{nestedData.slice.tooltip}: {nestedData.slice.tooltipValue}</title>
-						</path>
-
-						<text class="nested-slice-label" aria-hidden="true">
-							{nestedData.slice.arcLabel}
-						</text>
-					</g>
-				{/each}
-			{/if}
 		</g>
 
 		{#if centerLabel}
@@ -345,11 +422,12 @@
 
 <style>
 	.container {
+		/* Constants */
 		--highlight-color: rgba(255, 255, 255, 1);
 		--highlight-stroke-width: 2;
 		--hover-brightness: 1.1;
 		--hover-scale: 1.05;
-
+		
 		&[data-arc-type='TopHalf'] {
 			--center-label-baseline: text-after-edge;
 		}
@@ -368,12 +446,24 @@
 
 			.slice {
 				--slice-scale: 1;
-
+				
+				/* Main slice transform properties */
 				transform-origin: 0 0;
 				cursor: pointer;
 				will-change: transform;
-				transform: scale(var(--slice-scale));
-				transition: all 0.2s ease-out;
+				opacity: var(--slice-opacity);
+				
+				/* Unified transform that works for both parent and nested slices */
+				transform: 
+					rotate(calc(var(--mid-angle) * 1deg)) 
+					scale(var(--slice-scale)) 
+					translate(0, calc(var(--slice-gap) * -1px));
+				transition: transform 0.2s ease-out;
+				
+				/* Path just needs fill */
+				.slice-path {
+					fill: var(--slice-color);
+				}
 
 				&:hover,
 				&:focus {
@@ -395,44 +485,29 @@
 				}
 
 				.label-line {
-					--line-opacity: 0;
 					stroke: currentColor;
-					opacity: var(--line-opacity);
+					opacity: 0.3;
 					pointer-events: none;
+					stroke-width: 1;
 				}
 
-				.slice-path {
-					fill: var(--slice-color);
-				}
-
-				.slice-label,
-				.nested-slice-label {
+				.slice-label {
 					text-anchor: middle;
 					dominant-baseline: central;
 					fill: currentColor;
-					font-size: 10px;
+					font-size: var(--label-font-size);
 					pointer-events: none;
-					transform: 
-						rotate(calc(var(--mid-angle) * 1deg)) 
-						translate(0, calc(var(--label-distance) * -1px)) 
-						rotate(calc(var(--mid-angle) * -1deg));
-				}
-
-				&.nested-slice {
-					--nested-opacity: 0.9;
-					opacity: var(--nested-opacity);
-					transform-origin: 0 0;
-					transition: inherit;
-
-					.nested-slice-label {
-						font-size: 8px;
-					}
 					
-					&:hover,
-					&:focus {
-						filter: brightness(var(--hover-brightness));
-						--slice-scale: var(--hover-scale);
-					}
+					/* Label positioning - calculated once in CSS */
+					translate: 0 calc(var(--slice-label-y) * 1px);
+					rotate: calc(var(--mid-angle) * -1deg);
+				}
+				
+				/* Child slices container - counter-rotate to neutralize parent rotation */
+				.child-slices-container {
+					transform: rotate(calc(var(--mid-angle) * -1deg));
+					transform-origin: 0 0;
+					will-change: transform;
 				}
 			}
 		}

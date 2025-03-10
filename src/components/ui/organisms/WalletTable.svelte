@@ -157,14 +157,12 @@
 				{@const groupScore = value}
 
 				<WalletRating
-					data={{
-						wallet,
-						attrGroup,
-						evalGroup,
-						groupScore,
-						tableState,
-						rowId: wallet.metadata.id,
-					}}
+					{wallet}
+					{attrGroup}
+					{evalGroup}
+					{groupScore}
+					bind:tableState
+					rowId={wallet.metadata.id}
 				/>
 			{/if}
 		{/snippet}
