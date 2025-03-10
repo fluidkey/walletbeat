@@ -22,6 +22,10 @@
 		angleGap: number
 	}
 
+
+	// (Internal)
+	import type { Snippet } from 'svelte'
+
 	type ComputedSlice = Slice & {
 		computed: {
 			path: string
@@ -69,6 +73,9 @@
 		onSliceClick,
 		onSliceMouseEnter,
 		onSliceMouseLeave,
+
+		// Snippets
+		centerContentSnippet,
 	}: {
 		// Content
 		slices: Slice[]
@@ -87,6 +94,9 @@
 		onSliceClick?: (id: string) => void
 		onSliceMouseEnter?: (id: string) => void
 		onSliceMouseLeave?: (id: string) => void
+
+		// Snippets
+		centerContentSnippet?: Snippet
 	} = $props()
 
 
@@ -295,11 +305,6 @@
 	</g>
 {/snippet}
 
-{#snippet centerContentSnippet()}
-	<text>
-		{centerLabel}
-	</text>
-{/snippet}
 
 <div
 	class="container"
@@ -313,7 +318,13 @@
 		</g>
 
 		<g class="center">
-			{@render centerContentSnippet()}
+			{#if centerContentSnippet}
+				{@render centerContentSnippet()}
+			{:else}
+				<text>
+					{centerLabel}
+				</text>
+			{/if}
 		</g>
 	</svg>
 </div>
