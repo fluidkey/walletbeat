@@ -17,7 +17,6 @@ import { gemwallet } from './wallets/gemwallet';
 import { klever } from './wallets/klever';
 import { mathwallet } from './wallets/mathwallet';
 import { metamask } from './wallets/metamask';
-import { obvious } from './wallets/obvious';
 import { ownbit } from './wallets/ownbit';
 import { phantom } from './wallets/phantom';
 import { pillar } from './wallets/pillar';
@@ -42,7 +41,6 @@ export const wallets: Record<string, Info> = {
   Rainbow: rainbow,
   Safe: safe,
   Den: den,
-  Obvious: obvious,
   Zerion: zerion,
   Tokenary: tokenary,
   Ambire: ambire,
@@ -70,5 +68,5 @@ export const wallets: Record<string, Info> = {
   Enkrypt: enkrypt,
   'Timeless X': timeless,
   Rabby: rabby,
-  Talisman: talisman
+  Talisman: talisman,
 };
