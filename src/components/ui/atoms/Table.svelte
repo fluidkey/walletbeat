@@ -51,6 +51,13 @@
 	})
 
 
+	// Actions
+	const toggleColumnSort = (column: ColumnDef<Datum, CellValue>) => {
+		if (table.isSortable(column.id))
+			table.toggleSort(column.id)
+	}
+
+
 	// Transitions/animations
 	import { flip } from 'svelte/animate'
 	import { expoOut } from 'svelte/easing'
@@ -66,6 +73,10 @@
 			<tr>
 				{#each table.columns as column (column.id)}
 					<th
+						data-sort={table.isSortable(column.id) ? table.getSortState(column.id) ?? 'none' : undefined}
+						tabIndex={0}
+						role="button"
+						onclick={() => toggleColumnSort(column)}
 						animate:flip={{ duration: 300, easing: expoOut }}
 					>
 						{#if columnCellSnippet}
@@ -153,6 +164,40 @@
 
 				th {
 					/* color: color-mix(in oklch, currentColor 50%, transparent); */
+
+					&[data-sort] {
+						cursor: pointer;
+
+						&[data-sort='none'] {
+							--column-sortIndicator-transform: perspective(1000px) scale(0);
+							--column-sortIndicator-fontSize: 0;
+						}
+
+						&[data-sort='asc'] {
+							--column-sortIndicator-transform: perspective(1000px);
+							--column-sortIndicator-fontSize: 1em;
+						}
+
+						&[data-sort='desc'] {
+							--column-sortIndicator-transform: perspective(1000px) rotateX(180deg);
+							--column-sortIndicator-fontSize: 1em;
+						}
+
+						&:after {
+							content: '↑';
+
+							display: inline-block;
+
+							font-size: var(--column-sortIndicator-fontSize);
+							margin-inline-start: 0.5em;
+
+							transform: var(--column-sortIndicator-transform);
+
+							transition-property: transform, font-size;
+							transition-duration: 0.2s;
+							transition-timing-function: ease-out;
+						}
+					}
 				}
 			}
 		}
