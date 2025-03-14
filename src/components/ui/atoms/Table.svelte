@@ -34,9 +34,18 @@
 
 
 	// State
-	const table = new DataTable<Datum>({
-		data: rows,
-		columns,
+	let table = $state(
+		new DataTable<Datum>({
+			data: rows,
+			columns,
+		})
+	)
+
+	$effect(() => {
+		table = new DataTable<Datum>({
+			data: rows,
+			columns,
+		})
 	})
 </script>
 
