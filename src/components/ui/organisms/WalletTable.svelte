@@ -1,0 +1,152 @@
+<script module lang="ts">
+	export type WalletTableState = {
+		variantSelected: Variant | undefined
+		expandedRowIds: Set<string>
+	}
+</script>
+
+
+<script lang="ts">
+	// Types/constants
+	import { Variant } from '@/schema/variants'
+	import {
+		ecosystemAttributeGroup,
+		privacyAttributeGroup,
+		securityAttributeGroup,
+		selfSovereigntyAttributeGroup,
+		transparencyAttributeGroup,
+	} from '@/schema/attribute-groups'
+	import { ratedWallets } from '@/data/wallets'
+
+	const attributeGroups = {
+		[securityAttributeGroup.id]: securityAttributeGroup,
+		[privacyAttributeGroup.id]: privacyAttributeGroup,
+		[selfSovereigntyAttributeGroup.id]: selfSovereigntyAttributeGroup,
+		[transparencyAttributeGroup.id]: transparencyAttributeGroup,
+		[ecosystemAttributeGroup.id]: ecosystemAttributeGroup,
+	}
+
+
+	// State
+	let tableState = $state<WalletTableState>({
+		variantSelected: undefined,
+		expandedRowIds: new Set<string>()
+	})
+
+
+	// Components
+	import WalletRating from '@/components/ui/molecules/WalletRating.svelte'
+	import Table from '@/components/ui/atoms/Table.svelte'
+
+	import PhoneAndroidIcon from '@material-icons/svg/svg/phone_android/baseline.svg?raw'
+	import LanguageIcon from '@material-icons/svg/svg/language/baseline.svg?raw'
+	import MonitorIcon from '@material-icons/svg/svg/monitor/baseline.svg?raw'
+	import SettingsEthernetIcon from '@material-icons/svg/svg/settings_ethernet/baseline.svg?raw'
+
+	const variantIcons = {
+		[Variant.BROWSER]: LanguageIcon,
+		[Variant.DESKTOP]: MonitorIcon,
+		[Variant.MOBILE]: PhoneAndroidIcon,
+		[Variant.EMBEDDED]: SettingsEthernetIcon,
+	}
+</script>
+
+
+<Table
+	rows={
+		Object.entries(ratedWallets)
+			.map(([id, wallet]) => ({ id, wallet }))
+	}
+	getId={({ id }) => id}
+	columns={[
+		{
+			id: 'displayName',
+			key: 'displayName',
+			name: 'Wallet',
+			getValue: ({ wallet }) => wallet.metadata.displayName,
+		},
+		...(
+			Object.values(attributeGroups)
+				.map(attrGroup => ({
+					id: attrGroup.id,
+					key: attrGroup.id,
+					name: `${attrGroup.icon} ${attrGroup.displayName}`,
+					getValue: ({ wallet }) => attrGroup.score(wallet.overall[attrGroup.id]),
+				}))
+		),
+	]}
+	onRowClick={({ id }) => {
+		if(tableState.expandedRowIds.has(id))
+			tableState.expandedRowIds.delete(id)
+		else
+			tableState.expandedRowIds.add(id)
+	}}
+	class="wallet-table"
+>
+	{#snippet cellSnippet({
+		row: { wallet },
+		column,
+		value,
+	})}
+		{#if column.key === 'displayName'}
+			{@const displayName = value}
+
+			<div class="row">
+				<div class="row">
+					<img
+						alt={displayName}
+						src={`/images/wallets/${wallet.metadata.id}.${wallet.metadata.iconExtension}`}
+						width="16"
+						height="16"
+					/>
+					{displayName}
+				</div>
+
+				<div class="variants row inline">
+					{#each (
+						Object.entries(wallet.variants)
+							.filter(([, hasVariant]) => hasVariant)
+							.map(([variant]) => variant)
+					) as variant}
+						<span title={variant}>
+							{@html variantIcons[variant]}
+						</span>
+					{/each}
+				</div>
+			</div>
+		{:else}
+			{@const attrGroup = attributeGroups[column.id]}
+			{@const evalGroup = wallet.overall[attrGroup.id]}
+			{@const groupScore = value}
+
+			<WalletRating
+				{wallet}
+				{attrGroup}
+				{evalGroup}
+				{groupScore}
+				bind:tableState
+				rowId={wallet.metadata.id}
+			/>
+		{/if}
+	{/snippet}
+</Table>
+
+
+<style>
+	:global(.wallet-table) {
+		font-size: 1.1em;
+	}
+
+	img {
+		filter: drop-shadow(rgba(255, 255, 255, 0.1) 0px 0px 4.66667px);
+		width: auto;
+		height: 1.66rem;
+		vertical-align: middle;
+	}
+
+	.variants {
+		:global(svg) {
+			fill: currentColor;
+		}
+	}
+</style>
