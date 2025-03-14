@@ -36,17 +36,6 @@
 	})
 </script>
 
-<!-- {#snippet cellSnippet({
-	row,
-	column,
-	value,
-}: {
-	row: Datum
-	column: ColumnDef<Datum, CellValue>
-	value: CellValue
-})}
-	{value}
-{/snippet} -->
 
 {#snippet columnCellSnippet(
 	column: ColumnDef<Datum, CellValue>,
@@ -70,12 +59,18 @@
 			{#each table.rows as row, index (getId?.(row, index))}
 				<tr tabIndex={0}>
 					{#each table.columns as column (column.id)}
+						{@const value = column.getValue?.(row)}
+
 						<td>
-							{@render cellSnippet({
-								row,
-								column,
-								value: column.getValue?.(row),
-							})}
+							{#if cellSnippet}
+								{@render cellSnippet({
+									row,
+									column,
+									value,
+								})}
+							{:else}
+								{value}
+							{/if}
 						</td>
 					{/each}
 				</tr>
