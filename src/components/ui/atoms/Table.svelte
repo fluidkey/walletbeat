@@ -47,6 +47,11 @@
 			columns,
 		})
 	})
+
+
+	// Transitions/animations
+	import { flip } from 'svelte/animate'
+	import { expoOut } from 'svelte/easing'
 </script>
 
 
@@ -55,7 +60,9 @@
 		<thead>
 			<tr>
 				{#each table.columns as column (column.id)}
-					<th>
+					<th
+						animate:flip={{ duration: 300, easing: expoOut }}
+					>
 						{#if columnCellSnippet}
 							{@render columnCellSnippet(column)}
 						{:else}
@@ -67,11 +74,16 @@
 		</thead>
 		<tbody>
 			{#each table.rows as row, index (getId?.(row, index))}
-				<tr tabIndex={0}>
+				<tr
+					tabIndex={0}
+					animate:flip={{ duration: 300, easing: expoOut }}
+				>
 					{#each table.columns as column (column.id)}
 						{@const value = column.getValue?.(row)}
 
-						<td>
+						<td
+							animate:flip={{ duration: 300, easing: expoOut }}
+						>
 							{#if cellSnippet}
 								{@render cellSnippet({
 									row,
