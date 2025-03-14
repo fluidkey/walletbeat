@@ -14,18 +14,22 @@
 	let {
 		rows,
 		getId,
-		cellSnippet,
 		columns,
+		cellSnippet,
+		columnCellSnippet,
 		...restProps
 	}: {
 		rows: Datum[]
 		getId?: (row: Datum, index: number) => any
+		columns: ColumnDef<Datum, CellValue>[]
 		cellSnippet?: Snippet<[{
 			row: Datum
 			column: ColumnDef<Datum, CellValue>
 			value: CellValue
 		}]>
-		columns: ColumnDef<Datum, CellValue>[]
+		columnCellSnippet?: Snippet<[{
+			column: ColumnDef<Datum, CellValue>
+		}]>
 	} = $props()
 
 
@@ -37,20 +41,17 @@
 </script>
 
 
-{#snippet columnCellSnippet(
-	column: ColumnDef<Datum, CellValue>,
-)}
-	{column.name}
-{/snippet}
-
-
 <div {...restProps}>
 	<table>
 		<thead>
 			<tr>
 				{#each table.columns as column (column.id)}
 					<th>
-						{@render columnCellSnippet(column)}
+						{#if columnCellSnippet}
+							{@render columnCellSnippet(column)}
+						{:else}
+							{column.name}
+						{/if}
 					</th>
 				{/each}
 			</tr>
