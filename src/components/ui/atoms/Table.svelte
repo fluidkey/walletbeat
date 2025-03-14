@@ -55,7 +55,10 @@
 </script>
 
 
-<div {...restProps}>
+<div
+	{...restProps}
+	 class="container {'class' in restProps ? restProps.class : ''}"
+>
 	<table>
 		<thead>
 			<tr>
@@ -103,7 +106,7 @@
 
 
 <style>
-	div {
+	.container {
 		--table-backgroundColor: #22242b;
 		--table-outerBorderColor: rgba(20, 21, 25, 1);
 		--table-innerBorderColor: rgba(20, 21, 25, 1);
