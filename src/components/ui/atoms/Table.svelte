@@ -17,6 +17,7 @@
 		columns,
 		cellSnippet,
 		columnCellSnippet,
+		onRowClick,
 		...restProps
 	}: {
 		rows: Datum[]
@@ -30,6 +31,7 @@
 		columnCellSnippet?: Snippet<[{
 			column: ColumnDef<Datum, CellValue>
 		}]>
+		onRowClick?: (row: Datum) => void
 	} = $props()
 
 
@@ -79,6 +81,7 @@
 			{#each table.rows as row, index (getId?.(row, index))}
 				<tr
 					tabIndex={0}
+					onclick={() => onRowClick?.(row)}
 					animate:flip={{ duration: 300, easing: expoOut }}
 				>
 					{#each table.columns as column (column.id)}
