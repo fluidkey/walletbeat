@@ -9,34 +9,38 @@
 	import { DataTable, type ColumnDef } from '@careswitch/svelte-data-table'
 	import type { Snippet } from 'svelte'
 
+
 	// Inputs
 	let {
 		rows,
 		getId,
-		cellSnippet,
 		columns,
+		cellSnippet,
+		columnCellSnippet,
+		onRowClick,
 		...restProps
 	}: {
 		rows: Datum[]
 		getId?: (row: Datum, index: number) => any
-		cellSnippet?: Snippet<
-			[
-				{
-					row: Datum
-					column: ColumnDef<Datum, CellValue>
-					value: CellValue
-				},
-			]
-		>
 		columns: ColumnDef<Datum, CellValue>[]
+		cellSnippet?: Snippet<[{
+			row: Datum
+			column: ColumnDef<Datum, CellValue>
+			value: CellValue
+		}]>
+		columnCellSnippet?: Snippet<[{
+			column: ColumnDef<Datum, CellValue>
+		}]>
+		onRowClick?: (row: Datum) => void
 	} = $props()
+
 
 	// State
 	let table = $state(
 		new DataTable<Datum>({
 			data: rows,
 			columns,
-		}),
+		})
 	)
 
 	$effect(() => {
@@ -45,46 +49,67 @@
 			columns,
 		})
 	})
+
+
+	// Actions
+	const toggleColumnSort = (column: ColumnDef<Datum, CellValue>) => {
+		if (table.isSortable(column.id))
+			table.toggleSort(column.id)
+	}
+
+
+	// Transitions/animations
+	import { flip } from 'svelte/animate'
+	import { expoOut } from 'svelte/easing'
 </script>
 
-<!-- {#snippet cellSnippet({
-	row,
-	column,
-	value,
-}: {
-	row: Datum
-	column: ColumnDef<Datum, CellValue>
-	value: CellValue
-})}
-	{value}
-{/snippet} -->
 
-{#snippet columnCellSnippet(column: ColumnDef<Datum, CellValue>)}
-	{column.name}
-{/snippet}
-
-<!-- {#key columns} -->
-<div {...restProps}>
+<div
+	{...restProps}
+	 class="container {'class' in restProps ? restProps.class : ''}"
+>
 	<table>
 		<thead>
 			<tr>
 				{#each table.columns as column (column.id)}
-					<th>
-						{@render columnCellSnippet(column)}
+					<th
+						data-sort={table.isSortable(column.id) ? table.getSortState(column.id) ?? 'none' : undefined}
+						tabIndex={0}
+						role="button"
+						onclick={() => toggleColumnSort(column)}
+						animate:flip={{ duration: 300, easing: expoOut }}
+					>
+						{#if columnCellSnippet}
+							{@render columnCellSnippet(column)}
+						{:else}
+							{column.name}
+						{/if}
 					</th>
 				{/each}
 			</tr>
 		</thead>
 		<tbody>
 			{#each table.rows as row, index (getId?.(row, index))}
-				<tr tabIndex={0}>
+				<tr
+					tabIndex={0}
+					onclick={() => onRowClick?.(row)}
+					animate:flip={{ duration: 300, easing: expoOut }}
+				>
 					{#each table.columns as column (column.id)}
-						<td>
-							{@render cellSnippet({
-								row,
-								column,
-								value: column.getValue?.(row),
-							})}
+						{@const value = column.getValue?.(row)}
+
+						<td
+							animate:flip={{ duration: 300, easing: expoOut }}
+						>
+							{#if cellSnippet}
+								{@render cellSnippet({
+									row,
+									column,
+									value,
+								})}
+							{:else}
+								{value}
+							{/if}
 						</td>
 					{/each}
 				</tr>
@@ -93,8 +118,9 @@
 	</table>
 </div>
 
+
 <style>
-	div {
+	.container {
 		--table-backgroundColor: #22242b;
 		--table-outerBorderColor: rgba(20, 21, 25, 1);
 		--table-innerBorderColor: rgba(20, 21, 25, 1);
@@ -109,9 +135,11 @@
 		border-radius: var(--table-cornerRadius);
 
 		clip-path: inset(
-			calc(-1 * var(--table-borderWidth)) calc(-1 * var(--table-borderWidth))
-				calc(-1 * var(--table-borderWidth)) calc(-1 * var(--table-borderWidth)) round
-				var(--table-cornerRadius)
+			calc(-1 * var(--table-borderWidth))
+			calc(-1 * var(--table-borderWidth))
+			calc(-1 * var(--table-borderWidth))
+			calc(-1 * var(--table-borderWidth))
+			round var(--table-cornerRadius)
 		);
 	}
 
@@ -136,6 +164,40 @@
 
 				th {
 					/* color: color-mix(in oklch, currentColor 50%, transparent); */
+
+					&[data-sort] {
+						cursor: pointer;
+
+						&[data-sort='none'] {
+							--column-sortIndicator-transform: perspective(1000px) scale(0);
+							--column-sortIndicator-fontSize: 0;
+						}
+
+						&[data-sort='asc'] {
+							--column-sortIndicator-transform: perspective(1000px);
+							--column-sortIndicator-fontSize: 1em;
+						}
+
+						&[data-sort='desc'] {
+							--column-sortIndicator-transform: perspective(1000px) rotateX(180deg);
+							--column-sortIndicator-fontSize: 1em;
+						}
+
+						&:after {
+							content: '↑';
+
+							display: inline-block;
+
+							font-size: var(--column-sortIndicator-fontSize);
+							margin-inline-start: 0.5em;
+
+							transform: var(--column-sortIndicator-transform);
+
+							transition-property: transform, font-size;
+							transition-duration: 0.2s;
+							transition-timing-function: ease-out;
+						}
+					}
 				}
 			}
 		}
