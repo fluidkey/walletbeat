@@ -91,18 +91,40 @@ export function toFullyQualified(
 	if (isFullyQualifiedReference(reference)) {
 		return [reference]
 	}
-	if (isUrl(reference)) {
-		reference = labeledUrl(reference)
+	if (typeof reference === 'string') {
+		return toFullyQualified({ url: reference })
+	}
+	let explanation: string | undefined = undefined
+	if (
+		Object.hasOwn(reference, 'explanation') &&
+		typeof (reference as { explanation: unknown }).explanation === 'string' // eslint-disable-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we verify the "explanation" field exists.
+	) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we just verified the "explanation" field exists and is a string.
+		explanation = (reference as { explanation: string }).explanation
+	}
+	let lastRetrieved: CalendarDate | undefined = undefined
+	if (
+		Object.hasOwn(reference, 'lastRetrieved') &&
+		typeof (reference as { lastRetrieved: unknown }).lastRetrieved === 'string' // eslint-disable-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we verify the "lastRetrieved" field exists.
+	) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- Safe because we verify the "lastRetrieved" field exists, and the only possible string type for it is CalendarDate.
+		lastRetrieved = (reference as { lastRetrieved: CalendarDate }).lastRetrieved
 	}
 	if (isLabeledUrl(reference)) {
-		return [{ urls: [reference] }]
+		return [
+			{
+				urls: [reference],
+				explanation,
+				lastRetrieved,
+			},
+		]
 	}
 	if (isUrl(reference.url)) {
 		return [
 			{
 				urls: [labeledUrl(reference.url, reference.label)],
-				explanation: reference.explanation,
-				lastRetrieved: reference.lastRetrieved,
+				explanation,
+				lastRetrieved,
 			},
 		]
 	}
@@ -111,8 +133,8 @@ export function toFullyQualified(
 		return [
 			{
 				urls: [labeledUrl(url, reference.label)],
-				explanation: reference.explanation,
-				lastRetrieved: reference.lastRetrieved,
+				explanation,
+				lastRetrieved,
 			},
 		]
 	}
@@ -121,8 +143,8 @@ export function toFullyQualified(
 		if (isLabeledUrl(url)) {
 			return {
 				urls: [url],
-				explanation: reference.explanation,
-				lastRetrieved: reference.lastRetrieved,
+				explanation,
+				lastRetrieved,
 			}
 		}
 		const label = getUrlLabel(url)
@@ -135,8 +157,8 @@ export function toFullyQualified(
 					label: `${label} ${count + 1}`,
 				},
 			],
-			explanation: reference.explanation,
-			lastRetrieved: reference.lastRetrieved,
+			explanation,
+			lastRetrieved,
 		}
 	})
 }
@@ -174,24 +196,27 @@ export function popRefs<T>(withRef: WithRef<T>): {
 /** Deduplicate and merge references in `refs`. */
 export function mergeRefs(...refs: FullyQualifiedReference[]): FullyQualifiedReference[] {
 	const byExplanation = new Map<string, FullyQualifiedReference>()
+	const mergedRefs: FullyQualifiedReference[] = []
 	for (const ref of refs) {
-		const explanation = ref.explanation ?? ''
-		const existing = byExplanation.get(explanation)
+		if (ref.explanation === undefined) {
+			mergedRefs.push(ref)
+			continue
+		}
+		const existing = byExplanation.get(ref.explanation)
 		if (existing === undefined) {
-			byExplanation.set(explanation, ref)
+			byExplanation.set(ref.explanation, ref)
 			continue
 		}
 		let newUrls = existing.urls
 		for (const url of ref.urls) {
 			newUrls = mergeLabeledUrls(newUrls, url)
 		}
-		byExplanation.set(explanation, {
+		byExplanation.set(ref.explanation, {
 			urls: newUrls,
-			explanation: existing.explanation ?? ref.explanation,
+			explanation: ref.explanation,
 			lastRetrieved: existing.lastRetrieved ?? ref.lastRetrieved,
 		})
 	}
-	const mergedRefs: FullyQualifiedReference[] = []
 	byExplanation.forEach(ref => {
 		mergedRefs.push(ref)
 	})
