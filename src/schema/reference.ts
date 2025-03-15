@@ -68,7 +68,8 @@ export function isFullyQualifiedReference(
 	return typeof reference === 'object' && Object.hasOwn(reference, 'urls')
 }
 
-type References = Reference | NonEmptyArray<Reference>
+/** One or more references. */
+export type References = Reference | NonEmptyArray<Reference>
 
 /** An object that *must* be annotated with References. */
 export type MustRef<T> = T & { ref: References }
@@ -77,7 +78,9 @@ export type MustRef<T> = T & { ref: References }
 export type WithRef<T> = MustRef<T> | (T & { ref?: null })
 
 /** Fully qualify a `Reference`. */
-export function toFullyQualified(reference: References): FullyQualifiedReference[] {
+export function toFullyQualified(
+	reference: References | FullyQualifiedReference[],
+): FullyQualifiedReference[] {
 	if (Array.isArray(reference)) {
 		const qualified: FullyQualifiedReference[] = []
 		for (const ref of reference) {
@@ -85,14 +88,14 @@ export function toFullyQualified(reference: References): FullyQualifiedReference
 		}
 		return mergeRefs(...qualified)
 	}
+	if (isFullyQualifiedReference(reference)) {
+		return [reference]
+	}
 	if (isUrl(reference)) {
 		reference = labeledUrl(reference)
 	}
 	if (isLabeledUrl(reference)) {
 		return [{ urls: [reference] }]
-	}
-	if (isFullyQualifiedReference(reference)) {
-		return [reference]
 	}
 	if (isUrl(reference.url)) {
 		return [

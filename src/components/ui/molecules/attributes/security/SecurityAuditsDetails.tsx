@@ -5,7 +5,6 @@ import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon'
 import { isNonEmptyArray, nonEmptyGet, nonEmptyMap, nonEmptySorted } from '@/types/utils/non-empty'
 import type { SecurityAuditsDetailsProps } from '@/types/content/security-audits-details'
 import { dateCompare } from '@/types/date'
-import { toFullyQualified } from '@/schema/reference'
 import { EntityLink } from '@/components/ui/atoms/EntityLink'
 import {
 	securityAuditId,
@@ -35,7 +34,7 @@ export function SecurityAuditsDetails({
 				<Typography fontWeight={subsectionWeight}>
 					{wallet.metadata.displayName} was last audited on {mostRecentAudit.auditDate}
 					{auditedInLastYear ? '.' : ', which was over a year ago.'}{' '}
-					<ReferenceLinks ref={toFullyQualified(mostRecentAudit.ref)} />
+					<ReferenceLinks ref={mostRecentAudit.ref} />
 					{hasUnaddressedFlaws && ' There remains unaddressed security flaws in the codebase.'}
 				</Typography>
 			</WrapRatingIcon>
@@ -43,8 +42,7 @@ export function SecurityAuditsDetails({
 				<ul>
 					{nonEmptyMap(sortedAudits, audit => (
 						<li key={securityAuditId(audit)}>
-							<strong>{audit.auditDate}</strong>{' '}
-							<ReferenceLinks ref={toFullyQualified(audit.ref)} /> by{' '}
+							<strong>{audit.auditDate}</strong> <ReferenceLinks ref={audit.ref} /> by{' '}
 							<EntityLink entity={audit.auditor} />.{' '}
 							<React.Fragment key="unpatchedFlaws">
 								{audit.unpatchedFlaws === 'NONE_FOUND' &&

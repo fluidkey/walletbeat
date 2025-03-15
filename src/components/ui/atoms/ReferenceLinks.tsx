@@ -1,4 +1,9 @@
-import { type FullyQualifiedReference, mergeRefs } from '@/schema/reference'
+import {
+	type References,
+	type FullyQualifiedReference,
+	mergeRefs,
+	toFullyQualified,
+} from '@/schema/reference'
 import React from 'react'
 import { JoinedList } from './JoinedList'
 import { nonEmptyMap } from '@/types/utils/non-empty'
@@ -12,21 +17,24 @@ export function ReferenceLinks({
 	nonEmptyPrefix = undefined,
 }: {
 	key?: string
-	ref: FullyQualifiedReference | FullyQualifiedReference[]
+	ref?: null | References | FullyQualifiedReference | FullyQualifiedReference[]
 	ifEmpty?: React.JSX.Element
 	nonEmptyPrefix?: React.ReactNode
 }): React.JSX.Element | undefined {
 	let refs = ref
+	if (refs === undefined || refs === null) {
+		return ifEmpty
+	}
 	if (!Array.isArray(refs)) {
 		refs = [refs]
 	}
 	if (refs.length === 0) {
 		return ifEmpty
 	}
-	refs = mergeRefs(...refs)
+	refs = mergeRefs(...toFullyQualified(refs))
 	return (
 		<React.Fragment key={key}>
-			{nonEmptyPrefix && <>{nonEmptyPrefix} </>}
+			{nonEmptyPrefix !== undefined && nonEmptyPrefix !== '' && <>{nonEmptyPrefix} </>}
 			<JoinedList
 				data={refs.flatMap(ref =>
 					nonEmptyMap(ref.urls, url => ({

@@ -2,7 +2,6 @@ import { Box, Typography } from '@mui/material'
 import type React from 'react'
 import { subsectionWeight } from '@/components/constants'
 import { WrapRatingIcon } from '../../../atoms/WrapRatingIcon'
-import { toFullyQualified } from '@/schema/reference'
 import { ReferenceLinks } from '@/components/ui/atoms/ReferenceLinks'
 import type { ScamAlertDetailsProps } from '@/types/content/scam-alert-details'
 import { RenderTypographicContent } from '@/components/ui/atoms/RenderTypographicContent'
@@ -105,17 +104,14 @@ export function ScamAlertDetails({ wallet, value }: ScamAlertDetailsProps): Reac
 											to a third party which can correlate them.
 										</Typography>
 									)}
-									{value.scamAlerts.sendTransactionWarning.ref === null ||
-									value.scamAlerts.sendTransactionWarning.ref === undefined ? null : (
-										<ReferenceLinks
-											nonEmptyPrefix={
-												<Typography variant="body1" sx={{ display: 'inline' }}>
-													References:
-												</Typography>
-											}
-											ref={toFullyQualified(value.scamAlerts.sendTransactionWarning.ref)}
-										/>
-									)}
+									<ReferenceLinks
+										nonEmptyPrefix={
+											<Typography variant="body1" sx={{ display: 'inline' }}>
+												References:
+											</Typography>
+										}
+										ref={value.scamAlerts.sendTransactionWarning.ref}
+									/>
 								</>
 							) : (
 								<Typography variant="body1">
@@ -167,17 +163,14 @@ export function ScamAlertDetails({ wallet, value }: ScamAlertDetailsProps): Reac
 											submitted.
 										</Typography>
 									)}
-									{value.scamAlerts.contractTransactionWarning.ref === null ||
-									value.scamAlerts.contractTransactionWarning.ref === undefined ? null : (
-										<ReferenceLinks
-											nonEmptyPrefix={
-												<Typography variant="body1" sx={{ display: 'inline' }}>
-													References:
-												</Typography>
-											}
-											ref={toFullyQualified(value.scamAlerts.contractTransactionWarning.ref)}
-										/>
-									)}
+									<ReferenceLinks
+										nonEmptyPrefix={
+											<Typography variant="body1" sx={{ display: 'inline' }}>
+												References:
+											</Typography>
+										}
+										ref={value.scamAlerts.contractTransactionWarning.ref}
+									/>
 								</>
 							) : (
 								<Typography variant="body1">
@@ -202,17 +195,14 @@ export function ScamAlertDetails({ wallet, value }: ScamAlertDetailsProps): Reac
 											</>
 										)}
 									</Typography>
-									{value.scamAlerts.scamUrlWarning.ref === null ||
-									value.scamAlerts.scamUrlWarning.ref === undefined ? null : (
-										<ReferenceLinks
-											nonEmptyPrefix={
-												<Typography variant="body1" sx={{ display: 'inline' }}>
-													References:
-												</Typography>
-											}
-											ref={toFullyQualified(value.scamAlerts.scamUrlWarning.ref)}
-										/>
-									)}
+									<ReferenceLinks
+										nonEmptyPrefix={
+											<Typography variant="body1" sx={{ display: 'inline' }}>
+												References:
+											</Typography>
+										}
+										ref={value.scamAlerts.scamUrlWarning.ref}
+									/>
 								</>
 							) : (
 								<Typography variant="body1">
