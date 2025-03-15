@@ -26,7 +26,7 @@ export function ReferenceLinks({
 	refs = mergeRefs(...refs)
 	return (
 		<React.Fragment key={key}>
-			{nonEmptyPrefix}
+			{nonEmptyPrefix && <>{nonEmptyPrefix} </>}
 			<JoinedList
 				data={refs.flatMap(ref =>
 					nonEmptyMap(ref.urls, url => ({

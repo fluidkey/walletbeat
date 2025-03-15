@@ -9,6 +9,7 @@ import { SourceVisibilityDetails } from '@/components/ui/molecules/attributes/tr
 import { UnratedAttribute } from '@/components/ui/molecules/attributes/UnratedAttribute'
 import { SecurityAuditsDetails } from '@/components/ui/molecules/attributes/security/SecurityAuditsDetails'
 import { TransactionInclusionDetails } from '@/components/ui/molecules/attributes/self-sovereignty/TransactionInclusionDetails'
+import { ScamAlertDetails } from '../molecules/attributes/security/ScamAlertDetails'
 
 export function RenderContent({
 	content,
@@ -29,6 +30,8 @@ export function RenderContent({
 			return <FundingDetails {...componentProps} {...otherProps} />
 		case 'LicenseDetails':
 			return <LicenseDetails {...componentProps} {...otherProps} />
+		case 'ScamAlertDetails':
+			return <ScamAlertDetails {...componentProps} {...otherProps} />
 		case 'SecurityAuditsDetails':
 			return <SecurityAuditsDetails {...componentProps} {...otherProps} />
 		case 'SourceVisibilityDetails':
